@@ -1,4 +1,51 @@
 @import "tailwindcss";
-@plugin "daisyui"{
 
+@plugin "daisyui" {
+  themes: ewucsc --default;
 }
+
+@plugin "daisyui/theme" {
+  name: "ewucsc";
+  default: true;
+  prefersdark: true;
+
+  --color-primary: #2563eb;
+  --color-primary-content: #ffffff;
+
+  --color-secondary: #06b6d4;
+  --color-secondary-content: #022c22;
+
+  --color-accent: #22c55e;
+  --color-accent-content: #022c22;
+
+  --color-neutral: #0f172a;
+  --color-neutral-content: #f1f5f9;
+
+  --color-base-100: #020617;
+  --color-base-200: #0f172a;
+  --color-base-300: #1e293b;
+
+  --color-info: #38bdf8;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+
+  --radius-box: 1rem;
+  --radius-field: 0.75rem;
+  --radius-selector: 0.5rem;
+}
+
+body {
+  background: radial-gradient(
+      circle at 20% 20%,
+      rgba(37, 99, 235, 0.15),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(6, 182, 212, 0.15),
+      transparent 40%
+    ),
+    #020617;
+}
+
