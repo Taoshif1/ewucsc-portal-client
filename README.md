@@ -65,8 +65,10 @@ client
 │  │  ├─ Learning.jsx
 │  │  ├─ Login.jsx
 │  │  └─ Register.jsx
-│  └─ router
-│     └─ router.jsx
+│  ├─ router
+│  │  └─ router.jsx
+│  └─ services
+│     └─ api.js
 └─ vite.config.js
 
 ```
