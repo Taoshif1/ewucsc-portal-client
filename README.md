@@ -24,6 +24,10 @@ The site uses a custom-engineered daisyUI theme named `ewucsc`.
 *   **Gradient Buttons:** The Login button features a dual-tone linear gradient that reverses on hover with a smooth `500ms` transition.
 *   **Radial Background:** The global CSS includes a subtle radial gradient to create depth, mimicking a "cyber-grid" environment.
 
+## Problems
+
+The notification buttons badge aint showing up.
+
 ## 📂 Project Structure
 
 ```
@@ -46,7 +50,17 @@ client
 │  │  ├─ Navbar.jsx
 │  │  └─ ThemeToggle.jsx
 │  ├─ index.css
+│  ├─ layouts
+│  │  └─ MainLayout.jsx
 │  ├─ main.jsx
+│  ├─ pages
+│  │  ├─ CTF.jsx
+│  │  ├─ Dashboard.jsx
+│  │  ├─ Home.jsx
+│  │  ├─ Homeworks.jsx
+│  │  ├─ Learning.jsx
+│  │  ├─ Login.jsx
+│  │  └─ Register.jsx
 │  └─ router
 │     └─ router.jsx
 └─ vite.config.js
@@ -59,3 +73,4 @@ client
 - [ ] Integrate Firebase/JWT Authentication.
 - [ ] Develop the Homework Tracking logic.
 - [ ] More Advanced Features & logic.
+
