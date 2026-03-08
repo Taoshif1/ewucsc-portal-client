@@ -26,7 +26,6 @@ The site uses a custom-engineered daisyUI theme named `ewucsc`.
 
 ## Problems
 
-The notification buttons badge aint showing up.
 
 ## 📂 Project Structure
 
@@ -40,8 +39,6 @@ client
 │  └─ vite.svg
 ├─ README.md
 ├─ src
-│  ├─ App.css
-│  ├─ App.jsx
 │  ├─ assets
 │  │  ├─ ewucscLogo.jpg
 │  │  └─ react.svg
@@ -49,6 +46,13 @@ client
 │  │  ├─ Logo.jsx
 │  │  ├─ Navbar.jsx
 │  │  └─ ThemeToggle.jsx
+│  ├─ context
+│  │  ├─ AuthContext.jsx
+│  │  └─ AuthProvider.jsx
+│  ├─ firebase
+│  │  └─ firebase.config.js
+│  ├─ hooks
+│  │  └─ useAuth.js
 │  ├─ index.css
 │  ├─ layouts
 │  │  └─ MainLayout.jsx
@@ -67,10 +71,10 @@ client
 
 ```
 
+
 ## 🚀 Future Roadmap
 - [X] Implement Light/Dark mode toggle.
 - [ ] Build Role-Based Dashboards (Admin vs. Member).
 - [ ] Integrate Firebase/JWT Authentication.
 - [ ] Develop the Homework Tracking logic.
 - [ ] More Advanced Features & logic.
-

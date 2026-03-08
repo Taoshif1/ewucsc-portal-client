@@ -1,7 +1,11 @@
-import React from 'react'
+import React from 'react';
 
-export default function Learning() {
-  return (
-    <div>Learning</div>
-  )
-}
+const Learning = () => {
+    return (
+        <div>
+            <h1 className="text-3xl font-bold">Learning Path</h1>
+        </div>
+    );
+};
+
+export default Learning;
