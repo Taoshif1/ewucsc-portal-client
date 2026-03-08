@@ -43,7 +43,8 @@ client
 │  │  └─ react.svg
 │  ├─ components
 │  │  ├─ Logo.jsx
-│  │  └─ Navbar.jsx
+│  │  ├─ Navbar.jsx
+│  │  └─ ThemeToggle.jsx
 │  ├─ index.css
 │  ├─ main.jsx
 │  └─ router
@@ -51,3 +52,10 @@ client
 └─ vite.config.js
 
 ```
+
+## 🚀 Future Roadmap
+- [X] Implement Light/Dark mode toggle.
+- [ ] Build Role-Based Dashboards (Admin vs. Member).
+- [ ] Integrate Firebase/JWT Authentication.
+- [ ] Develop the Homework Tracking logic.
+- [ ] More Advanced Features & logic.

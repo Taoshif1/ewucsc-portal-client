@@ -2,6 +2,7 @@
 import React from "react";
 import Logo from "./Logo";
 import { NavLink } from "react-router";
+import ThemeToggle from "./ThemeToggle";
 
 const Navbar = () => {
   const Links = (
@@ -10,9 +11,11 @@ const Navbar = () => {
         <NavLink
           to="/ctf"
           className={({ isActive }) =>
-            isActive
-              ? "text-primary font-bold"
-              : "text-neutral-content hover:text-primary"
+            `transition-colors duration-200 ${
+              isActive
+                ? "text-primary font-bold bg-primary/10 px-4 py-2 rounded-lg"
+                : "text-base-content hover:text-primary px-4 py-2"
+            }`
           }
         >
           CTF
@@ -22,9 +25,11 @@ const Navbar = () => {
         <NavLink
           to="/learning"
           className={({ isActive }) =>
-            isActive
-              ? "text-primary font-bold"
-              : "text-neutral-content hover:text-primary"
+            `transition-colors duration-100 ${
+              isActive
+                ? "text-primary font-bold"
+                : "text-base-content/70 hover:text-primary"
+            }`
           }
         >
           Learning Path
@@ -34,9 +39,11 @@ const Navbar = () => {
         <NavLink
           to="/homeworks"
           className={({ isActive }) =>
-            isActive
-              ? "text-primary font-bold"
-              : "text-neutral-content hover:text-primary"
+            `transition-colors duration-100 ${
+              isActive
+                ? "text-primary font-bold"
+                : "text-base-content/70 hover:text-primary"
+            }`
           }
         >
           Homeworks
@@ -46,9 +53,11 @@ const Navbar = () => {
         <NavLink
           to="/dashboard"
           className={({ isActive }) =>
-            isActive
-              ? "text-primary font-bold"
-              : "text-neutral-content hover:text-primary"
+            `transition-colors duration-100 ${
+              isActive
+                ? "text-primary font-bold"
+                : "text-base-content/70 hover:text-primary"
+            }`
           }
         >
           Dashboard
@@ -58,13 +67,13 @@ const Navbar = () => {
   );
 
   return (
-    <div className="navbar bg-base-100/70 backdrop-blur-xl sticky top-0 z-50 border-b border-primary/20 shadow-[0_0_25px_rgba(37,99,235,0.12)] px-4 lg:px-12">
+    <div className="navbar bg-base-100/70 backdrop-blur-xl sticky top-0 z-50 px-4 lg:px-12 border-b border-white/5 shadow-[0_10px_30px_-15px_rgba(37,99,235,0.2)] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:bg-gradient-to-r after:from-transparent after:via-primary after:to-secondary  after:opacity-50">
       <div className="navbar-start">
         <div className="dropdown">
           <div
             tabIndex={0}
             role="button"
-            className="btn btn-ghost lg:hidden text-neutral-content"
+            className="btn btn-ghost lg:hidden text-base-content"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -83,13 +92,11 @@ const Navbar = () => {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-200 rounded-box w-64 border border-white/5"
+            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-2xl bg-base-100 rounded-box w-64 border border-base-content/5"
           >
             {Links}
           </ul>
         </div>
-
-        {/* Logo */}
         <NavLink
           to="/"
           className="btn btn-ghost hover:bg-transparent normal-case"
@@ -102,13 +109,21 @@ const Navbar = () => {
         <ul className="menu menu-horizontal px-1 gap-4 font-medium">{Links}</ul>
       </div>
 
-      <div className="navbar-end gap-2">
+      <div className="navbar-end gap-3">
+        <ThemeToggle />
+
         {/* Notification Icon */}
-        <button className="btn btn-ghost btn-circle text-neutral-content">
+        <button className="btn btn-ghost btn-circle relative">
           <div className="indicator">
+            {/* Clean single-indicator setup using CSS classes */}
+            <span className="notification-dot">
+              <span className="notification-ping"></span>
+            </span>
+
+            {/* ICON */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
+              className="h-6 w-6 text-base-content"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -120,12 +135,11 @@ const Navbar = () => {
                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
               />
             </svg>
-            <span className="badge badge-xs badge-primary indicator-item"></span>
           </div>
         </button>
 
         {/* Login Button */}
-        <button className="btn btn-sm px-8 rounded-full text-white font-bold border-none bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary hover:scale-105 active:scale-95 transition-all duration-500 ease-in-out  shadow-lg shadow-primary/30 hover:shadow-secondary/40 cursor-pointer">
+        <button className="btn btn-sm px-8 rounded-full text-white font-bold border-none bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary hover:scale-105 active:scale-95 transition-all duration-500 ease-in-out shadow-lg shadow-primary/30 cursor-pointer">
           Login
         </button>
       </div>
