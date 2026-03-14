@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router";
 import toast from "react-hot-toast";
+import Footer from "../components/Footer";
 
 export const Register = () => {
   const { registerUser } = useAuth();
@@ -133,6 +134,7 @@ export const Register = () => {
           </div>
         </div>
       </div>
+      <Footer></Footer>
     </div>
   );
 };

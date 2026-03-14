@@ -10,8 +10,8 @@ The navigation system is built for scalability and high-end visual appeal, utili
 
 The logo is abstracted into a standalone component to ensure branding consistency across the platform.
 
-- **Dynamic Sizing:** Uses ES6 destructuring for custom sizing with sensible defaults.
-- **Cyber Glow:** Implements `shadow-primary/30` to give the brand a neon-tech aesthetic.
+* **Dynamic Sizing:** Uses ES6 destructuring for custom sizing with sensible defaults.
+* **Cyber Glow:** Implements `shadow-primary/30` to give the brand a neon-tech aesthetic.
 *   **Branding:** Combines the `ewucscLogo` image with a "Brand Lockup" that hides the subtitle on mobile (`hidden sm:inline-block`) to maintain a clean UI.
 
 ### 2. Responsive Navbar (`Navbar.jsx`)
@@ -21,6 +21,14 @@ The logo is abstracted into a standalone component to ensure branding consistenc
 *   **Active States:** Integrated with `react-router`'s `NavLink`, which automatically applies active classes based on the current URL.
 *   **Auth Ready:** Includes placeholders for Role-Based Access Control (RBAC) and user profile dropdowns.
 ---
+
+## 🛠️ UI Architecture
+
+### 1. Footer Architecture (`Footer.jsx`)
+- **Consistent Glass:** Mirrored design with the Navbar to "sandwich" content in a unified theme.
+- **Gradient Accents:** Uses a top-border linear gradient (`primary` to `secondary`) to match the brand's glow.
+- **Social Integration:** Features `react-icons` for Discord, GitHub, and LinkedIn connectivity.
+
 
 ## 🔐 Authentication & Security Layer
 
@@ -58,11 +66,14 @@ We use **react-hot-toast** to provide instant visual feedback during auth flows.
 - **Loading States:** Toasts track the "Authenticating..." status.
 - **Success/Error:** Instant feedback for "Login successful" or "Registration failed."
 
-### 5. 🎨 Custom Theme Integration (`index.css`)
+---
+
+##  🎨 Custom Theme Integration (`index.css`)
 The site uses a custom-engineered daisyUI theme named `ewucsc`.
 *   **Color Palette:** Uses a deep midnight background (`#020617`) with vibrant Blue (`primary`) and Cyan (`secondary`) accents.
 *   **Gradient Buttons:** The Login button features a dual-tone linear gradient that reverses on hover with a smooth `500ms` transition.
 *   **Radial Background:** The global CSS includes a subtle radial gradient to create depth, mimicking a "cyber-grid" environment.
+*   **Animations:** Smooth `500ms` transitions for gradient buttons and `hover:scale-105` effects for interactivity.
 
 ---
 
@@ -102,6 +113,7 @@ The site uses a custom-engineered daisyUI theme named `ewucsc`.
 
 ## 📂 Project Structure
 
+
 ```
 client
 ├─ eslint.config.js
@@ -116,6 +128,7 @@ client
 │  │  ├─ ewucscLogo.jpg
 │  │  └─ react.svg
 │  ├─ components
+│  │  ├─ Footer.jsx
 │  │  ├─ Logo.jsx
 │  │  ├─ Navbar.jsx
 │  │  └─ ThemeToggle.jsx

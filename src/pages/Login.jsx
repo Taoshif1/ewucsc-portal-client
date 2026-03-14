@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import { Link } from "react-router";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
+import Footer from "../components/Footer";
 
 const Login = () => {
   const { loginUser } = useAuth();
@@ -114,6 +115,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <Footer></Footer>
     </div>
   );
 };
