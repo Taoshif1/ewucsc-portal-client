@@ -1,7 +1,7 @@
 // src/components/Navbar.jsx
 import React from "react";
 import Logo from "./Logo";
-import { NavLink } from "react-router";
+import { Link, NavLink } from "react-router";
 import ThemeToggle from "./ThemeToggle";
 
 const Navbar = () => {
@@ -139,9 +139,9 @@ const Navbar = () => {
         </button>
 
         {/* Login Button */}
-        <button className="btn btn-sm px-8 rounded-full text-white font-bold border-none bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary hover:scale-105 active:scale-95 transition-all duration-500 ease-in-out shadow-lg shadow-primary/30 cursor-pointer">
+        <Link to="/login" className="btn btn-sm px-8 rounded-full text-white font-bold border-none bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary hover:scale-105 active:scale-95 transition-all duration-500 ease-in-out shadow-lg shadow-primary/30 cursor-pointer">
           Login
-        </button>
+        </Link>
       </div>
     </div>
   );
