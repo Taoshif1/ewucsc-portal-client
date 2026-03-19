@@ -9,6 +9,10 @@ import Homeworks from "../pages/Homeworks";
 import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import AdminDashboard from "../pages/dashboards/AdminDashboard";
+import ExecutiveDashboard from "../pages/dashboards/ExecutiveDashboard";
+import SubExecutiveDashboard from "../pages/dashboards/SubExecutiveDashboard";
+import MemberDashboard from "../pages/dashboards/MemberDashboard";
 
 export const router = createBrowserRouter([
   {
@@ -19,7 +23,17 @@ export const router = createBrowserRouter([
       { path: "ctf", element: <CTF /> },
       { path: "learning", element: <Learning /> },
       { path: "homeworks", element: <Homeworks /> },
-      { path: "dashboard", element: <Dashboard /> },
+      {
+        path: "dashboard",
+        children: [
+          { index: true, element: <Dashboard /> }, // redirect logic
+
+          { path: "admin", element: <AdminDashboard /> },
+          { path: "executive", element: <ExecutiveDashboard /> },
+          { path: "sub", element: <SubExecutiveDashboard /> },
+          { path: "member", element: <MemberDashboard /> },
+        ],
+      },
     ],
   },
   {

@@ -113,7 +113,6 @@ The site uses a custom-engineered daisyUI theme named `ewucsc`.
 
 ## 📂 Project Structure
 
-
 ```
 client
 ├─ eslint.config.js
@@ -146,6 +145,11 @@ client
 │  ├─ pages
 │  │  ├─ CTF.jsx
 │  │  ├─ Dashboard.jsx
+│  │  ├─ dashboards
+│  │  │  ├─ AdminDashboard.jsx
+│  │  │  ├─ ExecutiveDashboard.jsx
+│  │  │  ├─ MemberDashboard.jsx
+│  │  │  └─ SubExecutiveDashboard.jsx
 │  │  ├─ Home.jsx
 │  │  ├─ Homeworks.jsx
 │  │  ├─ Learning.jsx
@@ -162,7 +166,8 @@ client
 ## 🚀 Future Roadmap
 
 - [x] Implement Light/Dark mode toggle.
+- [x] Integrate Firebase/JWT Authentication.
 - [ ] Build Role-Based Dashboards (Admin vs. Member).
-- [ ] Integrate Firebase/JWT Authentication.
 - [ ] Develop the Homework Tracking logic.
 - [ ] More Advanced Features & logic.
+

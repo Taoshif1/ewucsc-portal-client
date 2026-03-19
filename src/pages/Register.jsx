@@ -4,14 +4,15 @@ import { useAuth } from "../hooks/useAuth";
 import { api } from "../services/api";
 import Navbar from "../components/Navbar";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import Footer from "../components/Footer";
 
 export const Register = () => {
   const { registerUser } = useAuth();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset } = useForm();
 
   const onSubmit = async (data) => {
     const loadingToast = toast.loading("Creating Your Account...");
@@ -38,8 +39,12 @@ export const Register = () => {
       // Store JWT access token
       localStorage.setItem("access-token", res.data.token);
       toast.success("Account created successfully!", { id: loadingToast });
+      reset(); // clear form
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
 
-      console.log("JWT saved:", res.data.token);
+      // console.log("JWT saved:", res.data.token);
       console.log("User saved + JWT stored");
     } catch (error) {
       toast.error("Registration failed. Try again.", { id: loadingToast });

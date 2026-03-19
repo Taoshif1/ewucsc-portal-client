@@ -3,12 +3,13 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "../hooks/useAuth";
 import { api } from "../services/api";
 import Navbar from "../components/Navbar";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
 import Footer from "../components/Footer";
 
 const Login = () => {
+  const navigate = useNavigate();
   const { loginUser } = useAuth();
   const { register, handleSubmit } = useForm();
 
@@ -34,6 +35,8 @@ const Login = () => {
 
       localStorage.setItem("access-token", res.data.token);
       toast.success("Login successful!", { id: loadingToast });
+      
+      navigate("/dashboard");
 
       console.log("Login success");
     } catch (error) {
