@@ -118,3 +118,37 @@ body {
 .typing-glow {
   text-shadow: 0 0 8px rgba(34, 197, 94, 0.55);
 }
+
+/* Terminal cursor blink */
+@keyframes blinkCursor {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+.animate-blink-cursor {
+  animation: blinkCursor 1s steps(1) infinite;
+}
+
+/* Matrix falling animation */
+@keyframes matrixFall {
+  0% {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.18;
+  }
+  100% {
+    transform: translateY(120vh);
+    opacity: 0;
+  }
+}
+
+/* Scroll progress animation feel */
+html {
+  scroll-behavior: smooth;
+}

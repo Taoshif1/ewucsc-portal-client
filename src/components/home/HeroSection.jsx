@@ -5,6 +5,7 @@ import { FaArrowRight, FaShieldAlt, FaTerminal, FaTrophy } from "react-icons/fa"
 import MatrixBackground from "./MatrixBackground";
 import FloatingParticles from "./FloatingParticles";
 import HeroTerminal from "./HeroTerminal";
+import CodeRain from "./CodeRain";
 
 const HeroSection = () => {
   const [text] = useTypewriter({
@@ -24,6 +25,7 @@ const HeroSection = () => {
     <section className="relative min-h-[95vh] flex items-center justify-center overflow-hidden rounded-[2rem] border border-white/5 bg-base-100/40 backdrop-blur-xl px-6 py-20 lg:px-16">
       <MatrixBackground />
       <FloatingParticles />
+      <CodeRain />
 
       <div className="relative z-10 max-w-6xl mx-auto text-center">
         <motion.div
