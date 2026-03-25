@@ -128,8 +128,18 @@ client
 │  │  └─ react.svg
 │  ├─ components
 │  │  ├─ Footer.jsx
+│  │  ├─ home
+│  │  │  ├─ ActivitiesSection.jsx
+│  │  │  ├─ CTASection.jsx
+│  │  │  ├─ HeroSection.jsx
+│  │  │  ├─ LearningTracksSection.jsx
+│  │  │  ├─ MatrixBackground.jsx
+│  │  │  ├─ SectionHeading.jsx
+│  │  │  ├─ StatsSection.jsx
+│  │  │  └─ WhyJoinSection.jsx
 │  │  ├─ Logo.jsx
 │  │  ├─ Navbar.jsx
+│  │  ├─ Sidebar.jsx
 │  │  └─ ThemeToggle.jsx
 │  ├─ context
 │  │  ├─ AuthContext.jsx
@@ -140,6 +150,7 @@ client
 │  │  └─ useAuth.js
 │  ├─ index.css
 │  ├─ layouts
+│  │  ├─ DashboardLayout.jsx
 │  │  └─ MainLayout.jsx
 │  ├─ main.jsx
 │  ├─ pages

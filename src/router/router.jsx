@@ -26,7 +26,7 @@ export const router = createBrowserRouter([
       {
         path: "dashboard",
         children: [
-          { index: true, element: <Dashboard /> }, // redirect logic
+          { index: true, element: <Dashboard /> },
 
           { path: "admin", element: <AdminDashboard /> },
           { path: "executive", element: <ExecutiveDashboard /> },
