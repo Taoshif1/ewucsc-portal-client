@@ -182,3 +182,68 @@ client
 - [ ] Develop the Homework Tracking logic.
 - [ ] More Advanced Features & logic.
 
+
+```
+client
+├─ eslint.config.js
+├─ index.html
+├─ package-lock.json
+├─ package.json
+├─ public
+│  └─ vite.svg
+├─ README.md
+├─ src
+│  ├─ assets
+│  │  ├─ ewucscLogo.jpg
+│  │  └─ react.svg
+│  ├─ components
+│  │  ├─ Footer.jsx
+│  │  ├─ home
+│  │  │  ├─ ActivitiesSection.jsx
+│  │  │  ├─ CTASection.jsx
+│  │  │  ├─ CyberBadgeStrip.jsx
+│  │  │  ├─ FloatingParticles.jsx
+│  │  │  ├─ HeroSection.jsx
+│  │  │  ├─ HeroTerminal.jsx
+│  │  │  ├─ LearningTracksSection.jsx
+│  │  │  ├─ LiveRankingPreview.jsx
+│  │  │  ├─ MatrixBackground.jsx
+│  │  │  ├─ SectionHeading.jsx
+│  │  │  ├─ StatsSection.jsx
+│  │  │  └─ WhyJoinSection.jsx
+│  │  ├─ Logo.jsx
+│  │  ├─ Navbar.jsx
+│  │  ├─ Sidebar.jsx
+│  │  └─ ThemeToggle.jsx
+│  ├─ context
+│  │  ├─ AuthContext.jsx
+│  │  └─ AuthProvider.jsx
+│  ├─ firebase
+│  │  └─ firebase.config.js
+│  ├─ hooks
+│  │  └─ useAuth.js
+│  ├─ index.css
+│  ├─ layouts
+│  │  ├─ DashboardLayout.jsx
+│  │  └─ MainLayout.jsx
+│  ├─ main.jsx
+│  ├─ pages
+│  │  ├─ CTF.jsx
+│  │  ├─ Dashboard.jsx
+│  │  ├─ dashboards
+│  │  │  ├─ AdminDashboard.jsx
+│  │  │  ├─ ExecutiveDashboard.jsx
+│  │  │  ├─ MemberDashboard.jsx
+│  │  │  └─ SubExecutiveDashboard.jsx
+│  │  ├─ Home.jsx
+│  │  ├─ Homeworks.jsx
+│  │  ├─ Learning.jsx
+│  │  ├─ Login.jsx
+│  │  └─ Register.jsx
+│  ├─ router
+│  │  └─ router.jsx
+│  └─ services
+│     └─ api.js
+└─ vite.config.js
+
+```

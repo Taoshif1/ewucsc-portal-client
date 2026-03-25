@@ -1,12 +1,29 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router";
+import { useTypewriter, Cursor } from "react-simple-typewriter";
 import { FaArrowRight, FaShieldAlt, FaTerminal, FaTrophy } from "react-icons/fa";
 import MatrixBackground from "./MatrixBackground";
+import FloatingParticles from "./FloatingParticles";
+import HeroTerminal from "./HeroTerminal";
 
 const HeroSection = () => {
+  const [text] = useTypewriter({
+    words: [
+      "Ethical Hackers",
+      "CTF Champions",
+      "Cyber Defenders",
+      "Security Experts",
+    ],
+    loop: true,
+    typeSpeed: 70,
+    deleteSpeed: 40,
+    delaySpeed: 1800,
+  });
+
   return (
-    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden rounded-[2rem] border border-white/5 bg-base-100/40 backdrop-blur-xl px-6 py-20 lg:px-16">
+    <section className="relative min-h-[95vh] flex items-center justify-center overflow-hidden rounded-[2rem] border border-white/5 bg-base-100/40 backdrop-blur-xl px-6 py-20 lg:px-16">
       <MatrixBackground />
+      <FloatingParticles />
 
       <div className="relative z-10 max-w-6xl mx-auto text-center">
         <motion.div
@@ -25,15 +42,11 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.1 }}
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight"
         >
-          Train Like a{" "}
+          We Build{" "}
           <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-            Hacker
+            {text}
           </span>
-          <br />
-          Defend Like a{" "}
-          <span className="text-accent drop-shadow-[0_0_12px_rgba(34,197,94,0.45)]">
-            Professional
-          </span>
+          <Cursor cursorColor="#22c55e" />
         </motion.h1>
 
         <motion.p
@@ -44,7 +57,7 @@ const HeroSection = () => {
         >
           Join a high-performance cybersecurity community where students learn
           ethical hacking, solve CTF challenges, sharpen real-world skills, and
-          compete on rankings — all inside one elite platform.
+          compete on rankings inside one elite digital arena.
         </motion.p>
 
         <motion.div
@@ -98,6 +111,8 @@ const HeroSection = () => {
             </p>
           </div>
         </motion.div>
+
+        <HeroTerminal />
       </div>
     </section>
   );
