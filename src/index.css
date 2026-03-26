@@ -152,3 +152,29 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+/* Cyber glass shimmer */
+.cyber-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.cyber-shimmer::before {
+  content: "";
+  position: absolute;
+  inset: -100% 0 auto auto;
+  width: 50%;
+  height: 300%;
+  transform: rotate(25deg);
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.06),
+    transparent
+  );
+  transition: transform 0.8s ease;
+}
+
+.cyber-shimmer:hover::before {
+  transform: translateX(-220%) rotate(25deg);
+}
