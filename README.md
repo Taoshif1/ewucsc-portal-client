@@ -552,6 +552,39 @@ client
 ├─ src
 │  ├─ assets
 │  │  ├─ ewucscLogo.jpg
+│  │  ├─ members
+│  │  │  ├─ EP2425
+│  │  │  │  ├─ image1.jpg
+│  │  │  │  ├─ image10.jpg
+│  │  │  │  ├─ image11.jpg
+│  │  │  │  ├─ image12.jpg
+│  │  │  │  ├─ image2.jpg
+│  │  │  │  ├─ image3.jpg
+│  │  │  │  ├─ image4.jpg
+│  │  │  │  ├─ image5.jpg
+│  │  │  │  ├─ image6.jpg
+│  │  │  │  ├─ image7.jpg
+│  │  │  │  ├─ image8.jpg
+│  │  │  │  ├─ image9.jpg
+│  │  │  │  └─ thumbnail.jpg
+│  │  │  └─ EP2526
+│  │  │     ├─ image1.jpg
+│  │  │     ├─ image10.jpg
+│  │  │     ├─ image11.jpg
+│  │  │     ├─ image12.jpg
+│  │  │     ├─ image13.jpg
+│  │  │     ├─ image14.jpg
+│  │  │     ├─ image15.jpg
+│  │  │     ├─ image16.jpg
+│  │  │     ├─ image2.jpg
+│  │  │     ├─ image3.jpg
+│  │  │     ├─ image4.jpg
+│  │  │     ├─ image5.jpg
+│  │  │     ├─ image6.jpg
+│  │  │     ├─ image7.jpg
+│  │  │     ├─ image8.jpg
+│  │  │     ├─ image9.jpg
+│  │  │     └─ thumbnail.jpg
 │  │  └─ react.svg
 │  ├─ components
 │  │  ├─ Footer.jsx

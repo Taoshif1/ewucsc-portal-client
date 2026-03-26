@@ -14,6 +14,9 @@ import ExecutiveDashboard from "../pages/dashboards/ExecutiveDashboard";
 import SubExecutiveDashboard from "../pages/dashboards/SubExecutiveDashboard";
 import MemberDashboard from "../pages/dashboards/MemberDashboard";
 import Members from "../pages/Members";
+import ExecutivePanel2425 from "../pages/ExecutivePanel2425";
+import ExecutivePanel2526 from "../pages/ExecutivePanel2526";
+import CurrentMembers from "../pages/CurrentMembers";
 
 export const router = createBrowserRouter([
   {
@@ -24,15 +27,35 @@ export const router = createBrowserRouter([
       { path: "ctf", element: <CTF></CTF> },
       { path: "learning", element: <Learning></Learning> },
       { path: "homeworks", element: <Homeworks></Homeworks> },
-      { path: "members", element: <Members></Members> },
+      {
+        path: "members",
+        children: [
+          { index: true, element: <Members></Members> },
+          { path: "current", element: <CurrentMembers></CurrentMembers> },
+          {
+            path: "executive-panel-24-25",
+            element: <ExecutivePanel2425></ExecutivePanel2425>,
+          },
+          {
+            path: "executive-panel-25-26",
+            element: <ExecutivePanel2526></ExecutivePanel2526>,
+          },
+        ],
+      },
       {
         path: "dashboard",
         children: [
           { index: true, element: <Dashboard></Dashboard> },
 
           { path: "admin", element: <AdminDashboard></AdminDashboard> },
-          { path: "executive", element: <ExecutiveDashboard></ExecutiveDashboard> },
-          { path: "sub", element: <SubExecutiveDashboard></SubExecutiveDashboard> },
+          {
+            path: "executive",
+            element: <ExecutiveDashboard></ExecutiveDashboard>,
+          },
+          {
+            path: "sub",
+            element: <SubExecutiveDashboard></SubExecutiveDashboard>,
+          },
           { path: "member", element: <MemberDashboard></MemberDashboard> },
         ],
       },

@@ -1,5 +1,4 @@
 // src/components/Navbar.jsx
-import React from "react";
 import Logo from "./Logo";
 import { Link, NavLink } from "react-router";
 import ThemeToggle from "./ThemeToggle";
@@ -78,18 +77,26 @@ const Navbar = () => {
         </NavLink>
       </li>
       <li>
-        <NavLink
-          to="/members"
-          className={({ isActive }) =>
-            `transition-colors duration-100 ${
-              isActive
-                ? "text-primary font-bold"
-                : "text-base-content/70 hover:text-primary"
-            }`
-          }
-        >
-          Members
-        </NavLink>
+        <details>
+          <summary className="text-base-content/70 hover:text-primary transition-colors duration-100 cursor-pointer">
+            Members
+          </summary>
+          <ul className="p-2 bg-base-100 rounded-box w-64 border border-base-content/10 shadow-2xl">
+            <li>
+              <NavLink to="/members">Panels</NavLink>
+            </li>
+            <li>
+              <NavLink to="/members/executive-panel-24-25">
+                Executive Panel 24–25
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/members/executive-panel-25-26">
+                Executive Panel 25–26
+              </NavLink>
+            </li>
+          </ul>
+        </details>
       </li>
     </>
   );
