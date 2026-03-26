@@ -27,9 +27,11 @@ const PanelGallerySection = ({ members }) => {
               <h3 className="text-lg font-bold text-base-content">
                 {member.name}
               </h3>
-              <p className="text-sm text-primary font-medium">
-                {member.role}
-              </p>
+              <div className="inline-flex items-center rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-0.5 backdrop-blur-md">
+                <span className="text-xs font-semibold tracking-wide text-primary">
+                  {member.role}
+                </span>
+              </div>
             </div>
 
             {member.team && (
@@ -61,9 +63,15 @@ const PanelGallerySection = ({ members }) => {
                 )}
               </div>
 
-              <span className="text-[10px] uppercase tracking-[0.2em] text-accent/70">
-                Legacy Panel
-              </span>
+              <div className="inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-3 py-1">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75"></span>
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent"></span>
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent/80">
+                  Executive Panel 2024-2025
+                </span>
+              </div>
             </div>
           </div>
         </motion.div>
