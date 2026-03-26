@@ -9,6 +9,20 @@ const Navbar = () => {
     <>
       <li>
         <NavLink
+          to="/"
+          className={({ isActive }) =>
+            `transition-colors duration-100 ${
+              isActive
+                ? "text-primary font-bold"
+                : "text-base-content/70 hover:text-primary"
+            }`
+          }
+        >
+          Home
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
           to="/ctf"
           className={({ isActive }) =>
             `transition-colors duration-200 ${
@@ -61,6 +75,20 @@ const Navbar = () => {
           }
         >
           Dashboard
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="/members"
+          className={({ isActive }) =>
+            `transition-colors duration-100 ${
+              isActive
+                ? "text-primary font-bold"
+                : "text-base-content/70 hover:text-primary"
+            }`
+          }
+        >
+          Members
         </NavLink>
       </li>
     </>
@@ -139,7 +167,10 @@ const Navbar = () => {
         </button>
 
         {/* Login Button */}
-        <Link to="/login" className="btn btn-sm px-8 rounded-full text-white font-bold border-none bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary hover:scale-105 active:scale-95 transition-all duration-500 ease-in-out shadow-lg shadow-primary/30 cursor-pointer">
+        <Link
+          to="/login"
+          className="btn btn-sm px-8 rounded-full text-white font-bold border-none bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary hover:scale-105 active:scale-95 transition-all duration-500 ease-in-out shadow-lg shadow-primary/30 cursor-pointer"
+        >
           Login
         </Link>
       </div>

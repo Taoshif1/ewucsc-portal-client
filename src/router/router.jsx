@@ -13,35 +13,37 @@ import AdminDashboard from "../pages/dashboards/AdminDashboard";
 import ExecutiveDashboard from "../pages/dashboards/ExecutiveDashboard";
 import SubExecutiveDashboard from "../pages/dashboards/SubExecutiveDashboard";
 import MemberDashboard from "../pages/dashboards/MemberDashboard";
+import Members from "../pages/Members";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />,
+    element: <MainLayout></MainLayout>,
     children: [
-      { index: true, element: <Home /> },
-      { path: "ctf", element: <CTF /> },
-      { path: "learning", element: <Learning /> },
-      { path: "homeworks", element: <Homeworks /> },
+      { index: true, element: <Home></Home> },
+      { path: "ctf", element: <CTF></CTF> },
+      { path: "learning", element: <Learning></Learning> },
+      { path: "homeworks", element: <Homeworks></Homeworks> },
+      { path: "members", element: <Members></Members> },
       {
         path: "dashboard",
         children: [
-          { index: true, element: <Dashboard /> },
+          { index: true, element: <Dashboard></Dashboard> },
 
-          { path: "admin", element: <AdminDashboard /> },
-          { path: "executive", element: <ExecutiveDashboard /> },
-          { path: "sub", element: <SubExecutiveDashboard /> },
-          { path: "member", element: <MemberDashboard /> },
+          { path: "admin", element: <AdminDashboard></AdminDashboard> },
+          { path: "executive", element: <ExecutiveDashboard></ExecutiveDashboard> },
+          { path: "sub", element: <SubExecutiveDashboard></SubExecutiveDashboard> },
+          { path: "member", element: <MemberDashboard></MemberDashboard> },
         ],
       },
     ],
   },
   {
     path: "/login",
-    element: <Login />,
+    element: <Login></Login>,
   },
   {
     path: "/register",
-    element: <Register />,
+    element: <Register></Register>,
   },
 ]);
