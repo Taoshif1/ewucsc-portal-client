@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
 
-const PanelGallerySection = ({ members }) => {
+const PanelGallerySection = ({ members, panelLabel = "Executive Panel" }) => {
   return (
     <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {members.map((member, index) => (
@@ -34,8 +34,10 @@ const PanelGallerySection = ({ members }) => {
               </div>
             </div>
 
-            {member.team && (
-              <p className="text-sm text-base-content/60">{member.team}</p>
+            {member.designation && (
+              <p className="text-sm text-base-content/60">
+                {member.designation}
+              </p>
             )}
 
             <div className="flex items-center justify-between pt-1">
@@ -69,7 +71,7 @@ const PanelGallerySection = ({ members }) => {
                   <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent"></span>
                 </span>
                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent/80">
-                  Executive Panel 2024-2025
+                  {panelLabel}
                 </span>
               </div>
             </div>

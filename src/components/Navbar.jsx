@@ -83,16 +83,22 @@ const Navbar = () => {
           </summary>
           <ul className="p-2 bg-base-100 rounded-box w-64 border border-base-content/10 shadow-2xl">
             <li>
-              <NavLink to="/members">Panels</NavLink>
+              <NavLink to="/members"> • Panels</NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/members/moderators">
+                 • Moderators
+              </NavLink>
             </li>
             <li>
               <NavLink to="/members/executive-panel-24-25">
-                Executive Panel 24–25
+                 • Executive Panel 24–25
               </NavLink>
             </li>
             <li>
               <NavLink to="/members/executive-panel-25-26">
-                Executive Panel 25–26
+                • Executive Panel 25–26
               </NavLink>
             </li>
           </ul>

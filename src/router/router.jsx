@@ -17,6 +17,7 @@ import Members from "../pages/Members";
 import ExecutivePanel2425 from "../pages/ExecutivePanel2425";
 import ExecutivePanel2526 from "../pages/ExecutivePanel2526";
 import CurrentMembers from "../pages/CurrentMembers";
+import Moderators from "../pages/Moderators";
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ export const router = createBrowserRouter([
           {
             path: "executive-panel-25-26",
             element: <ExecutivePanel2526></ExecutivePanel2526>,
+          },
+          {
+            path: "/members/moderators",
+            element: <Moderators />,
           },
         ],
       },

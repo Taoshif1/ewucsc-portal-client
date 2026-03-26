@@ -538,121 +538,6 @@ This architecture allows the platform to become:
 
 ---
 
-## 📂 Project Structure
-
-```
-client
-├─ eslint.config.js
-├─ index.html
-├─ package-lock.json
-├─ package.json
-├─ public
-│  └─ vite.svg
-├─ README.md
-├─ src
-│  ├─ assets
-│  │  ├─ ewucscLogo.jpg
-│  │  ├─ members
-│  │  │  ├─ EP2425
-│  │  │  │  ├─ image1.jpg
-│  │  │  │  ├─ image10.jpg
-│  │  │  │  ├─ image11.jpg
-│  │  │  │  ├─ image12.jpg
-│  │  │  │  ├─ image2.jpg
-│  │  │  │  ├─ image3.jpg
-│  │  │  │  ├─ image4.jpg
-│  │  │  │  ├─ image5.jpg
-│  │  │  │  ├─ image6.jpg
-│  │  │  │  ├─ image7.jpg
-│  │  │  │  ├─ image8.jpg
-│  │  │  │  ├─ image9.jpg
-│  │  │  │  └─ thumbnail.jpg
-│  │  │  └─ EP2526
-│  │  │     ├─ image1.jpg
-│  │  │     ├─ image10.jpg
-│  │  │     ├─ image11.jpg
-│  │  │     ├─ image12.jpg
-│  │  │     ├─ image13.jpg
-│  │  │     ├─ image14.jpg
-│  │  │     ├─ image15.jpg
-│  │  │     ├─ image16.jpg
-│  │  │     ├─ image2.jpg
-│  │  │     ├─ image3.jpg
-│  │  │     ├─ image4.jpg
-│  │  │     ├─ image5.jpg
-│  │  │     ├─ image6.jpg
-│  │  │     ├─ image7.jpg
-│  │  │     ├─ image8.jpg
-│  │  │     ├─ image9.jpg
-│  │  │     └─ thumbnail.jpg
-│  │  └─ react.svg
-│  ├─ components
-│  │  ├─ Footer.jsx
-│  │  ├─ home
-│  │  │  ├─ ActivitiesSection.jsx
-│  │  │  ├─ CodeRain.jsx
-│  │  │  ├─ CTASection.jsx
-│  │  │  ├─ CyberBadgeStrip.jsx
-│  │  │  ├─ FAQSection.jsx
-│  │  │  ├─ FloatingParticles.jsx
-│  │  │  ├─ HeroSection.jsx
-│  │  │  ├─ HeroTerminal.jsx
-│  │  │  ├─ LearningTracksSection.jsx
-│  │  │  ├─ LiveRankingPreview.jsx
-│  │  │  ├─ MatrixBackground.jsx
-│  │  │  ├─ MouseGlow.jsx
-│  │  │  ├─ PageLoader.jsx
-│  │  │  ├─ ScrollProgress.jsx
-│  │  │  ├─ SectionHeading.jsx
-│  │  │  ├─ StatsSection.jsx
-│  │  │  └─ WhyJoinSection.jsx
-│  │  ├─ Logo.jsx
-│  │  ├─ members
-│  │  │  ├─ MemberCard.jsx
-│  │  │  ├─ MembersCTA.jsx
-│  │  │  ├─ MembersFilterTabs.jsx
-│  │  │  ├─ MembersGrid.jsx
-│  │  │  ├─ MembersHero.jsx
-│  │  │  └─ MembersSection.jsx
-│  │  ├─ Navbar.jsx
-│  │  ├─ Sidebar.jsx
-│  │  └─ ThemeToggle.jsx
-│  ├─ context
-│  │  ├─ AuthContext.jsx
-│  │  └─ AuthProvider.jsx
-│  ├─ data
-│  │  └─ membersData.js
-│  ├─ firebase
-│  │  └─ firebase.config.js
-│  ├─ hooks
-│  │  └─ useAuth.js
-│  ├─ index.css
-│  ├─ layouts
-│  │  ├─ DashboardLayout.jsx
-│  │  └─ MainLayout.jsx
-│  ├─ main.jsx
-│  ├─ pages
-│  │  ├─ CTF.jsx
-│  │  ├─ Dashboard.jsx
-│  │  ├─ dashboards
-│  │  │  ├─ AdminDashboard.jsx
-│  │  │  ├─ ExecutiveDashboard.jsx
-│  │  │  ├─ MemberDashboard.jsx
-│  │  │  └─ SubExecutiveDashboard.jsx
-│  │  ├─ Home.jsx
-│  │  ├─ Homeworks.jsx
-│  │  ├─ Learning.jsx
-│  │  ├─ Login.jsx
-│  │  ├─ Members.jsx
-│  │  └─ Register.jsx
-│  ├─ router
-│  │  └─ router.jsx
-│  └─ services
-│     └─ api.js
-└─ vite.config.js
-
-```
-
 ## 🚀 Future Roadmap
 
 ### Phase 1 — Foundation
@@ -685,3 +570,133 @@ client
 ---
 
 > ⚡ **Current Focus:** Building EWUCSC into a modern cyber learning and competition platform with authentication, role-based dashboards, CTF-style challenges, rankings, and structured member growth.
+
+---
+
+## 📂 Project Structure
+
+```
+client
+├─ eslint.config.js
+├─ index.html
+├─ package-lock.json
+├─ package.json
+├─ public
+│  └─ vite.svg
+├─ README.md
+├─ src
+│  ├─ assets
+│  │  ├─ ewucscLogo.jpg
+│  │  ├─ members
+│  │  │  ├─ EP2425
+│  │  │  │  ├─ image1.jpg
+│  │  │  │  ├─ image10.jpg
+│  │  │  │  ├─ image11.jpg
+│  │  │  │  ├─ image12.jpg
+│  │  │  │  ├─ image2.jpg
+│  │  │  │  ├─ image3.jpg
+│  │  │  │  ├─ image4.jpg
+│  │  │  │  ├─ image5.jpg
+│  │  │  │  ├─ image6.jpg
+│  │  │  │  ├─ image7.jpg
+│  │  │  │  ├─ image8.jpg
+│  │  │  │  ├─ image9.jpg
+│  │  │  │  └─ thumbnail.jpg
+│  │  │  ├─ EP2526
+│  │  │  │  ├─ image1.jpg
+│  │  │  │  ├─ image10.jpg
+│  │  │  │  ├─ image11.jpg
+│  │  │  │  ├─ image12.jpg
+│  │  │  │  ├─ image13.jpg
+│  │  │  │  ├─ image14.jpg
+│  │  │  │  ├─ image15.jpg
+│  │  │  │  ├─ image16.jpg
+│  │  │  │  ├─ image2.jpg
+│  │  │  │  ├─ image3.jpg
+│  │  │  │  ├─ image4.jpg
+│  │  │  │  ├─ image5.jpg
+│  │  │  │  ├─ image6.jpg
+│  │  │  │  ├─ image7.jpg
+│  │  │  │  ├─ image8.jpg
+│  │  │  │  ├─ image9.jpg
+│  │  │  │  └─ thumbnail.jpg
+│  │  │  └─ mods
+│  │  │     ├─ mod1.jpg
+│  │  │     ├─ mod2.jpg
+│  │  │     └─ thumbail.jpg
+│  │  └─ react.svg
+│  ├─ components
+│  │  ├─ Footer.jsx
+│  │  ├─ home
+│  │  │  ├─ ActivitiesSection.jsx
+│  │  │  ├─ CodeRain.jsx
+│  │  │  ├─ CTASection.jsx
+│  │  │  ├─ CyberBadgeStrip.jsx
+│  │  │  ├─ FAQSection.jsx
+│  │  │  ├─ FloatingParticles.jsx
+│  │  │  ├─ HeroSection.jsx
+│  │  │  ├─ HeroTerminal.jsx
+│  │  │  ├─ LearningTracksSection.jsx
+│  │  │  ├─ LiveRankingPreview.jsx
+│  │  │  ├─ MatrixBackground.jsx
+│  │  │  ├─ MouseGlow.jsx
+│  │  │  ├─ PageLoader.jsx
+│  │  │  ├─ ScrollProgress.jsx
+│  │  │  ├─ SectionHeading.jsx
+│  │  │  ├─ StatsSection.jsx
+│  │  │  └─ WhyJoinSection.jsx
+│  │  ├─ Logo.jsx
+│  │  ├─ members
+│  │  │  ├─ MemberCard.jsx
+│  │  │  ├─ MembersCTA.jsx
+│  │  │  ├─ MembersFilterTabs.jsx
+│  │  │  ├─ MembersGrid.jsx
+│  │  │  ├─ MembersHero.jsx
+│  │  │  ├─ MembersSection.jsx
+│  │  │  ├─ PanelGallerySection.jsx
+│  │  │  └─ PanelHero.jsx
+│  │  ├─ Navbar.jsx
+│  │  ├─ Sidebar.jsx
+│  │  └─ ThemeToggle.jsx
+│  ├─ context
+│  │  ├─ AuthContext.jsx
+│  │  └─ AuthProvider.jsx
+│  ├─ data
+│  │  ├─ membersData.js
+│  │  ├─ moderatorsData.js
+│  │  ├─ panel2425Data.js
+│  │  └─ panel2526Data.js
+│  ├─ firebase
+│  │  └─ firebase.config.js
+│  ├─ hooks
+│  │  └─ useAuth.js
+│  ├─ index.css
+│  ├─ layouts
+│  │  ├─ DashboardLayout.jsx
+│  │  └─ MainLayout.jsx
+│  ├─ main.jsx
+│  ├─ pages
+│  │  ├─ CTF.jsx
+│  │  ├─ CurrentMembers.jsx
+│  │  ├─ Dashboard.jsx
+│  │  ├─ dashboards
+│  │  │  ├─ AdminDashboard.jsx
+│  │  │  ├─ ExecutiveDashboard.jsx
+│  │  │  ├─ MemberDashboard.jsx
+│  │  │  └─ SubExecutiveDashboard.jsx
+│  │  ├─ ExecutivePanel2425.jsx
+│  │  ├─ ExecutivePanel2526.jsx
+│  │  ├─ Home.jsx
+│  │  ├─ Homeworks.jsx
+│  │  ├─ Learning.jsx
+│  │  ├─ Login.jsx
+│  │  ├─ Members.jsx
+│  │  ├─ Moderators.jsx
+│  │  └─ Register.jsx
+│  ├─ router
+│  │  └─ router.jsx
+│  └─ services
+│     └─ api.js
+└─ vite.config.js
+
+```

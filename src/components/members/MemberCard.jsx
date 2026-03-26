@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 const roleStyles = {
+  Moderator: "badge-warning",
   President: "badge-accent",
   "Vice President": "badge-secondary",
   Executive: "badge-primary",
@@ -43,12 +44,18 @@ const MemberCard = ({ member, index = 0, spotlight = false }) => {
           />
         </div>
 
-        <div className={`${spotlight ? "md:w-2/3 space-y-5 mt-6 md:mt-0" : ""}`}>
-          <div className={`${spotlight ? "space-y-3" : "flex items-start gap-4"}`}>
+        <div
+          className={`${spotlight ? "md:w-2/3 space-y-5 mt-6 md:mt-0" : ""}`}
+        >
+          <div
+            className={`${spotlight ? "space-y-3" : "flex items-start gap-4"}`}
+          >
             {!spotlight ? (
               <>
                 <div className="space-y-2">
-                  <span className={`badge ${roleStyles[member.role]} badge-outline`}>
+                  <span
+                    className={`badge ${roleStyles[member.role]} badge-outline`}
+                  >
                     {member.role}
                   </span>
 
@@ -56,13 +63,17 @@ const MemberCard = ({ member, index = 0, spotlight = false }) => {
                     <h3 className="text-xl font-bold text-base-content">
                       {member.name}
                     </h3>
-                    <p className="text-sm text-base-content/60">{member.team}</p>
+                    <p className="text-sm text-base-content/60">
+                      {member.designation}
+                    </p>
                   </div>
                 </div>
               </>
             ) : (
               <>
-                <span className={`badge ${roleStyles[member.role]} badge-outline badge-lg`}>
+                <span
+                  className={`badge ${roleStyles[member.role]} badge-outline badge-lg`}
+                >
                   {member.role}
                 </span>
 
@@ -70,7 +81,9 @@ const MemberCard = ({ member, index = 0, spotlight = false }) => {
                   <h3 className="text-2xl md:text-3xl font-black text-base-content">
                     {member.name}
                   </h3>
-                  <p className="text-base text-base-content/60">{member.team}</p>
+                  <p className="text-base text-base-content/60">
+                    {member.designation}
+                  </p>
                 </div>
               </>
             )}
@@ -102,7 +115,7 @@ const MemberCard = ({ member, index = 0, spotlight = false }) => {
             </div>
 
             <span className="text-xs uppercase tracking-[0.2em] text-accent/70">
-              Verified Node
+              Professor
             </span>
           </div>
         </div>

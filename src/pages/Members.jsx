@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import currentThumbnail from "../assets/ewucscLogo.jpg";
 import ep2425Thumbnail from "../assets/members/EP2425/thumbnail.jpg";
 import ep2526Thumbnail from "../assets/members/EP2526/thumbnail.jpg";
+import moderatorsThumbnail from "../assets/members/mods/thumbail.jpg";
 
 const panelCards = [
   {
@@ -35,6 +36,16 @@ const panelCards = [
     image: ep2526Thumbnail,
     path: "/members/executive-panel-25-26",
     badge: "Archive",
+  },
+  {
+    id: 4,
+    title: "Moderators",
+    subtitle: "Faculty Advisory Leadership",
+    description:
+      "Meet the faculty moderators supporting EWUCSC through academic mentorship, institutional guidance, and strategic leadership.",
+    image: moderatorsThumbnail,
+    path: "/members/moderators",
+    badge: "Faculty",
   },
 ];
 
