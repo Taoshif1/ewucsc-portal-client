@@ -10,6 +10,7 @@ import FAQSection from "../components/home/FAQSection";
 import MouseGlow from "../components/home/MouseGlow";
 import ScrollProgress from "../components/home/ScrollProgress";
 import PageLoader from "../components/home/PageLoader";
+import PartnersSection from "../components/home/PartnersSection";
 
 const Home = () => {
   return (
@@ -26,6 +27,7 @@ const Home = () => {
         <LearningTracksSection />
         <LiveRankingPreview />
         <WhyJoinSection />
+        <PartnersSection />
         <FAQSection />
         <CTASection />
       </div>

@@ -18,6 +18,12 @@ import ExecutivePanel2425 from "../pages/ExecutivePanel2425";
 import ExecutivePanel2526 from "../pages/ExecutivePanel2526";
 import CurrentMembers from "../pages/CurrentMembers";
 import Moderators from "../pages/Moderators";
+import Announcements from "../pages/Announcements";
+import Blogs from "../pages/Blogs";
+import Partners from "../pages/Partners";
+import About from "../pages/About";
+import Resources from "../pages/Resources";
+import Contact from "../pages/Contact";
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +34,12 @@ export const router = createBrowserRouter([
       { path: "ctf", element: <CTF></CTF> },
       { path: "learning", element: <Learning></Learning> },
       { path: "homeworks", element: <Homeworks></Homeworks> },
+      { path: "announcements", element: <Announcements /> },
+      { path: "blogs", element: <Blogs /> },
+      { path: "partners", element: <Partners /> },
+      { path: "about", element: <About /> },
+      { path: "resources", element: <Resources /> },
+      { path: "contact", element: <Contact /> },
       {
         path: "members",
         children: [
@@ -42,7 +54,7 @@ export const router = createBrowserRouter([
             element: <ExecutivePanel2526></ExecutivePanel2526>,
           },
           {
-            path: "/members/moderators",
+            path: "moderators",
             element: <Moderators />,
           },
         ],
