@@ -512,6 +512,239 @@ This architecture allows the platform to become:
 | CTF Challenge System             | ⏳ Planned        |
 | Leaderboard / Ranking Engine     | ⏳ Planned        |
 
+---
+
+## 🆕 Latest Update (27th March) — Content Expansion & Reusable Page System
+
+The platform has now been expanded beyond core club functionality into a more complete **public-facing cyber club website architecture**.
+
+This update improves:
+
+- **content discoverability**
+- **brand professionalism**
+- **club legitimacy**
+- **future content marketing scalability**
+
+It also reduces navbar clutter by introducing a more organized **"More" navigation group** and a reusable **Page Hero System** for all new informational pages.
+
+---
+
+# 🧭 Navigation & Information Architecture Upgrade
+
+As the platform grew, several new public-facing sections were needed:
+
+- Latest Announcements & Posts
+- Latest Blogs
+- Sponsors / Club Partners
+- About Us
+- Resources
+- Contact Us
+
+Instead of overcrowding the primary navbar, these were grouped into a dedicated **More dropdown menu**.
+
+### Why This Matters
+This was an important UX decision because it keeps the main navigation focused on the platform’s **core user actions**:
+
+- Home
+- CTF
+- Learning Path
+- Homeworks
+- Dashboard
+- Members
+
+While still making secondary informational pages easily accessible.
+
+### Result
+This creates a cleaner **navigation hierarchy** and makes the site feel more like a **real institution / tech organization website** instead of a student project.
+
+---
+
+## 📱 Mobile Navbar UX Upgrade
+
+The mobile navbar was also improved for a more polished user experience.
+
+### Improvements Added
+- **Hamburger ↔ Close Icon Toggle**
+- Clicking the menu now properly changes:
+  - `FaBars` → `FaTimes`
+  - `FaTimes` → `FaBars`
+- Mobile dropdown now opens/closes with smoother UX logic
+- Clicking any mobile nav item automatically closes the menu
+
+### Why This Matters
+This improves:
+
+- usability
+- clarity
+- mobile interaction quality
+- production-readiness
+
+This is a small UI improvement, but it creates a noticeably more professional feel.
+
+---
+
+# 🧩 Reusable Page Hero System (`PageHero.jsx`)
+
+A brand-new reusable **Page Hero component** was introduced to standardize the top section of all new content pages.
+
+This is one of the most important frontend architecture improvements in this update.
+
+---
+
+## 🎯 Purpose of `PageHero.jsx`
+
+The new informational pages all needed:
+
+- a consistent visual identity
+- strong page introductions
+- reusable layout logic
+- a premium cyber-themed section header
+
+Instead of repeating hero code six different times, a single reusable component was created.
+
+---
+
+## ✅ Responsibilities of `PageHero.jsx`
+
+The component handles:
+
+- page heading
+- short supporting description
+- optional badge / eyebrow text
+- visual consistency
+- responsive spacing
+- cyber-themed branding alignment
+
+---
+
+## 💡 Why This Is a Strong Architecture Decision
+
+Using a shared hero component gives the project several major advantages:
+
+### 1. **Consistency**
+All public pages now feel like part of the same platform ecosystem.
+
+### 2. **Scalability**
+If you later create more pages like:
+
+- Events
+- Workshops
+- Gallery
+- Alumni
+- FAQ Archive
+
+you can reuse the same hero instantly.
+
+### 3. **Cleaner Codebase**
+Instead of duplicating large hero JSX blocks, each page stays lightweight and easier to maintain.
+
+### 4. **Faster Development**
+New pages can now be created much faster with a polished, branded structure already in place.
+
+---
+
+## 🧠 Example Usage Pattern
+
+```jsx
+<PageHero
+  badge="Club Updates"
+  title="Latest Announcements & Posts"
+  subtitle="Stay updated with the latest notices, club activities, and important updates from EWUCSC."
+/>
+```
+
+## 📰 New Public Pages Added
+
+The project now includes six new public-facing informational pages. These pages help transform the platform from a simple cyber club app into a more complete **organization website + learning platform**.
+
+---
+
+### 1. `Announcements.jsx`
+A dedicated page for official notices, updates, and upcoming activity highlights.
+
+**Business / Product Value:**
+- Improves communication clarity and member engagement.
+- Establishes trust for new visitors.
+- **Future Use:** Perfect for workshop announcements, recruitment notices, and competition updates.
+
+### 2. `Blogs.jsx`
+A dedicated space for publishing educational and community-driven cybersecurity content.
+
+**Strategic Value:**
+- Supports **SEO growth** and technical authority.
+- Showcases student learning visibility.
+- **Future Use:** Beginner guides, CTF writeups, and Linux tips.
+
+### 3. `About.jsx`
+A structured page to explain who the club is, what the mission is, and why the platform exists.
+
+**Why It Matters:**
+- Establishes **legitimacy** and institutional identity.
+- Provides a strong first impression for external visitors.
+
+### 4. `Resources.jsx`
+A dedicated page for club learning and support materials.
+
+**Strategic Value:**
+- Strengthens the platform’s role as an **ecosystem**, not just a showcase.
+- **Future Use:** Downloadable PDF notes, toolkit libraries, and curated roadmaps.
+
+### 5. `Contact.jsx`
+A dedicated contact page for communication and outreach.
+
+**Why It Matters:**
+- Makes the platform feel organization-ready.
+- **Future Use:** Collaboration inquiries, sponsorship outreach, and mentor contact flows.
+
+### 6. `Partners.jsx`
+A dedicated page for Sponsors and Club Partners.
+
+**Strategic Role:**
+- Prepared for **institutional credibility**.
+- **Future Use:** Event sponsors, education partners, and security organizations.
+
+---
+
+## 🤝 Home Page Upgrade — Partners Section
+
+Instead of hiding sponsors in a sub-menu, the project introduces a **Homepage Partners visibility strategy**.
+
+**Decision:**
+Sponsors and Partners are now displayed directly on the Home page using the new `PartnersSection.jsx` component.
+
+**Why This Is a Smart Move:**
+- Instantly increases **social proof** and legitimacy.
+- Makes the homepage feel "real-world" and professional.
+- Supports partnership credibility without cluttering the hero area.
+
+---
+
+## 🧱 Footer Expansion
+
+The footer has been upgraded to serve as a **secondary content navigation hub**.
+
+**Footer Improvements:**
+- Includes direct access to About Us, Resources, Contact, Announcements, and Blogs.
+- **UX Strategy:** Keeps the **Navbar** focused on primary actions while the **Footer** handles secondary discovery and institutional content.
+
+---
+
+## 🛣️ Routing Layer Upgrade (`router.jsx`)
+
+The routing system was expanded to support the modular architecture of all newly introduced pages.
+
+**New Routes Added:**
+- `/announcements`
+- `/blogs`
+- `/partners`
+- `/about`
+- `/resources`
+- `/contact`
+
+**Why This Matters:**
+This expansion supports future feature growth without needing major structural refactoring, reinforcing a **production-grade** page architecture.
+
+---
 
 ## 🧭 Next Development Steps
 
@@ -531,8 +764,8 @@ This architecture allows the platform to become:
 
 ### Future Enhancements
 - [ ] Add real-time notifications.
-- [ ] Add event / workshop management.
-- [ ] Add member profile pages.
+- [X] Add event / workshop management.
+- [X] Add member profile pages.
 - [ ] Add achievement badges and streak system.
 - [ ] Connect homepage stats with live backend data.
 
@@ -641,6 +874,7 @@ client
 │  │  │  ├─ MatrixBackground.jsx
 │  │  │  ├─ MouseGlow.jsx
 │  │  │  ├─ PageLoader.jsx
+│  │  │  ├─ PartnersSection.jsx
 │  │  │  ├─ ScrollProgress.jsx
 │  │  │  ├─ SectionHeading.jsx
 │  │  │  ├─ StatsSection.jsx
@@ -656,6 +890,7 @@ client
 │  │  │  ├─ PanelGallerySection.jsx
 │  │  │  └─ PanelHero.jsx
 │  │  ├─ Navbar.jsx
+│  │  ├─ PageHero.jsx
 │  │  ├─ Sidebar.jsx
 │  │  └─ ThemeToggle.jsx
 │  ├─ context
@@ -676,6 +911,9 @@ client
 │  │  └─ MainLayout.jsx
 │  ├─ main.jsx
 │  ├─ pages
+│  │  ├─ About.jsx
+│  │  ├─ Announcements.jsx
+│  │  ├─ Contact.jsx
 │  │  ├─ CTF.jsx
 │  │  ├─ CurrentMembers.jsx
 │  │  ├─ Dashboard.jsx
@@ -692,11 +930,14 @@ client
 │  │  ├─ Login.jsx
 │  │  ├─ Members.jsx
 │  │  ├─ Moderators.jsx
-│  │  └─ Register.jsx
+│  │  ├─ Partners.jsx
+│  │  ├─ Register.jsx
+│  │  └─ Resources.jsx
 │  ├─ router
 │  │  └─ router.jsx
 │  └─ services
 │     └─ api.js
+├─ vercel.json
 └─ vite.config.js
 
 ```
