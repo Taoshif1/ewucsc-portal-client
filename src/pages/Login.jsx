@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../hooks/useAuth";
-import { api } from "../services/api";
+import { publicApi } from "../services/api";
 import Navbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -10,7 +10,7 @@ import Footer from "../components/Footer";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { loginUser } = useAuth();
+  const { loginUser, fetchUserProfile  } = useAuth();
   const { register, handleSubmit } = useForm();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -23,7 +23,7 @@ const Login = () => {
 
       const firebaseToken = await result.user.getIdToken();
 
-      const res = await api.post(
+      const res = await publicApi.post(
         "/login",
         {},
         {
@@ -34,6 +34,7 @@ const Login = () => {
       );
 
       localStorage.setItem("access-token", res.data.token);
+      await fetchUserProfile(); // Fetch profile immediately after login
       toast.success("Login successful!", { id: loadingToast });
       
       navigate("/dashboard");

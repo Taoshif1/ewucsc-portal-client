@@ -1,21 +1,13 @@
-import PageHero from "../PageHero";
+import DashboardHeader from "./DashboardHeader";
 
-const DashboardShell = ({
-  title,
-  subtitle,
-  badge = "Dashboard",
-  children,
-}) => {
+const DashboardShell = ({ title, subtitle, children }) => {
   return (
-    <div className="space-y-10">
-      <PageHero
-        badge={badge}
-        title={title}
-        subtitle={subtitle}
-      />
-
-      <div className="space-y-8">{children}</div>
-    </div>
+    <section className="min-h-screen bg-base-200/40 p-4 md:p-6">
+      <div className="mx-auto max-w-7xl">
+        <DashboardHeader title={title} subtitle={subtitle} />
+        {children}
+      </div>
+    </section>
   );
 };
 

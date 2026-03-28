@@ -1,17 +1,7 @@
-const DashboardSectionCard = ({ title, subtitle, children, action }) => {
+const DashboardSectionCard = ({ title, children }) => {
   return (
-    <div className="rounded-3xl border border-base-content/10 bg-base-100/60 backdrop-blur-xl p-6 md:p-8 shadow-xl">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <div>
-          <h2 className="text-2xl font-bold">{title}</h2>
-          {subtitle && (
-            <p className="text-sm text-base-content/70 mt-1">{subtitle}</p>
-          )}
-        </div>
-
-        {action && <div>{action}</div>}
-      </div>
-
+    <div className="rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm">
+      <h3 className="mb-4 text-xl font-bold">{title}</h3>
       {children}
     </div>
   );

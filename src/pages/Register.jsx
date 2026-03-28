@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../hooks/useAuth";
-import { api } from "../services/api";
+import { publicApi } from "../services/api";
 import Navbar from "../components/Navbar";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router";
@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import Footer from "../components/Footer";
 
 export const Register = () => {
-  const { registerUser } = useAuth();
+  const { registerUser, fetchUserProfile } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit, reset } = useForm();
@@ -30,7 +30,7 @@ export const Register = () => {
       };
 
       // Send to backend with Firebase token
-      const res = await api.post("/users", userData, {
+      const res = await publicApi.post("/users", userData, {
         headers: {
           Authorization: `Bearer ${firebaseToken}`,
         },
@@ -38,10 +38,12 @@ export const Register = () => {
 
       // Store JWT access token
       localStorage.setItem("access-token", res.data.token);
+      await fetchUserProfile(); // Fetch profile immediately after registration
+
       toast.success("Account created successfully!", { id: loadingToast });
       reset(); // clear form
       setTimeout(() => {
-        navigate("/login");
+        navigate("/dashboard");
       }, 1000);
 
       // console.log("JWT saved:", res.data.token);

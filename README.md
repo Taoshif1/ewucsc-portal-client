@@ -514,7 +514,7 @@ This architecture allows the platform to become:
 
 ---
 
-## 🆕 Latest Update (27th March) — Content Expansion & Reusable Page System
+## 🆕 Content Expansion & Reusable Page System
 
 The platform has now been expanded beyond core club functionality into a more complete **public-facing cyber club website architecture**.
 
@@ -771,6 +771,64 @@ This expansion supports future feature growth without needing major structural r
 
 ---
 
+# 🧱 UI States, Error Handling & Dashboard Foundation Update
+
+This update focused on improving the **frontend architecture**, **user experience**, and **scalability** of the EWUCSC platform before moving into full **Role-Based Access Control (RBAC)** and **dashboard development**.
+
+---
+
+## ✨ What Was Added in This Phase
+
+This phase was mainly about building the **reusable system-level UI components** and **dashboard foundation** that make the project feel more complete, scalable, and production-ready.
+
+### ✅ UI / UX Enhancements
+- Added reusable **loading states**
+- Added reusable **spinner components**
+- Added **button loading state**
+- Added **empty state UI**
+- Added **error state UI**
+- Added **404 / Not Found page**
+- Added **coming soon section placeholders**
+- Added **skeleton loaders** for cards and tables
+
+### ✅ Dashboard Foundation
+- Created reusable **dashboard shell/layout components**
+- Added reusable **dashboard stat cards**
+- Added reusable **dashboard section cards**
+- Structured the app for future **role-based dashboards**
+
+### ✅ Error Handling Structure
+- Added a dedicated **ErrorPage**
+- Added **NotFound** fallback page
+- Improved routing fallback structure for invalid routes
+
+### ✅ Scalability Improvements
+- Organized reusable components into:
+  - `common/`
+  - `dashboard/`
+  - `skeletons/`
+- Prepared the frontend architecture for:
+  - Protected routes
+  - Role-based route control
+  - Admin / Executive / Member dashboard expansion
+
+---
+
+# 🧱 New Frontend Architecture Additions
+
+## 📁 New Reusable Common Components
+
+```bash
+src/components/common/
+├─ ButtonLoader.jsx
+├─ EmptyState.jsx
+├─ ErrorState.jsx
+├─ NotFound.jsx
+├─ SectionComingSoon.jsx
+└─ Spinner.jsx
+```
+---
+
 ## 🚀 Future Roadmap
 
 ### Phase 1 — Foundation
@@ -867,6 +925,7 @@ client
 │  │  │  ├─ SectionComingSoon.jsx
 │  │  │  └─ Spinner.jsx
 │  │  ├─ dashboard
+│  │  │  ├─ DashboardHeader.jsx
 │  │  │  ├─ DashboardSectionCard.jsx
 │  │  │  ├─ DashboardShell.jsx
 │  │  │  └─ DashboardStatCard.jsx
@@ -918,7 +977,8 @@ client
 │  ├─ firebase
 │  │  └─ firebase.config.js
 │  ├─ hooks
-│  │  └─ useAuth.js
+│  │  ├─ useAuth.js
+│  │  └─ useUserRole.js
 │  ├─ index.css
 │  ├─ layouts
 │  │  ├─ DashboardLayout.jsx
@@ -949,6 +1009,8 @@ client
 │  │  ├─ Register.jsx
 │  │  └─ Resources.jsx
 │  ├─ router
+│  │  ├─ PrivateRouter.jsx
+│  │  ├─ RoleRouter.jsx
 │  │  └─ router.jsx
 │  └─ services
 │     └─ api.js

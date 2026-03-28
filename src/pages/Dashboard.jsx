@@ -1,38 +1,31 @@
-import { useEffect, useState } from "react";
-import { api } from "../services/api";
-import { useNavigate } from "react-router";
+import { Navigate } from "react-router";
+import Spinner from "../components/common/Spinner";
+import { useUserRole } from "../hooks/useUserRole";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
+  const { role, roleLoading } = useUserRole();
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await api.get("/profile");
+  if (roleLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
 
-        const role = res.data.user.role;
+  if (role === "admin") {
+    return <Navigate to="/dashboard/admin" replace />;
+  }
 
-        // 🔥 Role-based redirect
-        if (role === "admin") navigate("/dashboard/admin");
-        else if (role === "executive") navigate("/dashboard/executive");
-        else if (role === "sub-executive") navigate("/dashboard/sub");
-        else navigate("/dashboard/member");
+  if (role === "executive") {
+    return <Navigate to="/dashboard/executive" replace />;
+  }
 
-      } catch (error) {
-        console.error("Unauthorized", error);
-        navigate("/login");
-      } finally {
-        setLoading(false);
-      }
-    };
+  if (role === "sub-executive") {
+    return <Navigate to="/dashboard/sub" replace />;
+  }
 
-    fetchProfile();
-  }, [navigate]);
-
-  if (loading) return <p className="text-center mt-10">Loading dashboard...</p>;
-
-  return null;
+  return <Navigate to="/dashboard/member" replace />;
 };
 
 export default Dashboard;
