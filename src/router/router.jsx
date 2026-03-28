@@ -24,11 +24,13 @@ import Partners from "../pages/Partners";
 import About from "../pages/About";
 import Resources from "../pages/Resources";
 import Contact from "../pages/Contact";
+import ErrorPage from "../pages/ErrorPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout></MainLayout>,
+    errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home></Home> },
       { path: "ctf", element: <CTF></CTF> },

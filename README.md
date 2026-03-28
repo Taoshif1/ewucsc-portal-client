@@ -859,6 +859,17 @@ client
 │  │  │     └─ thumbail.jpg
 │  │  └─ react.svg
 │  ├─ components
+│  │  ├─ common
+│  │  │  ├─ ButtonLoader.jsx
+│  │  │  ├─ EmptyState.jsx
+│  │  │  ├─ ErrorState.jsx
+│  │  │  ├─ NotFound.jsx
+│  │  │  ├─ SectionComingSoon.jsx
+│  │  │  └─ Spinner.jsx
+│  │  ├─ dashboard
+│  │  │  ├─ DashboardSectionCard.jsx
+│  │  │  ├─ DashboardShell.jsx
+│  │  │  └─ DashboardStatCard.jsx
 │  │  ├─ Footer.jsx
 │  │  ├─ home
 │  │  │  ├─ ActivitiesSection.jsx
@@ -892,6 +903,9 @@ client
 │  │  ├─ Navbar.jsx
 │  │  ├─ PageHero.jsx
 │  │  ├─ Sidebar.jsx
+│  │  ├─ skeletons
+│  │  │  ├─ SkeletonCard.jsx
+│  │  │  └─ SkeletonTable.jsx
 │  │  └─ ThemeToggle.jsx
 │  ├─ context
 │  │  ├─ AuthContext.jsx
@@ -922,6 +936,7 @@ client
 │  │  │  ├─ ExecutiveDashboard.jsx
 │  │  │  ├─ MemberDashboard.jsx
 │  │  │  └─ SubExecutiveDashboard.jsx
+│  │  ├─ ErrorPage.jsx
 │  │  ├─ ExecutivePanel2425.jsx
 │  │  ├─ ExecutivePanel2526.jsx
 │  │  ├─ Home.jsx
