@@ -1,14 +1,36 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router";
-import { FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
+import { Link, NavLink, useNavigate } from "react-router";
+import { FaBars, FaTimes } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
+import { useAuth } from "../hooks/useAuth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [logoutLoading, setLogoutLoading] = useState(false);
+
+  const { user, logoutUser } = useAuth();
+  const navigate = useNavigate();
 
   const closeMobileMenu = () => setIsOpen(false);
+
+  const handleLogout = async () => {
+    const loadingToast = toast.loading("Logging out...");
+    try {
+      setLogoutLoading(true);
+      await logoutUser();
+      toast.success("Logged out successfully!", { id: loadingToast });
+      navigate("/");
+      closeMobileMenu();
+    } catch (error) {
+      toast.error("Logout failed. Try again.", { id: loadingToast });
+      console.error("Logout error:", error);
+    } finally {
+      setLogoutLoading(false);
+    }
+  };
 
   const navLinkClass = ({ isActive }) =>
     `transition-colors duration-200 ${
@@ -62,17 +84,18 @@ const Navbar = () => {
         </NavLink>
       </li>
 
-      <li>
-        <NavLink
-          to="/dashboard"
-          className={navLinkClass}
-          onClick={closeMobileMenu}
-        >
-          Dashboard
-        </NavLink>
-      </li>
+      {user && (
+        <li>
+          <NavLink
+            to="/dashboard"
+            className={navLinkClass}
+            onClick={closeMobileMenu}
+          >
+            Dashboard
+          </NavLink>
+        </li>
+      )}
 
-      {/* Members Dropdown */}
       <li>
         <details>
           <summary className="text-base-content/70 hover:text-primary transition-colors duration-200 cursor-pointer">
@@ -114,7 +137,6 @@ const Navbar = () => {
         </details>
       </li>
 
-      {/* NEW More Dropdown */}
       <li>
         <details>
           <summary className="text-base-content/70 hover:text-primary transition-colors duration-200 cursor-pointer">
@@ -160,7 +182,6 @@ const Navbar = () => {
   return (
     <div className="navbar relative bg-base-100/70 backdrop-blur-xl sticky top-0 z-50 px-4 lg:px-12 border-b border-white/5 shadow-[0_10px_30px_-15px_rgba(37,99,235,0.2)] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:bg-gradient-to-r after:from-transparent after:via-primary after:to-secondary after:opacity-50">
       <div className="navbar-start">
-        {/* Mobile Menu Button */}
         <button
           type="button"
           className="btn btn-ghost lg:hidden text-base-content"
@@ -179,7 +200,6 @@ const Navbar = () => {
         </NavLink>
       </div>
 
-      {/* Desktop Nav */}
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1 gap-4 font-medium">
           {Links}
@@ -189,7 +209,6 @@ const Navbar = () => {
       <div className="navbar-end gap-3">
         <ThemeToggle />
 
-        {/* Notification Icon */}
         <button className="btn btn-ghost btn-circle relative">
           <div className="indicator">
             <span className="notification-dot">
@@ -213,15 +232,40 @@ const Navbar = () => {
           </div>
         </button>
 
-        <Link
-          to="/login"
-          className="btn btn-sm px-8 rounded-full text-white font-bold border-none bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary hover:scale-105 active:scale-95 transition-all duration-500 ease-in-out shadow-lg shadow-primary/30 cursor-pointer"
-        >
-          Login
-        </Link>
+        {user ? (
+          <button
+            onClick={handleLogout}
+            disabled={logoutLoading}
+            className="btn btn-sm px-8 rounded-full text-white font-bold border-none bg-gradient-to-r from-error to-secondary hover:from-secondary hover:to-error hover:scale-105 active:scale-95 transition-all duration-500 ease-in-out shadow-lg shadow-primary/30 cursor-pointer disabled:opacity-70"
+          >
+            {logoutLoading ? (
+              <>
+                <span className="loading loading-spinner loading-sm"></span>
+                Logging Out...
+              </>
+            ) : (
+              "Logout"
+            )}
+          </button>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Link
+              to="/login"
+              className="btn btn-sm px-6 rounded-full text-white font-bold border-none bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary hover:scale-105 active:scale-95 transition-all duration-500 ease-in-out shadow-lg shadow-primary/30 cursor-pointer"
+            >
+              Login
+            </Link>
+
+            <Link
+              to="/register"
+              className="btn btn-sm px-6 rounded-full font-bold border border-primary/20 bg-base-100 hover:bg-primary/10 transition-all duration-300"
+            >
+              Register
+            </Link>
+          </div>
+        )}
       </div>
 
-      {/* Mobile Menu Panel */}
       <div
         className={`absolute top-full left-0 w-full lg:hidden transition-all duration-300 ease-in-out ${
           isOpen
@@ -231,6 +275,34 @@ const Navbar = () => {
       >
         <div className="mx-4 mt-3 rounded-2xl border border-base-content/10 bg-base-100/95 backdrop-blur-xl shadow-2xl">
           <ul className="menu p-4 gap-2 font-medium">{Links}</ul>
+
+          <div className="p-4 pt-0">
+            {user ? (
+              <button
+                onClick={handleLogout}
+                disabled={logoutLoading}
+                className="btn w-full rounded-xl text-white font-bold border-none bg-gradient-to-r from-error to-secondary disabled:opacity-70"
+              >
+                {logoutLoading ? (
+                  <>
+                    <span className="loading loading-spinner loading-sm"></span>
+                    Logging Out...
+                  </>
+                ) : (
+                  "Logout"
+                )}
+              </button>
+            ) : (
+              <div className="grid gap-2">
+                <Link to="/login" onClick={closeMobileMenu} className="btn btn-primary">
+                  Login
+                </Link>
+                <Link to="/register" onClick={closeMobileMenu} className="btn btn-outline">
+                  Register
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

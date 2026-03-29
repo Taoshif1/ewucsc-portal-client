@@ -7,16 +7,19 @@ import { Link, useNavigate } from "react-router";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
 import Footer from "../components/Footer";
+import ButtonLoader from "../components/common/ButtonLoader";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { loginUser, fetchUserProfile  } = useAuth();
+  const { loginUser, fetchUserProfile } = useAuth();
   const { register, handleSubmit } = useForm();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (data) => {
     const loadingToast = toast.loading("Logging in...");
+    setIsSubmitting(true);
 
     try {
       const result = await loginUser(data.email, data.password);
@@ -35,14 +38,16 @@ const Login = () => {
 
       localStorage.setItem("access-token", res.data.token);
       await fetchUserProfile(); // Fetch profile immediately after login
+
       toast.success("Login successful!", { id: loadingToast });
-      
       navigate("/dashboard");
 
       console.log("Login success");
     } catch (error) {
       toast.error("Invalid email or password", { id: loadingToast });
       console.error("Login error:", error.response?.data || error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -101,9 +106,16 @@ const Login = () => {
 
               <button
                 type="submit"
-                className="btn w-full mt-6 border-none text-white bg-gradient-to-r from-primary via-secondary to-accent hover:saturate-150 hover:scale-[1.02] active:scale-95 transition-all duration-500 shadow-xl shadow-primary/20 font-bold text-lg"
+                disabled={isSubmitting}
+                className="btn w-full mt-6 border-none text-white bg-gradient-to-r from-primary via-secondary to-accent hover:saturate-150 hover:scale-[1.02] active:scale-95 transition-all duration-500 shadow-xl shadow-primary/20 font-bold text-lg disabled:opacity-70 disabled:hover:scale-100"
               >
-                Login
+                {isSubmitting ? (
+                  <>
+                    <ButtonLoader/>
+                  </>
+                ) : (
+                  "Login"
+                )}
               </button>
 
               <p className="text-center text-sm mt-4">

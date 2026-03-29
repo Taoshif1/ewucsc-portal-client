@@ -325,9 +325,9 @@ The Members page follows the same broader product direction as the homepage:
 | Reusable Member Card Component      | ✅ Complete   |
 | CTA Section                         | ✅ Complete   |
 | Static Frontend Data Layer          | ✅ Complete   |
-| Backend / MongoDB Integration       | ⏳ Planned    |
-| Real Member Images                  | ⏳ Planned    |
-| Admin Member Management Panel       | ⏳ Planned    |
+| Backend / MongoDB Integration       | ✅ Complete   |
+| Real Member Images                  | ✅ Complete   |
+| Admin Member Management Panel       | ✅ Complete   |
 
 ---
 
@@ -506,8 +506,8 @@ This architecture allows the platform to become:
 | Landing Page V1                  | ✅ Complete       |
 | Hero + Terminal Experience       | ✅ Complete       |
 | Cyber Visual Effects Layer       | ✅ Complete       |
-| Role-Based Dashboard Structure   | 🟡 In Progress    |
-| Protected Routes                 | ⏳ Planned        |
+| Role-Based Dashboard Structure   | ✅ Complete       |
+| Protected Routes                 | ✅ Complete       |
 | Homework System                  | ⏳ Planned        |
 | CTF Challenge System             | ⏳ Planned        |
 | Leaderboard / Ranking Engine     | ⏳ Planned        |
@@ -749,10 +749,10 @@ This expansion supports future feature growth without needing major structural r
 ## 🧭 Next Development Steps
 
 ### Immediate Priorities
-- [ ] **Protected Routes:** Prevent unauthorized access to dashboard pages.
-- [ ] **Role Redirect Logic:** Redirect users to the correct dashboard after login.
-- [ ] **Role-Based Dashboard UI:** Complete Admin, Executive, Sub-Executive, and Member dashboard shells.
-- [ ] **User Context Sync:** Store authenticated backend user info globally after login.
+- [X] **Protected Routes:** Prevent unauthorized access to dashboard pages.
+- [X] **Role Redirect Logic:** Redirect users to the correct dashboard after login.
+- [X] **Role-Based Dashboard UI:** Complete Admin, Executive, Sub-Executive, and Member dashboard shells.
+- [X] **User Context Sync:** Store authenticated backend user info globally after login.
 
 ### Core Product Features
 - [ ] **CTF Problem System:** Allow admins to create and manage cyber challenges.
@@ -829,6 +829,110 @@ src/components/common/
 ```
 ---
 
+# 🔐 RBAC, Route Protection & Dashboard Access Control Update
+
+This phase focused on transforming the **EWUCSC platform** from a basic authenticated app into a more secure, role-aware, and production-ready system.
+
+## 📌 Overview
+The primary goal was to establish a robust access control layer to ensure:
+*   **Authenticated users** access only the correct areas.
+*   **Unauthorized users** are blocked from protected pages.
+*   **Logged-in users** are prevented from accessing unnecessary auth pages (Login/Register).
+*   **Dashboard access** is structured around **Role-Based Access Control (RBAC)**.
+
+This update lays the foundation for future features such as:
+*   Admin-only challenge creation.
+*   Executive-only management tools.
+*   Member-specific learning dashboards.
+*   Secure internal club workflows.
+
+---
+
+## 🎯 Core Objectives
+Before building advanced features, the platform required a proper security layer to solve several frontend architectural problems:
+1.  **Gatekeeping:** Prevents unauthenticated users from entering protected routes.
+2.  **Auth-Flow Logic:** Prevents logged-in users from revisiting Login/Register.
+3.  **Role Separation:** Diversifies dashboard access based on specific user permissions.
+4.  **Scalability:** Creates a cleaner, modular routing system for long-term growth.
+
+---
+
+## 🧱 Routing & Access Control Architecture
+The routing system has been upgraded with a multi-layer protection strategy.
+
+### Directory Structure
+`src/router/`
+-   `PrivateRouter.jsx` — Authenticated access only.
+-   `PublicOnlyRoute.jsx` — Guest access only.
+-   `RoleRouter.jsx` — Permission-based access.
+-   `router.jsx` — Main configuration.
+
+### 1. 🔒 Private Route Protection (`PrivateRouter.jsx`)
+Acts as the first security gate for sensitive areas.
+*   **Responsibility:** Protects `/dashboard`, `/profile`, and internal tools.
+*   **Behavior:** Unauthenticated users are denied and redirected to the **Login** page.
+*   **Value:** Essential for secure modules like challenge submissions and internal club management.
+
+### 2. 🚫 Public-Only Route Guard (`PublicOnlyRoute.jsx`)
+Handles the "Already Logged In" UX flow.
+*   **Responsibility:** Protects `/login` and `/register`.
+*   **Behavior:** Authenticated users are automatically redirected away from auth pages to prevent redundant logins.
+*   **Benefit:** Provides a polished, production-grade user experience.
+
+### 3. 🛡️ Role-Based Route Guard (`RoleRouter.jsx`)
+The core of the RBAC system, ensuring users only see what they are authorized to manage.
+*   **Supported Roles:** `admin`, `executive`, `sub-executive`, `member`.
+*   **Use Cases:** 
+    *   **Admins:** Create/Manage CTF problems.
+    *   **Executives:** Manage club operations.
+    *   **Members:** Access learner-focused dashboards.
+
+---
+
+## 🧠 Role State Management (`useUserRole.js`)
+To simplify logic, a dedicated custom hook was introduced to centralize permission checks.
+*   **Abstracts Logic:** Removes the need to repeat role checks across multiple components.
+*   **Feature Flags:** Enables showing/hiding specific UI elements (like sidebar links or action buttons) based on the user's level.
+
+---
+
+## 🧩 Dashboard Foundation
+The project has moved away from a generic dashboard to a role-specific experience.
+
+### Dedicated Pages
+`src/pages/dashboards/`
+-   `AdminDashboard.jsx`
+-   `ExecutiveDashboard.jsx`
+-   `SubExecutiveDashboard.jsx`
+-   `MemberDashboard.jsx`
+
+### Reusable UI Components
+`src/components/dashboard/`
+-   `DashboardHeader.jsx`: Handles page headings and role identity.
+-   `DashboardShell.jsx`: The main layout wrapper for internal pages.
+-   `DashboardStatCard.jsx`: For displaying role-specific metrics (e.g., "Active Members" or "Points").
+-   `DashboardSectionCard.jsx`: A container for grouping dashboard tools and features.
+
+---
+
+### 🧭 Routing Layer Improvement (`router.jsx`)
+
+The core routing structure has been upgraded to a multi-tiered architecture that natively supports:
+*   **Public Pages:** Accessible to everyone (Home, About, etc.).
+*   **Auth-Only Pages:** Restricted to guests (Login, Register).
+*   **Private Pages:** Restricted to authenticated users.
+*   **Role-Protected Routes:** Restricted to specific permissions (Admin, Executive, etc.).
+
+#### Why This Matters
+As the project grows, route complexity increases. By separating access logic now, the project avoids:
+*   **Messy conditional rendering** within page components.
+*   **Duplicated authentication checks** across the app.
+*   **Technical debt**, ensuring the routing code remains maintainable as features scale.
+
+This level of routing discipline is a hallmark of **scalable, production-grade applications**.
+
+---
+
 ## 🚀 Future Roadmap
 
 ### Phase 1 — Foundation
@@ -839,10 +943,14 @@ src/components/common/
 - [x] Prepare role-based dashboard structure
 
 ### Phase 2 — Access & Member System
-- [ ] Protected Routes
-- [ ] Role Redirect after Login
-- [ ] Global Auth/User Sync
-- [ ] Role-Based Dashboards (Admin / Executive / Sub-Executive / Member)
+- [X] Protected Routes
+- [X] Firebase Authentication
+- [X] Role Redirect after Login
+- [X] MongoDB User Storage
+- [X] JWT Backend Token System
+- [X] Public-Only Auth Route Blocking
+- [X] Global Auth/User Sync
+- [X] Role-Based Dashboards (Admin / Executive / Sub-Executive / Member)
 
 ### Phase 3 — Core Cyber Platform
 - [ ] Problem Creation Panel for Admin
@@ -1010,6 +1118,7 @@ client
 │  │  └─ Resources.jsx
 │  ├─ router
 │  │  ├─ PrivateRouter.jsx
+│  │  ├─ PublicOnlyRoute.jsx
 │  │  ├─ RoleRouter.jsx
 │  │  └─ router.jsx
 │  └─ services

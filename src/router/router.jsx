@@ -25,10 +25,12 @@ import Partners from "../pages/Partners";
 import About from "../pages/About";
 import Resources from "../pages/Resources";
 import Contact from "../pages/Contact";
+import Blogs from "../pages/Blogs";
 
 import PrivateRoute from "./PrivateRouter";
 import RoleRoute from "./RoleRouter";
 import ErrorPage from "../pages/ErrorPage";
+import PublicOnlyRoute from "./PublicOnlyRoute";
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +43,7 @@ export const router = createBrowserRouter([
       { path: "learning", element: <Learning /> },
       { path: "homeworks", element: <Homeworks /> },
       { path: "announcements", element: <Announcements /> },
+      { path: "blogs", element: <Blogs /> },
       { path: "partners", element: <Partners /> },
       { path: "about", element: <About /> },
       { path: "resources", element: <Resources /> },
@@ -107,10 +110,18 @@ export const router = createBrowserRouter([
 
   {
     path: "/login",
-    element: <Login />,
+    element: (
+      <PublicOnlyRoute>
+        <Login />
+      </PublicOnlyRoute>
+    ),
   },
   {
     path: "/register",
-    element: <Register />,
+    element: (
+      <PublicOnlyRoute>
+        <Register />
+      </PublicOnlyRoute>
+    ),
   },
 ]);

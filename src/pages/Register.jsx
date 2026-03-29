@@ -7,15 +7,18 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import Footer from "../components/Footer";
+import ButtonLoader from "../components/common/ButtonLoader";
 
 export const Register = () => {
   const { registerUser, fetchUserProfile } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit, reset } = useForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (data) => {
     const loadingToast = toast.loading("Creating Your Account...");
+    setIsSubmitting(true);
     try {
       // Create firebase user
       const result = await registerUser(data.email, data.password);
@@ -51,6 +54,8 @@ export const Register = () => {
     } catch (error) {
       toast.error("Registration failed. Try again.", { id: loadingToast });
       console.error("Register error:", error.response?.data || error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -123,9 +128,16 @@ export const Register = () => {
 
               <button
                 type="submit"
-                className="btn w-full mt-6 border-none text-white bg-gradient-to-r from-primary via-secondary to-accent hover:saturate-150 hover:scale-[1.02] active:scale-95 transition-all duration-500 shadow-xl shadow-primary/20 font-bold text-lg"
+                disabled={isSubmitting}
+                className="btn w-full mt-6 border-none text-white bg-gradient-to-r from-primary via-secondary to-accent hover:saturate-150 hover:scale-[1.02] active:scale-95 transition-all duration-500 shadow-xl shadow-primary/20 font-bold text-lg disabled:opacity-70 disabled:hover:scale-100"
               >
-                Sign Up
+                {isSubmitting ? (
+                  <>
+                    <ButtonLoader></ButtonLoader>
+                  </>
+                ) : (
+                  "Sign Up"
+                )}
               </button>
             </form>
 
