@@ -68,7 +68,7 @@ const Footer = () => {
           </div>
 
           <p className="text-xs text-base-content/50">
-            Contact: support@ewucsc.org
+            Contact: ewucsc@ewubd.edu
           </p>
         </div>
       </div>
