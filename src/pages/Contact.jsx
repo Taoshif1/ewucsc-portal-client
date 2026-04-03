@@ -135,13 +135,13 @@ const Contact = () => {
               <HiOutlineMail className="text-4xl text-primary" />
               <div>
                 <p className="text-xs uppercase opacity-40 font-mono">Email Us</p>
-                <p className="font-bold">support@ewucsc.org</p>
+                <p className="font-bold">ewucsc@ewubd.edu</p>
               </div>
             </div>
             <div className="p-8 rounded-3xl border border-white/5 bg-base-100/60 flex items-center gap-6 hover:border-accent/20 transition-all">
               <HiOutlineLocationMarker className="text-4xl text-accent" />
               <div>
-                <p className="text-xs uppercase opacity-40 font-mono">Base Ops</p>
+                <p className="text-xs uppercase opacity-40 font-mono">Base Address</p>
                 <p className="font-bold">Aftabnagar, Dhaka</p>
               </div>
             </div>
