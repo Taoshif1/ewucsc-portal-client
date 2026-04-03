@@ -38,7 +38,9 @@ const FAQSection = () => {
             key={index}
             className="collapse collapse-plus border border-white/10 bg-base-100/70 backdrop-blur-xl"
           >
-            <input type="radio" name="faq-accordion" defaultChecked={index === 0} />
+            {/* Switched type to checkbox and removed defaultChecked */}
+            <input type="checkbox" name={`faq-accordion-${index}`} />
+
             <div className="collapse-title text-lg font-bold text-base-content">
               {faq.question}
             </div>

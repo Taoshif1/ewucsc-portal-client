@@ -104,17 +104,17 @@ const Navbar = () => {
           <ul className="p-2 bg-base-100 rounded-box w-64 border border-base-content/10 shadow-2xl">
             <li>
               <NavLink to="/members" onClick={closeMobileMenu}>
-                • Panels
+                Panels
               </NavLink>
             </li>
             <li>
               <NavLink to="/members/current" onClick={closeMobileMenu}>
-                • Current Members
+                Current Members
               </NavLink>
             </li>
             <li>
               <NavLink to="/members/moderators" onClick={closeMobileMenu}>
-                • Moderators
+                Moderators
               </NavLink>
             </li>
             <li>
@@ -122,7 +122,7 @@ const Navbar = () => {
                 to="/members/executive-panel-24-25"
                 onClick={closeMobileMenu}
               >
-                • Executive Panel 24–25
+                Executive Panel 24–25
               </NavLink>
             </li>
             <li>
@@ -130,7 +130,7 @@ const Navbar = () => {
                 to="/members/executive-panel-25-26"
                 onClick={closeMobileMenu}
               >
-                • Executive Panel 25–26
+                Executive Panel 25–26
               </NavLink>
             </li>
           </ul>
@@ -145,32 +145,32 @@ const Navbar = () => {
           <ul className="p-2 bg-base-100 rounded-box w-72 border border-base-content/10 shadow-2xl">
             <li>
               <NavLink to="/announcements" onClick={closeMobileMenu}>
-                • Latest Announcements & Posts
+                Latest Announcements & Posts
               </NavLink>
             </li>
             <li>
               <NavLink to="/blogs" onClick={closeMobileMenu}>
-                • Latest Blogs
+                Latest Blogs
               </NavLink>
             </li>
             <li>
               <NavLink to="/partners" onClick={closeMobileMenu}>
-                • Sponsors / Club Partners
+                Sponsors / Club Partners
               </NavLink>
             </li>
             <li>
               <NavLink to="/about" onClick={closeMobileMenu}>
-                • About Us
+                About Us
               </NavLink>
             </li>
             <li>
               <NavLink to="/resources" onClick={closeMobileMenu}>
-                • Resources
+                Resources
               </NavLink>
             </li>
             <li>
               <NavLink to="/contact" onClick={closeMobileMenu}>
-                • Contact Us
+                Contact Us
               </NavLink>
             </li>
           </ul>

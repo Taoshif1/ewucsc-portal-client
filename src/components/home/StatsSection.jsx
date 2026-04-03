@@ -1,12 +1,33 @@
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform, animate, useInView } from "framer-motion";
+import { useEffect, useRef } from "react";
 import SectionHeading from "./SectionHeading";
 
 const stats = [
-  { number: "150+", label: "Active Learners" },
-  { number: "40+", label: "Cyber Challenges" },
-  { number: "12+", label: "Workshops & Sessions" },
-  { number: "4", label: "Growth Tracks" },
+  { number: 150, suffix: "+", label: "Active Learners" },
+  { number: 40, suffix: "+", label: "Cyber Challenges" },
+  { number: 12, suffix: "+", label: "Workshops & Sessions" },
+  { number: 4, suffix: "", label: "Growth Tracks" },
 ];
+
+const Counter = ({ value, suffix }) => {
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (latest) => Math.round(latest));
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (isInView) {
+      animate(count, value, { duration: 3, ease: "easeOut" });
+    }
+  }, [isInView, count, value]);
+
+  return (
+    <span ref={ref}>
+      <motion.span>{rounded}</motion.span>
+      {suffix}
+    </span>
+  );
+};
 
 const StatsSection = () => {
   return (
@@ -29,7 +50,7 @@ const StatsSection = () => {
           >
             <div className="card-body items-center text-center">
               <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                {stat.number}
+                <Counter value={stat.number} suffix={stat.suffix} />
               </h3>
               <p className="text-sm md:text-base text-base-content/70">
                 {stat.label}
