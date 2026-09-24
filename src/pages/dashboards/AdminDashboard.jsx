@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa6";
 import { api } from "../../services/api";
 import { useAuth } from "../../hooks/useAuth";
+import CyberOperationsManager from "../../components/admin/CyberOperationsManager";
 
 const ROLES = ["admin", "executive", "sub-executive", "member"];
 const FILTERS = ["all", "pending", "approved", "rejected", "suspended"];
@@ -241,6 +242,8 @@ const AdminDashboard = () => {
             the member can enter the portal at all.
           </div>
         </section>
+
+        <CyberOperationsManager />
       </div>
     </div>
   );
