@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FaLinkedin, FaGithub, FaGlobe } from "react-icons/fa";
+import { FaLinkedin, FaGithub, FaGlobe, FaFacebook } from "react-icons/fa";
 
 const PanelGallerySection = ({ members, panelLabel = "Executive Panel" }) => {
   return (
@@ -50,6 +50,18 @@ const PanelGallerySection = ({ members, panelLabel = "Executive Panel" }) => {
                     className="btn btn-sm btn-circle btn-ghost hover:text-primary"
                   >
                     <FaLinkedin size={18} />
+                  </a>
+                )}
+
+                {member.facebook && member.facebook !== "#" && (
+                  <a
+                    href={member.facebook}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn btn-sm btn-circle btn-ghost hover:text-secondary"
+                    aria-label={`${member.name} on Facebook`}
+                  >
+                    <FaFacebook size={18} />
                   </a>
                 )}
 
