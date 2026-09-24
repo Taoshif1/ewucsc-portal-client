@@ -23,14 +23,16 @@ const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (data) => {
-    const studentId = normalizeStudentId(data.studentId);
+    const identity = data.studentId.trim();
+    const studentId = normalizeStudentId(identity);
+    const isLegacyEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identity);
 
-    if (!isValidStudentId(studentId)) {
+    if (!isValidStudentId(studentId) && !isLegacyEmail) {
       toast.error("Enter a valid EWU Student ID.");
       return;
     }
 
-    const email = studentIdToEmail(studentId);
+    const email = isLegacyEmail ? identity.toLowerCase() : studentIdToEmail(studentId);
     const loadingToast = toast.loading("Authenticating...");
     setIsSubmitting(true);
 
@@ -117,6 +119,11 @@ const Login = () => {
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
+
+              <p className="px-1 text-[11px] leading-relaxed text-base-content/40">
+                During migration, existing admin/executive accounts may use their current
+                email address. New member accounts must use an EWU Student ID.
+              </p>
 
               <button
                 type="submit"
