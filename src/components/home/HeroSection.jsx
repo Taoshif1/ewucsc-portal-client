@@ -6,8 +6,10 @@ import MatrixBackground from "./MatrixBackground";
 import FloatingParticles from "./FloatingParticles";
 import HeroTerminal from "./HeroTerminal";
 import CodeRain from "./CodeRain";
+import { useAuth } from "../../hooks/useAuth";
 
 const HeroSection = () => {
+  const { user } = useAuth();
   const [text] = useTypewriter({
     words: [
       "Ethical Hackers",
@@ -20,6 +22,11 @@ const HeroSection = () => {
     deleteSpeed: 40,
     delaySpeed: 1800,
   });
+
+  const ctfDestination = user ? "/dashboard/ctf" : "/login";
+  const ctfLoginState = user
+    ? undefined
+    : { from: { pathname: "/dashboard/ctf" } };
 
   return (
     <section className="relative min-h-[95vh] flex items-center justify-center overflow-hidden rounded-[2rem] border border-white/5 bg-base-100/40 backdrop-blur-xl px-6 py-20 lg:px-16">
@@ -76,10 +83,11 @@ const HeroSection = () => {
           </Link>
 
           <Link
-            to="/ctf"
+            to={ctfDestination}
+            state={ctfLoginState}
             className="btn btn-lg btn-outline btn-accent rounded-full px-8 hover:scale-105 active:scale-95 transition-all duration-300"
           >
-            Explore CTF Arena
+            {user ? "Explore CTF Arena" : "Member CTF Access"}
           </Link>
         </motion.div>
 
