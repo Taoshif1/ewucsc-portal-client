@@ -15,6 +15,14 @@ const PrivateRoute = ({ children }) => {
     );
   }
 
+  if (user && hasToken && !backendUser) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+
   if (!user || !hasToken || !backendUser) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
