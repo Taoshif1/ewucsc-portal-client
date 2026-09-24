@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import {
+  FaBan,
   FaCheck,
   FaClock,
   FaRotate,
@@ -13,6 +14,8 @@ import { api } from "../../services/api";
 import { useAuth } from "../../hooks/useAuth";
 import CyberOperationsManager from "../../components/admin/CyberOperationsManager";
 import ContentManager from "../../components/admin/ContentManager";
+import SubmissionReviewPanel from "../../components/admin/SubmissionReviewPanel";
+import MemberDashboard from "./MemberDashboard";
 
 const ROLES = ["admin", "executive", "sub-executive", "member"];
 const FILTERS = ["all", "pending", "approved", "rejected", "suspended"];
@@ -27,8 +30,7 @@ const AdminDashboard = () => {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const query = filter === "all" ? "" : `?status=${filter}`;
-      const res = await api.get(`/admin/users${query}`);
+      const res = await api.get("/admin/users");
       setUsers(res.data.users || []);
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to load members.");
@@ -44,8 +46,16 @@ const AdminDashboard = () => {
   const counts = useMemo(() => {
     const pending = users.filter((user) => user.approvalStatus === "pending").length;
     const approved = users.filter((user) => user.approvalStatus === "approved").length;
-    return { pending, approved, visible: users.length };
+    return { pending, approved, total: users.length };
   }, [users]);
+
+  const visibleUsers = useMemo(
+    () =>
+      filter === "all"
+        ? users
+        : users.filter((user) => user.approvalStatus === filter),
+    [filter, users],
+  );
 
   const updateApproval = async (uid, status) => {
     try {
@@ -74,7 +84,9 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="relative overflow-hidden pb-20">
+    <>
+      <MemberDashboard />
+      <div className="relative overflow-hidden pb-20">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_8%,rgba(37,99,235,0.14),transparent_28%),radial-gradient(circle_at_90%_12%,rgba(239,68,68,0.08),transparent_26%)]" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-12 lg:px-8">
@@ -106,7 +118,7 @@ const AdminDashboard = () => {
           {[
             ["Pending review", filter === "pending" ? counts.visible : counts.pending, <FaClock key="clock" />],
             ["Approved shown", filter === "approved" ? counts.visible : counts.approved, <FaCheck key="check" />],
-            ["Visible records", counts.visible, <FaUsers key="users" />],
+            ["Total accounts", counts.total, <FaUsers key="users" />],
           ].map(([label, value, icon]) => (
             <div key={label} className="rounded-2xl border border-white/5 bg-base-100/65 p-5">
               <div className="text-xl text-secondary">{icon}</div>
@@ -153,7 +165,7 @@ const AdminDashboard = () => {
             <div className="flex justify-center py-16">
               <span className="loading loading-spinner loading-lg text-primary" />
             </div>
-          ) : users.length === 0 ? (
+          ) : visibleUsers.length === 0 ? (
             <div className="mt-8 rounded-2xl border border-dashed border-white/10 p-10 text-center text-base-content/50">
               No members found in this state.
             </div>
@@ -170,7 +182,7 @@ const AdminDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((user) => {
+                  {visibleUsers.map((user) => {
                     const busy = busyUid === user.uid;
                     return (
                       <tr key={user.uid}>
@@ -217,6 +229,16 @@ const AdminDashboard = () => {
                                 <FaCheck /> Approve
                               </button>
                             )}
+                            {user.approvalStatus === "approved" && user.uid !== backendUser?.uid && (
+                              <button
+                                type="button"
+                                onClick={() => updateApproval(user.uid, "suspended")}
+                                disabled={busy}
+                                className="btn btn-sm btn-warning btn-outline"
+                              >
+                                <FaBan /> Suspend
+                              </button>
+                            )}
                             {user.approvalStatus !== "rejected" && user.uid !== backendUser?.uid && (
                               <button
                                 type="button"
@@ -246,8 +268,10 @@ const AdminDashboard = () => {
 
         <CyberOperationsManager />
         <ContentManager />
+        <SubmissionReviewPanel />
       </div>
     </div>
+    </>
   );
 };
 
