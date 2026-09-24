@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FaLinkedin, FaGithub } from "react-icons/fa";
+import { FaLinkedin, FaGithub, FaGlobe } from "react-icons/fa";
 
 const PanelGallerySection = ({ members, panelLabel = "Executive Panel" }) => {
   return (
@@ -59,8 +59,21 @@ const PanelGallerySection = ({ members, panelLabel = "Executive Panel" }) => {
                     target="_blank"
                     rel="noreferrer"
                     className="btn btn-sm btn-circle btn-ghost hover:text-secondary"
+                    aria-label={`${member.name} on GitHub`}
                   >
                     <FaGithub size={18} />
+                  </a>
+                )}
+
+                {member.portfolio && member.portfolio !== "#" && (
+                  <a
+                    href={member.portfolio}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn btn-sm btn-circle btn-ghost hover:text-accent"
+                    aria-label={`${member.name} portfolio`}
+                  >
+                    <FaGlobe size={17} />
                   </a>
                 )}
               </div>
