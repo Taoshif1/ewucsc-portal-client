@@ -3,49 +3,70 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "../hooks/useAuth";
 import { publicApi } from "../services/api";
 import Navbar from "../components/Navbar";
-import { Link, useNavigate } from "react-router";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Link, useLocation, useNavigate } from "react-router";
+import { FaEye, FaEyeSlash, FaShieldHalved } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import Footer from "../components/Footer";
 import ButtonLoader from "../components/common/ButtonLoader";
+import {
+  isValidStudentId,
+  normalizeStudentId,
+  studentIdToEmail,
+} from "../utils/ewuIdentity";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { loginUser, fetchUserProfile } = useAuth();
+  const location = useLocation();
+  const { loginUser, logoutUser, fetchUserProfile } = useAuth();
   const { register, handleSubmit } = useForm();
-
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (data) => {
-    const loadingToast = toast.loading("Logging in...");
+    const studentId = normalizeStudentId(data.studentId);
+
+    if (!isValidStudentId(studentId)) {
+      toast.error("Enter a valid EWU Student ID.");
+      return;
+    }
+
+    const email = studentIdToEmail(studentId);
+    const loadingToast = toast.loading("Authenticating...");
     setIsSubmitting(true);
 
     try {
-      const result = await loginUser(data.email, data.password);
-
-      const firebaseToken = await result.user.getIdToken();
+      const result = await loginUser(email, data.password);
+      const firebaseToken = await result.user.getIdToken(true);
 
       const res = await publicApi.post(
         "/login",
         {},
-        {
-          headers: {
-            Authorization: `Bearer ${firebaseToken}`,
-          },
-        },
+        { headers: { Authorization: `Bearer ${firebaseToken}` } },
       );
 
       localStorage.setItem("access-token", res.data.token);
-      await fetchUserProfile(); // Fetch profile immediately after login
+      await fetchUserProfile();
 
-      toast.success("Login successful!", { id: loadingToast });
-      navigate("/dashboard");
+      toast.success("Access granted.", { id: loadingToast });
 
-      console.log("Login success");
+      const destination = location.state?.from?.pathname || "/dashboard";
+      navigate(destination, { replace: true });
     } catch (error) {
-      toast.error("Invalid email or password", { id: loadingToast });
-      console.error("Login error:", error.response?.data || error);
+      const code = error.response?.data?.code;
+      const message = error.response?.data?.message;
+
+      if (["PENDING_APPROVAL", "EMAIL_NOT_VERIFIED"].includes(code)) {
+        await logoutUser();
+        toast(message || "Your account is not ready yet.", { id: loadingToast });
+        navigate("/pending-approval", { state: { email }, replace: true });
+      } else if (code === "ACCOUNT_REJECTED" || code === "ACCOUNT_SUSPENDED") {
+        await logoutUser();
+        toast.error(message || "This account cannot access the portal.", {
+          id: loadingToast,
+        });
+      } else {
+        toast.error("Invalid Student ID or password.", { id: loadingToast });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -54,84 +75,68 @@ const Login = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-
-      <div className="flex-grow flex items-center justify-center bg-base-200 p-4">
-        {/* THE UPGRADED BOX: Multi-color gradient wrapper */}
+      <main className="flex-grow flex items-center justify-center px-4 py-12">
         <div className="relative group w-full max-w-md">
-          {/* Animated Glow Background */}
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-primary via-secondary to-accent rounded-[var(--radius-box)] blur opacity-30 group-hover:opacity-60 transition duration-1000"></div>
-
-          {/* Main Card */}
-          <div className="relative card w-full bg-base-100/80 backdrop-blur-xl border border-white/10 shadow-2xl p-8">
-            <h1 className="text-3xl font-black mb-2 text-center bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              Welcome Back
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-primary via-secondary to-accent rounded-[var(--radius-box)] blur opacity-25 group-hover:opacity-50 transition duration-700" />
+          <div className="relative card bg-base-100/85 backdrop-blur-xl border border-white/10 shadow-2xl p-8">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
+              <FaShieldHalved size={22} />
+            </div>
+            <h1 className="text-3xl font-black text-center bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+              Member Access
             </h1>
-
-            <p className="text-center text-sm text-base-content/70 mb-6">
-              Login to continue your journey
+            <p className="text-center text-sm text-base-content/60 mt-2 mb-7">
+              Approved EWUCSC members
             </p>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="form-control">
-                <input
-                  {...register("email")}
-                  type="email"
-                  placeholder="Email Address"
-                  className="input border-2 border-base-300 focus:border-primary transition-all w-full bg-base-200/50"
-                  required
-                />
-              </div>
+              <input
+                {...register("studentId")}
+                type="text"
+                placeholder="EWU Student ID"
+                className="input input-bordered w-full bg-base-200/50"
+                autoComplete="username"
+                required
+              />
 
-              <div className="form-control relative w-full">
+              <div className="form-control relative">
                 <input
                   {...register("password")}
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
-                  className="input border-2 border-base-300 focus:border-primary transition-all w-full pr-12 bg-base-200/50"
+                  className="input input-bordered w-full bg-base-200/50 pr-12"
+                  autoComplete="current-password"
                   required
                 />
-
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-2 right-2 px-3 flex items-center text-white bg-gradient-to-br from-primary via-secondary to-accent hover:scale-105 active:scale-95 transition-all duration-300 shadow-md cursor-pointer rounded-lg"
+                  onClick={() => setShowPassword((value) => !value)}
+                  className="absolute inset-y-2 right-2 px-3 rounded-lg text-primary"
+                  aria-label="Toggle password visibility"
                 >
-                  {showPassword ? (
-                    <FaEyeSlash size={18} />
-                  ) : (
-                    <FaEye size={18} />
-                  )}
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="btn w-full mt-6 border-none text-white bg-gradient-to-r from-primary via-secondary to-accent hover:saturate-150 hover:scale-[1.02] active:scale-95 transition-all duration-500 shadow-xl shadow-primary/20 font-bold text-lg disabled:opacity-70 disabled:hover:scale-100"
+                className="btn w-full border-none text-white bg-gradient-to-r from-primary via-secondary to-accent font-bold disabled:opacity-60"
               >
-                {isSubmitting ? (
-                  <>
-                    <ButtonLoader/>
-                  </>
-                ) : (
-                  "Login"
-                )}
+                {isSubmitting ? <ButtonLoader /> : "Enter Portal"}
               </button>
-
-              <p className="text-center text-sm mt-4">
-                Don't have an account?{" "}
-                <Link
-                  to="/register"
-                  className="font-bold text-secondary hover:text-primary transition-colors underline decoration-2 underline-offset-4"
-                >
-                  Create one
-                </Link>
-              </p>
             </form>
+
+            <p className="text-center text-sm mt-6">
+              New member?{" "}
+              <Link to="/register" className="font-bold text-secondary hover:text-primary">
+                Register with EWU ID
+              </Link>
+            </p>
           </div>
         </div>
-      </div>
-      <Footer></Footer>
+      </main>
+      <Footer />
     </div>
   );
 };
