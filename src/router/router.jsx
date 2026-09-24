@@ -4,17 +4,20 @@ import MainLayout from "../layouts/MainLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
 
 import Home from "../pages/Home";
-import CTF from "../pages/CTF";
 import Learning from "../pages/Learning";
-import Homeworks from "../pages/Homeworks";
 import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import PendingApproval from "../pages/PendingApproval";
 
 import AdminDashboard from "../pages/dashboards/AdminDashboard";
 import ExecutiveDashboard from "../pages/dashboards/ExecutiveDashboard";
 import SubExecutiveDashboard from "../pages/dashboards/SubExecutiveDashboard";
 import MemberDashboard from "../pages/dashboards/MemberDashboard";
+import PortalCTF from "../pages/PortalCTF";
+import PortalHomeworks from "../pages/PortalHomeworks";
+import PortalLeaderboard from "../pages/PortalLeaderboard";
+
 import Members from "../pages/Members";
 import ExecutivePanel2425 from "../pages/ExecutivePanel2425";
 import ExecutivePanel2526 from "../pages/ExecutivePanel2526";
@@ -39,16 +42,13 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
-      { path: "ctf", element: <CTF /> },
       { path: "learning", element: <Learning /> },
-      { path: "homeworks", element: <Homeworks /> },
       { path: "announcements", element: <Announcements /> },
       { path: "blogs", element: <Blogs /> },
       { path: "partners", element: <Partners /> },
       { path: "about", element: <About /> },
       { path: "resources", element: <Resources /> },
       { path: "contact", element: <Contact /> },
-
       {
         path: "members",
         children: [
@@ -61,7 +61,6 @@ export const router = createBrowserRouter([
       },
     ],
   },
-
   {
     path: "/dashboard",
     element: (
@@ -72,7 +71,6 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Dashboard /> },
-
       {
         path: "admin",
         element: (
@@ -105,9 +103,11 @@ export const router = createBrowserRouter([
           </RoleRoute>
         ),
       },
+      { path: "ctf", element: <PortalCTF /> },
+      { path: "homeworks", element: <PortalHomeworks /> },
+      { path: "leaderboard", element: <PortalLeaderboard /> },
     ],
   },
-
   {
     path: "/login",
     element: (
@@ -123,5 +123,9 @@ export const router = createBrowserRouter([
         <Register />
       </PublicOnlyRoute>
     ),
+  },
+  {
+    path: "/pending-approval",
+    element: <PendingApproval />,
   },
 ]);
