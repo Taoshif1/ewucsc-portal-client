@@ -39,13 +39,6 @@ const Navbar = () => {
         : "text-base-content/70 hover:text-primary"
     }`;
 
-  const desktopNavLinkClass = ({ isActive }) =>
-    `transition-colors duration-200 ${
-      isActive
-        ? "text-primary font-bold bg-primary/10 px-4 py-2 rounded-lg"
-        : "text-base-content hover:text-primary px-4 py-2"
-    }`;
-
   const Links = (
     <>
       <li>
