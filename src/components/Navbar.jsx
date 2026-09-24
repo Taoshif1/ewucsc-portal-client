@@ -56,31 +56,11 @@ const Navbar = () => {
 
       <li>
         <NavLink
-          to="/ctf"
-          className={desktopNavLinkClass}
-          onClick={closeMobileMenu}
-        >
-          CTF
-        </NavLink>
-      </li>
-
-      <li>
-        <NavLink
           to="/learning"
           className={navLinkClass}
           onClick={closeMobileMenu}
         >
           Learning Path
-        </NavLink>
-      </li>
-
-      <li>
-        <NavLink
-          to="/homeworks"
-          className={navLinkClass}
-          onClick={closeMobileMenu}
-        >
-          Homeworks
         </NavLink>
       </li>
 
