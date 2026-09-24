@@ -1,161 +1,211 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  HiOutlineBookOpen, HiOutlineShieldCheck, HiOutlineTerminal, 
-  HiOutlineAcademicCap, HiOutlineGlobeAlt, HiOutlineDocumentText,
-  HiOutlineSearch, HiOutlineCode, HiOutlineLockClosed
-} from "react-icons/hi";
+import { useMemo, useState } from "react";
+import {
+  FaBookOpen,
+  FaCode,
+  FaCompass,
+  FaExternalLinkAlt,
+  FaFlag,
+  FaGlobe,
+  FaGraduationCap,
+  FaLock,
+  FaMagnifyingGlass,
+  FaRoute,
+  FaTerminal,
+  FaToolbox,
+} from "react-icons/fa6";
 import PageHero from "../components/PageHero";
+import UpcomingCtfs from "../components/ctf/UpcomingCtfs";
 
 const resources = [
   {
-    title: "TryHackMe",
-    desc: "Hands-on cyber security training through browser-based labs. Perfect for beginners.",
-    icon: <HiOutlineShieldCheck />,
-    tag: "Platform",
-    link: "https://tryhackme.com",
-    color: "from-red-500/20"
+    title: "EWUCSC Arsenal",
+    category: "Learning",
+    description: "Existing EWUCSC learning project and practical security roadmap.",
+    href: "https://ewucsc-arsenal.vercel.app/",
+    icon: <FaRoute />,
+  },
+  {
+    title: "PortSwigger Web Security Academy",
+    category: "Labs",
+    description: "High-quality interactive web security learning and vulnerability labs.",
+    href: "https://portswigger.net/web-security",
+    icon: <FaGlobe />,
   },
   {
     title: "OWASP Top 10",
-    desc: "The standard awareness document for web application security risks.",
-    icon: <HiOutlineGlobeAlt />,
-    tag: "Documentation",
-    link: "https://owasp.org",
-    color: "from-cyan-500/20"
+    category: "Reference",
+    description: "Core awareness material for common web application security risks.",
+    href: "https://owasp.org/www-project-top-ten/",
+    icon: <FaLock />,
   },
   {
-    title: "Hack The Box",
-    desc: "Massive hacking playground for advanced penetration testing skills.",
-    icon: <HiOutlineTerminal />,
-    tag: "Labs",
-    link: "https://hackthebox.com",
-    color: "from-emerald-500/20"
+    title: "TryHackMe",
+    category: "Labs",
+    description: "Guided hands-on cybersecurity rooms and beginner-friendly learning paths.",
+    href: "https://tryhackme.com/",
+    icon: <FaTerminal />,
+  },
+  {
+    title: "Hack The Box Academy",
+    category: "Labs",
+    description: "Structured security modules and practical offensive-security exercises.",
+    href: "https://academy.hackthebox.com/",
+    icon: <FaToolbox />,
   },
   {
     title: "picoCTF",
-    desc: "Free computer security education program with year-round challenges.",
-    icon: <HiOutlineAcademicCap />,
-    tag: "CTF",
-    link: "https://picoctf.org",
-    color: "from-purple-500/20"
+    category: "CTF",
+    description: "Beginner-friendly cybersecurity challenges and competition practice.",
+    href: "https://picoctf.org/",
+    icon: <FaFlag />,
   },
   {
-    title: "Cyber Security Wiki",
-    desc: "Comprehensive roadmap and resources for every security domain.",
-    icon: <HiOutlineDocumentText />,
-    tag: "Wiki",
-    link: "https://roadmap.sh",
-    color: "from-blue-500/20"
+    title: "roadmap.sh Cyber Security",
+    category: "Roadmap",
+    description: "A broad visual roadmap for cybersecurity topics and study planning.",
+    href: "https://roadmap.sh/cyber-security",
+    icon: <FaCompass />,
   },
   {
-    title: "Exploit Database",
-    desc: "CVE compliant database for exploits and vulnerable software research.",
-    icon: <HiOutlineLockClosed />,
-    tag: "Database",
-    link: "https://exploit-db.com",
-    color: "from-orange-500/20"
+    title: "NIST Cybersecurity Framework",
+    category: "Reference",
+    description: "Industry-standard guidance for managing cybersecurity risk.",
+    href: "https://www.nist.gov/cyberframework",
+    icon: <FaBookOpen />,
   },
   {
-    title: "PortSwigger Academy",
-    desc: "Free online web security training from the creators of Burp Suite.",
-    icon: <HiOutlineCode />,
-    tag: "Course",
-    link: "https://portswigger.net",
-    color: "from-pink-500/20"
+    title: "CTFtime",
+    category: "CTF",
+    description: "Global CTF calendar, teams, rankings, archives and writeups.",
+    href: "https://ctftime.org/",
+    icon: <FaFlag />,
   },
   {
-    title: "NIST Framework",
-    desc: "Standard guidelines to manage and reduce cybersecurity risk.",
-    icon: <HiOutlineBookOpen />,
-    tag: "Standard",
-    link: "https://nist.gov",
-    color: "from-amber-500/20"
-  }
+    title: "UITS Cyber Security Wing",
+    category: "Community",
+    description: "Reference community site shared by EWUCSC leadership for resource inspiration.",
+    href: "https://uitssec.xyz/index.html",
+    icon: <FaGraduationCap />,
+  },
 ];
 
 const Resources = () => {
   const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All");
 
-  const filteredResources = resources.filter(res => 
-    res.title.toLowerCase().includes(search.toLowerCase()) || 
-    res.tag.toLowerCase().includes(search.toLowerCase())
-  );
+  const categories = ["All", ...new Set(resources.map((item) => item.category))];
+
+  const filtered = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    return resources.filter((item) => {
+      const matchesCategory = category === "All" || item.category === category;
+      const matchesSearch =
+        !term ||
+        item.title.toLowerCase().includes(term) ||
+        item.description.toLowerCase().includes(term) ||
+        item.category.toLowerCase().includes(term);
+      return matchesCategory && matchesSearch;
+    });
+  }, [search, category]);
 
   return (
     <div className="space-y-16 pb-20">
       <PageHero
-        badge="Learning Assets"
-        title="Cyber"
-        highlight="Vault"
-        description="A curated collection of professional tools, labs, and documentation for EWUCSC members."
+        badge="Technical Resource Hub"
+        title="EWUCSC"
+        highlight="Cyber Library"
+        description="Learning paths, labs, references, tools and live CTF discovery in one technical hub."
       />
 
-      {/* Search Bar Section */}
-      <div className="max-w-md mx-auto px-4 -mt-10 relative z-20">
-        <div className="relative group">
-          <HiOutlineSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/40 group-focus-within:text-primary transition-colors" />
-          <input 
-            type="text"
-            placeholder="Search tools, platforms, or tags..."
-            className="input input-bordered w-full pl-12 bg-base-100/50 backdrop-blur-md border-white/10 focus:border-primary/50 focus:outline-none"
+      <section className="mx-auto max-w-6xl rounded-[1.5rem] border border-white/5 bg-base-100/60 p-5 backdrop-blur-xl">
+        <div className="relative">
+          <FaMagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/35" />
+          <input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search resources, labs, CTFs or roadmaps..."
+            className="input input-bordered w-full bg-base-200/45 pl-11"
           />
         </div>
-      </div>
-
-      <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto px-4">
-        <AnimatePresence mode="popLayout">
-          {filteredResources.map((res, index) => (
-            <motion.div
-              layout
-              key={res.title}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.2 }}
-              className="group relative overflow-hidden rounded-[1.5rem] border border-white/5 bg-base-100/70 p-8 backdrop-blur-xl shadow-2xl hover:border-primary/30 transition-all duration-300 cyber-shimmer flex flex-col"
+        <div className="mt-4 flex flex-wrap gap-2">
+          {categories.map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setCategory(item)}
+              className={`btn btn-sm rounded-full ${category === item ? "btn-primary" : "btn-ghost border border-white/5"}`}
             >
-              <div className={`absolute -inset-24 bg-gradient-to-br ${res.color} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-3xl`} />
-
-              <div className="relative z-10 flex flex-col h-full">
-                <div className="flex justify-between items-start mb-6">
-                  <div className="p-3 rounded-xl bg-primary/10 text-primary text-3xl group-hover:scale-110 transition-transform duration-300">
-                    {res.icon}
-                  </div>
-                  <span className="badge badge-outline border-white/10 text-[10px] uppercase tracking-wider font-mono opacity-60">
-                    {res.tag}
-                  </span>
-                </div>
-
-                <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
-                  {res.title}
-                </h3>
-                
-                <p className="text-sm text-base-content/60 leading-relaxed mb-6 flex-grow">
-                  {res.desc}
-                </p>
-
-                <a 
-                  href={res.link} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="btn btn-sm btn-ghost p-0 w-fit hover:bg-transparent hover:text-primary group-hover:translate-x-1 transition-all"
-                >
-                  Visit Resource →
-                </a>
-              </div>
-            </motion.div>
+              {item}
+            </button>
           ))}
-        </AnimatePresence>
+        </div>
       </section>
 
-      {filteredResources.length === 0 && (
-        <div className="text-center py-20 opacity-50">
-          <p className="text-xl font-mono">No resources found for "{search}"</p>
+      <section className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {filtered.map((item) => (
+          <a
+            key={item.title}
+            href={item.href}
+            target="_blank"
+            rel="noreferrer"
+            className="group rounded-[1.5rem] border border-white/5 bg-base-100/70 p-6 transition duration-300 hover:-translate-y-1 hover:border-secondary/30"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/10 text-2xl text-secondary">
+                {item.icon}
+              </div>
+              <span className="badge badge-outline border-white/10 text-[10px] uppercase tracking-[0.16em]">
+                {item.category}
+              </span>
+            </div>
+            <h2 className="mt-5 text-xl font-black group-hover:text-secondary">{item.title}</h2>
+            <p className="mt-3 text-sm leading-relaxed text-base-content/60">
+              {item.description}
+            </p>
+            <span className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.14em] text-secondary">
+              Open resource <FaExternalLinkAlt size={10} />
+            </span>
+          </a>
+        ))}
+      </section>
+
+      {filtered.length === 0 && (
+        <div className="rounded-2xl border border-dashed border-white/10 p-12 text-center text-base-content/50">
+          No resources match this filter.
         </div>
       )}
+
+      <section className="rounded-[2rem] border border-secondary/15 bg-base-100/65 p-6 md:p-9">
+        <div className="flex items-center gap-3 text-secondary">
+          <FaFlag />
+          <p className="font-mono text-xs uppercase tracking-[0.22em]">// upcoming competitions</p>
+        </div>
+        <h2 className="mt-3 text-3xl font-black">Upcoming global CTFs</h2>
+        <p className="mt-3 mb-7 max-w-3xl text-base-content/60">
+          Live event discovery is fetched through the EWUCSC backend from CTFtime.
+          Club-only challenge content stays inside the authenticated member portal.
+        </p>
+        <UpcomingCtfs limit={6} />
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-2">
+        <div className="rounded-[1.5rem] border border-primary/15 bg-primary/5 p-7">
+          <FaCode className="text-2xl text-primary" />
+          <h2 className="mt-4 text-2xl font-black">Resource migration</h2>
+          <p className="mt-3 text-sm leading-relaxed text-base-content/60">
+            Legacy EWUCSC HTML/JS learning resources can be migrated into reusable React
+            modules here without changing the public learning URLs.
+          </p>
+        </div>
+        <div className="rounded-[1.5rem] border border-accent/15 bg-accent/5 p-7">
+          <FaBookOpen className="text-2xl text-accent" />
+          <h2 className="mt-4 text-2xl font-black">Contribute responsibly</h2>
+          <p className="mt-3 text-sm leading-relaxed text-base-content/60">
+            The future contributor workflow will let members propose technical resources
+            and writeups for review before publication.
+          </p>
+        </div>
+      </section>
     </div>
   );
 };
