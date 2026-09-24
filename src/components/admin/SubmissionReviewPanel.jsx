@@ -3,10 +3,10 @@ import toast from "react-hot-toast";
 import {
   FaCheck,
   FaClipboardCheck,
-  FaExternalLinkAlt,
   FaRotate,
   FaTriangleExclamation,
 } from "react-icons/fa6";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import { api } from "../../services/api";
 
 const SubmissionReviewPanel = () => {
