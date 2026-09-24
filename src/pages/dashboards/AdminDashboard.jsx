@@ -4,6 +4,7 @@ import {
   FaBan,
   FaCheck,
   FaClock,
+  FaDownload,
   FaRotate,
   FaShieldHalved,
   FaUserGear,
@@ -56,6 +57,41 @@ const AdminDashboard = () => {
         : users.filter((user) => user.approvalStatus === filter),
     [filter, users],
   );
+
+  const exportMembersCsv = () => {
+    const headers = [
+      "name",
+      "studentId",
+      "email",
+      "role",
+      "approvalStatus",
+      "ctfScore",
+      "solvedChallenges",
+      "createdAt",
+    ];
+
+    const escape = (value) =>
+      '"' + String(value ?? "").replaceAll('"', '""') + '"';
+
+    const rows = [
+      headers.join(","),
+      ...users.map((user) =>
+        headers.map((key) => escape(user[key])).join(","),
+      ),
+    ];
+
+    const blob = new Blob([rows.join("\n")], {
+      type: "text/csv;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "ewucsc-members.csv";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+  };
 
   const updateApproval = async (uid, status) => {
     try {
@@ -136,14 +172,24 @@ const AdminDashboard = () => {
               </p>
               <h2 className="mt-2 text-2xl font-black">Member requests & roles</h2>
             </div>
-            <button
-              type="button"
-              onClick={loadUsers}
-              className="btn btn-sm btn-ghost"
-              disabled={loading}
-            >
-              <FaRotate className={loading ? "animate-spin" : ""} /> Refresh
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={exportMembersCsv}
+                className="btn btn-sm btn-ghost"
+                disabled={loading || users.length === 0}
+              >
+                <FaDownload /> Export CSV
+              </button>
+              <button
+                type="button"
+                onClick={loadUsers}
+                className="btn btn-sm btn-ghost"
+                disabled={loading}
+              >
+                <FaRotate className={loading ? "animate-spin" : ""} /> Refresh
+              </button>
+            </div>
           </div>
 
           <div className="mt-6 flex flex-wrap gap-2">
