@@ -3,7 +3,7 @@ import SectionHeading from "./SectionHeading";
 
 const points = [
   "Gain hands-on exposure to cybersecurity",
-  "Participate in ranked challenge-based learning",
+  "Access member-only challenge-based learning after approval",
   "Build confidence through real practice",
   "Collaborate with a serious student tech community",
 ];
@@ -29,9 +29,7 @@ const WhyJoinSection = () => {
             Competitive Learning Environment
           </h3>
           <p className="text-base-content/70 leading-relaxed">
-            Members will be able to solve cyber problems, earn points, and climb
-            rankings — creating a focused environment similar to gamified learning
-            platforms like picoCTF.
+            Approved members can solve private EWUCSC challenges, earn points, and follow their internal ranking inside the protected member portal.
           </p>
         </motion.div>
 

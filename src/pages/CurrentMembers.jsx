@@ -1,47 +1,18 @@
-import MembersHero from "../components/members/MembersHero";
+import PanelHero from "../components/members/PanelHero";
+import PanelGallerySection from "../components/members/PanelGallerySection";
 import MembersCTA from "../components/members/MembersCTA";
-import MembersSection from "../components/members/MembersSection";
-import { membersData } from "../data/membersData";
+import { panel2526Data } from "../data/panel2526Data";
 
 const CurrentMembers = () => {
-  const president = membersData.filter((member) => member.role === "President");
-  const vicePresidents = membersData.filter(
-    (member) => member.role === "Vice President"
-  );
-  const executives = membersData.filter((member) => member.role === "Executive");
-  const subExecutives = membersData.filter(
-    (member) => member.role === "Sub Executive"
-  );
-
   return (
     <div className="space-y-20 md:space-y-28">
-      <MembersHero />
-
-      <MembersSection
-        title="President"
-        subtitle="The primary strategic leader driving the club’s vision, direction, and long-term cyber culture."
-        members={president}
-        spotlight
+      <PanelHero
+        badge="Current Leadership"
+        title="Executive Panel 25–26"
+        description="Meet the current EWUCSC executive leadership team leading club operations, technical activities, events and community growth."
       />
 
-      <MembersSection
-        title="Vice Presidents"
-        subtitle="The executive support layer helping lead operations, initiatives, and organizational execution."
-        members={vicePresidents}
-        gridCols="grid-cols-1 md:grid-cols-2"
-      />
-
-      <MembersSection
-        title="Executives"
-        subtitle="The core management team responsible for planning, administration, technical direction, and delivery."
-        members={executives}
-      />
-
-      <MembersSection
-        title="Sub Executives"
-        subtitle="The operational force supporting training, events, engagement, content, and technical execution."
-        members={subExecutives}
-      />
+      <PanelGallerySection members={panel2526Data} panelLabel="Current Executive" />
 
       <MembersCTA />
     </div>

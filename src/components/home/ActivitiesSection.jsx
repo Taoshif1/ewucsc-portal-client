@@ -6,7 +6,7 @@ const activities = [
   {
     title: "Capture The Flag",
     description:
-      "Sharpen your skills through web exploitation, OSINT, forensics, and security puzzles.",
+      "Represent EWUCSC in cybersecurity competitions and structured practice. Internal challenges and flags stay inside the approved member portal.",
     icon: <FaBug className="text-2xl" />,
   },
   {
