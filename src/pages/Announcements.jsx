@@ -35,7 +35,7 @@ const Announcements = () => {
           <FaBullhorn className="mx-auto text-3xl text-base-content/30" />
           <h2 className="mt-4 text-xl font-black">No published announcements yet</h2>
           <p className="mt-2 text-sm text-base-content/50">
-            New official notices will appear here when published from Studio Admin.
+            New official notices will appear here when published from the EWUCSC Admin portal.
           </p>
         </div>
       ) : (
