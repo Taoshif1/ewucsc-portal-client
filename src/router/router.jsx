@@ -29,6 +29,7 @@ import About from "../pages/About";
 import Resources from "../pages/Resources";
 import Contact from "../pages/Contact";
 import Blogs from "../pages/Blogs";
+import BlogDetails from "../pages/BlogDetails";
 
 import PrivateRoute from "./PrivateRouter";
 import RoleRoute from "./RoleRouter";
@@ -45,6 +46,7 @@ export const router = createBrowserRouter([
       { path: "learning", element: <Learning /> },
       { path: "announcements", element: <Announcements /> },
       { path: "blogs", element: <Blogs /> },
+      { path: "blogs/:slug", element: <BlogDetails /> },
       { path: "partners", element: <Partners /> },
       { path: "about", element: <About /> },
       { path: "resources", element: <Resources /> },
