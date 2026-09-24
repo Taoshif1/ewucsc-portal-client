@@ -1,4 +1,5 @@
 // EWU student identities use the Student ID as the institutional-email local part.
+// Keep this helper shared by registration and login so both flows enforce one format.
 export const EWU_STUDENT_ID_PATTERN = /^\d{4}-\d-\d{2}-\d{2,3}$/;
 
 export const normalizeStudentId = (value = "") =>
