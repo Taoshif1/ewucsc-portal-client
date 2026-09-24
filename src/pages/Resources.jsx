@@ -3,7 +3,6 @@ import {
   FaBookOpen,
   FaCode,
   FaCompass,
-  FaExternalLinkAlt,
   FaFlag,
   FaGlobe,
   FaGraduationCap,
@@ -13,6 +12,7 @@ import {
   FaTerminal,
   FaToolbox,
 } from "react-icons/fa6";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import PageHero from "../components/PageHero";
 import UpcomingCtfs from "../components/ctf/UpcomingCtfs";
 
