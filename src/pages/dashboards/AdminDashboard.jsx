@@ -16,6 +16,7 @@ import { useAuth } from "../../hooks/useAuth";
 import CyberOperationsManager from "../../components/admin/CyberOperationsManager";
 import ContentManager from "../../components/admin/ContentManager";
 import SubmissionReviewPanel from "../../components/admin/SubmissionReviewPanel";
+import ContactInbox from "../../components/admin/ContactInbox";
 import MemberDashboard from "./MemberDashboard";
 
 const ROLES = ["admin", "executive", "sub-executive", "member"];
@@ -315,6 +316,7 @@ const AdminDashboard = () => {
         <CyberOperationsManager />
         <ContentManager />
         <SubmissionReviewPanel />
+        <ContactInbox />
       </div>
     </div>
     </>
