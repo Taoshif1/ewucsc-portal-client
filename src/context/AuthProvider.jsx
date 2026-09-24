@@ -16,13 +16,11 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [profileLoading, setProfileLoading] = useState(false);
 
-  const registerUser = (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
-  };
+  const registerUser = (email, password) =>
+    createUserWithEmailAndPassword(auth, email, password);
 
-  const loginUser = (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
-  };
+  const loginUser = (email, password) =>
+    signInWithEmailAndPassword(auth, email, password);
 
   const logoutUser = async () => {
     localStorage.removeItem("access-token");
@@ -35,18 +33,18 @@ export const AuthProvider = ({ children }) => {
 
     if (!token) {
       setBackendUser(null);
-      return;
+      return null;
     }
 
     try {
       setProfileLoading(true);
       const res = await api.get("/profile");
-      console.log("Backend profile fetched:", res.data.user);
       setBackendUser(res.data.user);
-    } catch (error) {
-      console.error("Profile fetch failed:", error);
+      return res.data.user;
+    } catch {
       setBackendUser(null);
       localStorage.removeItem("access-token");
+      return null;
     } finally {
       setProfileLoading(false);
     }
@@ -67,7 +65,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (user) {
+    if (user && localStorage.getItem("access-token")) {
       fetchUserProfile();
     }
   }, [user]);
