@@ -1,15 +1,19 @@
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const configuredApiUrl = import.meta.env.VITE_API_URL?.trim().replace(/\/$/, "");
 
-// For normal protected backend routes (JWT)
+export const API_BASE_URL =
+  configuredApiUrl ||
+  (import.meta.env.DEV
+    ? "http://localhost:5000/api"
+    : "https://ewucsc-portal-server.vercel.app/api");
+
 export const api = axios.create({
-  baseURL,
+  baseURL: API_BASE_URL,
 });
 
-// For Firebase token based auth routes
 export const publicApi = axios.create({
-  baseURL,
+  baseURL: API_BASE_URL,
 });
 
 api.interceptors.request.use(
@@ -22,5 +26,5 @@ api.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
