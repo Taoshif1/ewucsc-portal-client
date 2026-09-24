@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaCalendarDays, FaClock, FaExternalLinkAlt, FaFlag } from "react-icons/fa";
+import { FaCalendarAlt, FaClock, FaExternalLinkAlt, FaFlag } from "react-icons/fa";
 import { publicApi } from "../../services/api";
 
 const formatDate = (value) => {
@@ -73,7 +73,7 @@ const UpcomingCtfs = ({ limit = 4, compact = false }) => {
 
           <div className="mt-4 space-y-2 text-xs text-base-content/55">
             <p className="flex items-center gap-2">
-              <FaCalendarDays className="text-secondary" />
+              <FaCalendarAlt className="text-secondary" />
               Starts {formatDate(event.start)}
             </p>
             <p className="flex items-center gap-2">
