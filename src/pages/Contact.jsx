@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import { useRef, useState } from "react";
-import emailjs from "@emailjs/browser";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import {
   HiOutlineMail,
@@ -18,36 +17,36 @@ import {
   HiOutlineFire,
 } from "react-icons/hi";
 
-import { FaDiscord, FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa";
 import PageHero from "../components/PageHero";
 import Map from "../components/Map";
+import { publicApi } from "../services/api";
 
 const Contact = () => {
-  const form = useRef();
   const [loading, setLoading] = useState(false);
 
-  const sendEmail = (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const sendMessage = async (event) => {
+    event.preventDefault();
+    const formElement = event.currentTarget;
+    const formData = new FormData(formElement);
 
-    // Replace the strings below with your actual EmailJS IDs
-    emailjs
-      .sendForm(
-        "YOUR_SERVICE_ID",
-        "YOUR_TEMPLATE_ID",
-        form.current,
-        "YOUR_PUBLIC_KEY",
-      )
-      .then(() => {
-        toast.success("Message transmitted successfully!");
-        e.target.reset();
-      })
-      .catch(() => {
-        toast.error("Transmission failed. Please try again.");
-      })
-      .finally(() => {
-        setLoading(false);
+    try {
+      setLoading(true);
+      await publicApi.post("/contact", {
+        name: formData.get("name"),
+        email: formData.get("email"),
+        message: formData.get("message"),
+        website: formData.get("website"),
       });
+      toast.success("Message received. EWUCSC can review it from the club inbox.");
+      formElement.reset();
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Unable to send your message right now. Please email ewucsc@ewubd.edu.",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const recruitmentSteps = [
@@ -214,16 +213,24 @@ const Contact = () => {
             Direct line for inquiries.
           </p>
 
-          <form ref={form} onSubmit={sendEmail} className="space-y-5">
+          <form onSubmit={sendMessage} className="space-y-5">
             <input
-              name="user_name"
+              type="text"
+              name="website"
+              tabIndex="-1"
+              autoComplete="off"
+              className="hidden"
+              aria-hidden="true"
+            />
+            <input
+              name="name"
               type="text"
               placeholder="Full Name"
               required
               className="input input-bordered w-full h-14 bg-base-200/30 border-white/5 focus:border-primary"
             />
             <input
-              name="user_email"
+              name="email"
               type="email"
               placeholder="Email Address"
               required
@@ -244,30 +251,12 @@ const Contact = () => {
             </button>
           </form>
 
-          <div className="mt-10 flex justify-center gap-4">
+          <div className="mt-10 text-center">
             <a
-              href="#"
-              className="btn btn-ghost btn-sm btn-circle text-xl hover:text-secondary hover:bg-secondary/10 transition-all"
+              href="mailto:ewucsc@ewubd.edu"
+              className="link link-secondary text-sm font-bold"
             >
-              <FaDiscord />
-            </a>
-            <a
-              href="#"
-              className="btn btn-ghost btn-sm btn-circle text-xl hover:text-secondary hover:bg-secondary/10 transition-all"
-            >
-              <FaGithub />
-            </a>
-            <a
-              href="#"
-              className="btn btn-ghost btn-sm btn-circle text-xl hover:text-secondary hover:bg-secondary/10 transition-all"
-            >
-              <FaFacebook />
-            </a>
-            <a
-              href="#"
-              className="btn btn-ghost btn-sm btn-circle text-xl hover:text-secondary hover:bg-secondary/10 transition-all"
-            >
-              <FaLinkedin />
+              Prefer email? Contact ewucsc@ewubd.edu
             </a>
           </div>
         </motion.div>
