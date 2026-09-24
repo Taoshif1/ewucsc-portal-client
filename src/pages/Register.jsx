@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { sendEmailVerification } from "firebase/auth";
+import { deleteUser, sendEmailVerification } from "firebase/auth";
 import { useAuth } from "../hooks/useAuth";
 import { publicApi } from "../services/api";
 import Navbar from "../components/Navbar";
@@ -47,9 +47,12 @@ const Register = () => {
     const email = studentIdToEmail(studentId);
     const loadingToast = toast.loading("Submitting EWUCSC registration...");
     setIsSubmitting(true);
+    let createdFirebaseUser = null;
+    let backendProfileSaved = false;
 
     try {
       const result = await registerUser(email, data.password);
+      createdFirebaseUser = result.user;
       await sendEmailVerification(result.user);
 
       const firebaseToken = await result.user.getIdToken();
@@ -66,6 +69,7 @@ const Register = () => {
         },
       );
 
+      backendProfileSaved = true;
       await logoutUser();
 
       toast.success("Registration submitted. Check your EWU email.", {
@@ -73,6 +77,14 @@ const Register = () => {
       });
       navigate("/pending-approval", { state: { email }, replace: true });
     } catch (error) {
+      if (createdFirebaseUser && !backendProfileSaved) {
+        try {
+          await deleteUser(createdFirebaseUser);
+        } catch (cleanupError) {
+          console.error("Firebase registration cleanup failed:", cleanupError);
+        }
+      }
+
       const message =
         error.response?.data?.message ||
         (error.code === "auth/email-already-in-use"
