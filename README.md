@@ -209,3 +209,8 @@ The following require real club-provided information rather than invented data:
 - designated test credentials for each of the four roles
 - final production domains/DNS
 - full migration of all legacy Arsenal HTML/CSS/JS lessons into React modules
+
+
+## Deployment recovery
+
+The current `main` branch includes the registration orphan-cleanup and latest portal fixes. A fresh production deployment should be triggered after any Vercel build-rate-limit window clears.
