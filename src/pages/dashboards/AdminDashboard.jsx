@@ -152,8 +152,8 @@ const AdminDashboard = () => {
 
         <section className="mt-8 grid gap-4 md:grid-cols-3">
           {[
-            ["Pending review", filter === "pending" ? counts.visible : counts.pending, <FaClock key="clock" />],
-            ["Approved shown", filter === "approved" ? counts.visible : counts.approved, <FaCheck key="check" />],
+            ["Pending review", counts.pending, <FaClock key="clock" />],
+            ["Approved members", counts.approved, <FaCheck key="check" />],
             ["Total accounts", counts.total, <FaUsers key="users" />],
           ].map(([label, value, icon]) => (
             <div key={label} className="rounded-2xl border border-white/5 bg-base-100/65 p-5">

@@ -22,7 +22,7 @@ const Blogs = () => {
         badge="Knowledge Hub"
         title="Latest"
         highlight="Blogs"
-        description="Cybersecurity insights, learning notes, event recaps and student-driven technical writing."
+        description="Official club stories, event recaps, announcements in depth, achievements and community updates from EWUCSC."
       />
 
       {loading ? (

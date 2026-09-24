@@ -80,7 +80,14 @@ const SubmissionReviewPanel = () => {
                       {row.homeworkTitle}
                     </span>
                   </div>
-                  <p className="mt-3 text-sm font-bold">Member UID: {row.uid}</p>
+                  <div className="mt-3">
+                    <p className="text-sm font-bold">
+                      {row.member?.name || "EWUCSC Member"}
+                    </p>
+                    <p className="mt-1 font-mono text-xs text-secondary">
+                      {row.member?.studentId || row.member?.email || "Legacy member"}
+                    </p>
+                  </div>
                   {row.response && (
                     <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-base-content/65">
                       {row.response}
