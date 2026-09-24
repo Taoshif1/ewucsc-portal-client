@@ -13,6 +13,7 @@ import {
 } from "react-icons/fa6";
 import { useAuth } from "../../hooks/useAuth";
 import PortalActionCard from "../../components/dashboard/PortalActionCard";
+import UpcomingCtfs from "../../components/ctf/UpcomingCtfs";
 
 const portalCards = [
   {
@@ -164,12 +165,12 @@ const MemberDashboard = () => {
               <p className="font-mono text-xs uppercase tracking-[0.22em] text-secondary">Tournament watch</p>
             </div>
             <h2 className="mt-4 text-2xl font-black">Upcoming external CTFs</h2>
-            <p className="mt-3 text-base-content/60">
-              The public CTFtime event feed will appear here in the next platform checkpoint.
-              EWUCSC private challenges remain inside the protected Arena.
+            <p className="mt-3 mb-6 text-base-content/60">
+              External competitions from CTFtime. EWUCSC private challenges stay inside the protected Arena.
             </p>
+            <UpcomingCtfs limit={2} compact />
             <Link to="/dashboard/ctf" className="btn btn-sm btn-outline btn-secondary mt-6 rounded-full">
-              Open Arena
+              Open private Arena
             </Link>
           </div>
 
