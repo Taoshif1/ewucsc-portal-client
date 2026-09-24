@@ -12,6 +12,7 @@ import {
 import { api } from "../../services/api";
 import { useAuth } from "../../hooks/useAuth";
 import CyberOperationsManager from "../../components/admin/CyberOperationsManager";
+import ContentManager from "../../components/admin/ContentManager";
 
 const ROLES = ["admin", "executive", "sub-executive", "member"];
 const FILTERS = ["all", "pending", "approved", "rejected", "suspended"];
@@ -244,6 +245,7 @@ const AdminDashboard = () => {
         </section>
 
         <CyberOperationsManager />
+        <ContentManager />
       </div>
     </div>
   );
