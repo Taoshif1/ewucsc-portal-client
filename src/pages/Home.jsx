@@ -1,5 +1,4 @@
 import HeroSection from "../components/home/HeroSection";
-import StatsSection from "../components/home/StatsSection";
 import ActivitiesSection from "../components/home/ActivitiesSection";
 import LearningTracksSection from "../components/home/LearningTracksSection";
 import WhyJoinSection from "../components/home/WhyJoinSection";
@@ -20,7 +19,6 @@ const Home = () => {
       <div className="relative z-10 space-y-24 lg:space-y-32">
         <HeroSection />
         <CyberBadgeStrip />
-        <StatsSection />
         <ActivitiesSection />
         <LearningTracksSection />
         <WhyJoinSection />
