@@ -3,10 +3,11 @@ import Spinner from "../components/common/Spinner";
 import { useAuth } from "../hooks/useAuth";
 
 const PrivateRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, backendUser, loading, profileLoading } = useAuth();
   const location = useLocation();
+  const hasToken = Boolean(localStorage.getItem("access-token"));
 
-  if (loading) {
+  if (loading || profileLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Spinner />
@@ -14,8 +15,12 @@ const PrivateRoute = ({ children }) => {
     );
   }
 
-  if (!user) {
+  if (!user || !hasToken || !backendUser) {
     return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (backendUser.approvalStatus && backendUser.approvalStatus !== "approved") {
+    return <Navigate to="/pending-approval" replace />;
   }
 
   return children;
