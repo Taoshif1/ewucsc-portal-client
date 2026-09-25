@@ -1,13 +1,7 @@
-import MemberDashboard from "./MemberDashboard";
-import SubmissionReviewPanel from "../../components/admin/SubmissionReviewPanel";
+import StaffDashboardHome from "../../components/dashboard/StaffDashboardHome";
 
 const SubExecutiveDashboard = () => (
-  <>
-    <MemberDashboard />
-    <div className="mx-auto -mt-14 max-w-7xl px-4 pb-20 md:px-6 lg:px-8">
-      <SubmissionReviewPanel />
-    </div>
-  </>
+  <StaffDashboardHome role="sub-executive" />
 );
 
 export default SubExecutiveDashboard;
