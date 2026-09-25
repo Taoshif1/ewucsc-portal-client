@@ -138,9 +138,9 @@ const Learning = () => {
             <p className="font-mono text-xs uppercase tracking-[0.22em] text-primary">
               // VP technical references
             </p>
-            <h2 className="mt-3 text-3xl font-black">Zaber Mahmud’s Technical Notes</h2>
+            <h2 className="mt-3 text-3xl font-black">A Gift from the VP ✦</h2>
             <p className="mt-3 max-w-3xl text-base-content/60">
-              Original standalone HTML references shared by the Vice President (Technical),
+              A curated set of standalone technical references contributed by the Vice President (Technical),
               preserved inside the EWUCSC technical library for club learning and future
               technical-subdomain use.
             </p>
