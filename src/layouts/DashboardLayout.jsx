@@ -158,7 +158,6 @@ const DashboardLayout = () => {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    setMenuOpen(false);
   }, [pathname]);
 
   const role = backendUser?.role || "member";
