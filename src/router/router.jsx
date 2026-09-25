@@ -35,6 +35,7 @@ import Resources from "../pages/Resources";
 import Contact from "../pages/Contact";
 import Blogs from "../pages/Blogs";
 import BlogDetails from "../pages/BlogDetails";
+import Credits from "../pages/Credits";
 
 import PrivateRoute from "./PrivateRouter";
 import RoleRoute from "./RoleRouter";
@@ -56,6 +57,7 @@ export const router = createBrowserRouter([
       { path: "about", element: <About /> },
       { path: "resources", element: <Resources /> },
       { path: "contact", element: <Contact /> },
+      { path: "credits", element: <Credits /> },
       {
         path: "members",
         children: [
