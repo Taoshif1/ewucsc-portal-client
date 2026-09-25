@@ -21,8 +21,48 @@ const resources = [
     title: "EWUCSC Arsenal",
     category: "Learning",
     description: "Existing EWUCSC learning project and practical security roadmap.",
-    href: "https://ewucsc-arsenal.vercel.app/",
+    href: "/arsenal/index.html",
     icon: <FaRoute />,
+  },
+  {
+    title: "VP Technical Resources",
+    category: "EWUCSC",
+    description: "A curated landing page for the technical references shared by the Vice President (Technical).",
+    href: "/vp-resources/index.html",
+    icon: <FaBookOpen />,
+    credit: "Zaber Mahmud",
+  },
+  {
+    title: "Web Security Field Notes",
+    category: "Field Notes",
+    description: "Standalone web-security reference notes intended for responsible, authorized testing and club practice.",
+    href: "/vp-resources/web-security-field-notes.html",
+    icon: <FaGlobe />,
+    credit: "Zaber Mahmud",
+  },
+  {
+    title: "Linux & Security Field Guide",
+    category: "Field Guide",
+    description: "A detailed Linux and security reference covering practical commands, concepts and workflows.",
+    href: "/vp-resources/linux-security-field-guide.html",
+    icon: <FaTerminal />,
+    credit: "Zaber Mahmud",
+  },
+  {
+    title: "Reverse Engineering Field Notes",
+    category: "Field Notes",
+    description: "Reverse-engineering and Linux CTF reference material for binary analysis and related practice.",
+    href: "/vp-resources/reverse-engineering-field-notes.html",
+    icon: <FaCode />,
+    credit: "Zaber Mahmud",
+  },
+  {
+    title: "EWUCSC Toolkit",
+    category: "Toolkit",
+    description: "A searchable categorized directory of cybersecurity tools with links to their official sources.",
+    href: "/vp-resources/ewucsc-toolkit.html",
+    icon: <FaToolbox />,
+    credit: "Zaber Mahmud",
   },
   {
     title: "PortSwigger Web Security Academy",
@@ -162,6 +202,11 @@ const Resources = () => {
             <p className="mt-3 text-sm leading-relaxed text-base-content/60">
               {item.description}
             </p>
+            {item.credit && (
+              <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-accent/70">
+                Shared by {item.credit}
+              </p>
+            )}
             <span className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.14em] text-secondary">
               Open resource <FaExternalLinkAlt size={10} />
             </span>
