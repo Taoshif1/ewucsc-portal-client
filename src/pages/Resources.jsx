@@ -25,9 +25,9 @@ const resources = [
     icon: <FaRoute />,
   },
   {
-    title: "VP Technical Resources",
+    title: "Technical Resource Drop",
     category: "EWUCSC",
-    description: "A curated landing page for the technical references shared by the Vice President (Technical).",
+    description: "A curated technical collection contributed to EWUCSC as a gift from the Vice President (Technical).",
     href: "/vp-resources/index.html",
     icon: <FaBookOpen />,
     credit: "A Gift from the VP ✦",
