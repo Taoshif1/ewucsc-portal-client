@@ -17,10 +17,92 @@ import {
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { loginUser, logoutUser, fetchUserProfile } = useAuth();
-  const { register, handleSubmit } = useForm();
+  const {
+    loginUser,
+    logoutUser,
+    fetchUserProfile,
+    resetPassword,
+    resendVerification,
+  } = useAuth();
+  const { register, handleSubmit, getValues } = useForm();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [resettingPassword, setResettingPassword] = useState(false);
+  const [resendingVerification, setResendingVerification] = useState(false);
+
+  const resolveEmail = (identityValue = "") => {
+    const identity = identityValue.trim();
+    const studentId = normalizeStudentId(identity);
+    const isLegacyEmail = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(identity);
+
+    if (!isValidStudentId(studentId) && !isLegacyEmail) {
+      return null;
+    }
+
+    return isLegacyEmail ? identity.toLowerCase() : studentIdToEmail(studentId);
+  };
+
+  const handleForgotPassword = async () => {
+    const email = resolveEmail(getValues("studentId"));
+
+    if (!email) {
+      toast.error("Enter your EWU Student ID first.");
+      return;
+    }
+
+    try {
+      setResettingPassword(true);
+      await resetPassword(email);
+      toast.success("Password reset email sent. Check your EWU inbox.");
+    } catch (error) {
+      if (error.code === "auth/too-many-requests") {
+        toast.error("Too many requests. Please wait a little and try again.");
+      } else {
+        toast.success(
+          "If an account exists for this Student ID, a password reset email has been requested.",
+        );
+      }
+    } finally {
+      setResettingPassword(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    const email = resolveEmail(getValues("studentId"));
+    const password = getValues("password");
+
+    if (!email) {
+      toast.error("Enter your EWU Student ID first.");
+      return;
+    }
+
+    if (!password) {
+      toast.error("Enter your password so Firebase can verify the account.");
+      return;
+    }
+
+    try {
+      setResendingVerification(true);
+      const result = await loginUser(email, password);
+
+      if (result.user.emailVerified) {
+        toast.success("Your EWU email is already verified.");
+        return;
+      }
+
+      await resendVerification(result.user);
+      toast.success("Verification email sent again. Check your EWU inbox.");
+    } catch (error) {
+      if (error.code === "auth/too-many-requests") {
+        toast.error("Too many requests. Please wait a little and try again.");
+      } else {
+        toast.error("Could not resend verification. Check your Student ID and password.");
+      }
+    } finally {
+      await logoutUser().catch(() => {});
+      setResendingVerification(false);
+    }
+  };
 
   const onSubmit = async (data) => {
     const identity = data.studentId.trim();
@@ -57,9 +139,17 @@ const Login = () => {
       const code = error.response?.data?.code;
       const message = error.response?.data?.message;
 
-      if (["PENDING_APPROVAL", "EMAIL_NOT_VERIFIED"].includes(code)) {
+      if (code === "EMAIL_NOT_VERIFIED") {
         await logoutUser();
-        toast(message || "Your account is not ready yet.", { id: loadingToast });
+        toast.error(
+          message || "Verify your EWU email first. You can resend the verification email below.",
+          { id: loadingToast },
+        );
+      } else if (code === "PENDING_APPROVAL") {
+        await logoutUser();
+        toast(message || "Your account is waiting for admin approval.", {
+          id: loadingToast,
+        });
         navigate("/pending-approval", { state: { email }, replace: true });
       } else if (code === "ACCOUNT_REJECTED" || code === "ACCOUNT_SUSPENDED") {
         await logoutUser();
@@ -120,9 +210,30 @@ const Login = () => {
                 </button>
               </div>
 
+              <div className="flex flex-wrap items-center justify-between gap-2 px-1 text-xs">
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  disabled={resettingPassword || isSubmitting}
+                  className="font-semibold text-primary hover:text-secondary disabled:opacity-50"
+                >
+                  {resettingPassword ? "Sending reset..." : "Forgot password?"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleResendVerification}
+                  disabled={resendingVerification || isSubmitting}
+                  className="font-semibold text-secondary hover:text-primary disabled:opacity-50"
+                >
+                  {resendingVerification ? "Sending verification..." : "Resend verification email"}
+                </button>
+              </div>
+
               <p className="px-1 text-[11px] leading-relaxed text-base-content/40">
-                During migration, existing admin/executive accounts may use their current
-                email address. New member accounts must use an EWU Student ID.
+                Password reset only needs your Student ID. Resending verification requires
+                your Student ID and current password. New member accounts use the EWU email
+                derived from their Student ID.
               </p>
 
               <button

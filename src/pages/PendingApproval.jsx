@@ -50,6 +50,12 @@ const PendingApproval = () => {
               ))}
             </div>
 
+            <p className="mx-auto mt-7 max-w-xl text-sm text-base-content/50">
+              Didn&apos;t receive the Firebase verification email? Return to Login, enter
+              your Student ID and password, then choose <strong>Resend verification email</strong>.
+              If you forgot the password, use <strong>Forgot password?</strong> there instead.
+            </p>
+
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Link to="/login" className="btn btn-primary rounded-full px-7">
                 <FaShieldHalved /> Back to Login

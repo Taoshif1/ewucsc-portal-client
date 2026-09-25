@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import {
   FaArrowUpRightFromSquare,
   FaBookOpen,
+  FaCode,
   FaFlag,
   FaGlobe,
   FaLinux,
@@ -9,6 +10,7 @@ import {
   FaRoute,
   FaShieldHalved,
   FaTerminal,
+  FaToolbox,
 } from "react-icons/fa6";
 import PageHero from "../components/PageHero";
 
@@ -35,6 +37,33 @@ const arsenalModules = [
   ["Pwn & Boot2Root", "pwn_boot2root.html", "Binary exploitation and boot-to-root practice guidance."],
   ["APT Tradecraft", "apt_tradecraft.html", "Advanced persistent threat tradecraft concepts."],
   ["Red / Blue / Purple", "red_blue_purple.html", "Offensive, defensive and collaborative security operations."],
+];
+
+const vpResources = [
+  {
+    title: "Web Security Field Notes",
+    href: "/vp-resources/web-security-field-notes.html",
+    description: "Web-security field notes for responsible, authorized practice.",
+    icon: <FaGlobe />,
+  },
+  {
+    title: "Linux & Security Field Guide",
+    href: "/vp-resources/linux-security-field-guide.html",
+    description: "A detailed Linux and security command/reference guide.",
+    icon: <FaLinux />,
+  },
+  {
+    title: "Reverse Engineering Field Notes",
+    href: "/vp-resources/reverse-engineering-field-notes.html",
+    description: "Reverse-engineering and Linux CTF reference material.",
+    icon: <FaCode />,
+  },
+  {
+    title: "EWUCSC Toolkit",
+    href: "/vp-resources/ewucsc-toolkit.html",
+    description: "A categorized directory of cybersecurity tools and official sources.",
+    icon: <FaToolbox />,
+  },
 ];
 
 const Learning = () => {
@@ -98,6 +127,52 @@ const Learning = () => {
                 <FaArrowUpRightFromSquare className="text-xs text-accent/60" />
               </div>
               <p className="mt-2 text-sm leading-relaxed text-base-content/50">{description}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-[2rem] border border-primary/15 bg-base-100/70 p-6 md:p-9">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.22em] text-primary">
+              // VP technical references
+            </p>
+            <h2 className="mt-3 text-3xl font-black">Zaber Mahmud’s Technical Notes</h2>
+            <p className="mt-3 max-w-3xl text-base-content/60">
+              Original standalone HTML references shared by the Vice President (Technical),
+              preserved inside the EWUCSC technical library for club learning and future
+              technical-subdomain use.
+            </p>
+          </div>
+          <a
+            href="/vp-resources/index.html"
+            target="_blank"
+            rel="noreferrer"
+            className="btn btn-primary btn-outline rounded-full"
+          >
+            Open Collection <FaArrowUpRightFromSquare />
+          </a>
+        </div>
+
+        <div className="mt-7 grid gap-4 md:grid-cols-2">
+          {vpResources.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              target="_blank"
+              rel="noreferrer"
+              className="group flex gap-4 rounded-2xl border border-white/5 bg-base-200/35 p-5 transition hover:-translate-y-1 hover:border-primary/25"
+            >
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-xl text-primary">
+                {item.icon}
+              </div>
+              <div>
+                <h3 className="font-black group-hover:text-primary">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-base-content/50">
+                  {item.description}
+                </p>
+              </div>
             </a>
           ))}
         </div>
