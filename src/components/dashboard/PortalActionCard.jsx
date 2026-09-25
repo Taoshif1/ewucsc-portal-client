@@ -1,6 +1,15 @@
 import { Link } from "react-router";
+import { isExternalHref } from "../../config/siteLinks";
 
-const PortalActionCard = ({ to, icon, eyebrow, title, description, accent = "primary" }) => {
+const PortalActionCard = ({
+  to,
+  href,
+  icon,
+  eyebrow,
+  title,
+  description,
+  accent = "primary",
+}) => {
   const accentMap = {
     primary: "border-primary/20 hover:border-primary/50 text-primary from-primary/15",
     secondary: "border-secondary/20 hover:border-secondary/50 text-secondary from-secondary/15",
@@ -8,11 +17,11 @@ const PortalActionCard = ({ to, icon, eyebrow, title, description, accent = "pri
     warning: "border-warning/20 hover:border-warning/50 text-warning from-warning/15",
   };
 
-  return (
-    <Link
-      to={to}
-      className={`group relative overflow-hidden rounded-[1.5rem] border bg-base-100/65 p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${accentMap[accent] || accentMap.primary}`}
-    >
+  const destination = href || to;
+  const className = `group relative block overflow-hidden rounded-[1.5rem] border bg-base-100/65 p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${accentMap[accent] || accentMap.primary}`;
+
+  const body = (
+    <>
       <div className={`absolute inset-0 bg-gradient-to-br ${accentMap[accent]?.split(" ").find((item) => item.startsWith("from-")) || "from-primary/15"} to-transparent opacity-0 transition-opacity group-hover:opacity-100`} />
       <div className="relative z-10">
         <div className="mb-8 flex items-start justify-between gap-4">
@@ -29,6 +38,20 @@ const PortalActionCard = ({ to, icon, eyebrow, title, description, accent = "pri
           Open module →
         </div>
       </div>
+    </>
+  );
+
+  if (isExternalHref(destination)) {
+    return (
+      <a href={destination} target="_blank" rel="noreferrer" className={className}>
+        {body}
+      </a>
+    );
+  }
+
+  return (
+    <Link to={destination} className={className}>
+      {body}
     </Link>
   );
 };
