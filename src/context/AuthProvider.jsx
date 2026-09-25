@@ -7,6 +7,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
+  sendEmailVerification,
+  sendPasswordResetEmail,
   signOut,
 } from "firebase/auth";
 
@@ -21,6 +23,12 @@ export const AuthProvider = ({ children }) => {
 
   const loginUser = (email, password) =>
     signInWithEmailAndPassword(auth, email, password);
+
+  const resetPassword = (email) =>
+    sendPasswordResetEmail(auth, email);
+
+  const resendVerification = (firebaseUser) =>
+    sendEmailVerification(firebaseUser);
 
   const logoutUser = async () => {
     localStorage.removeItem("access-token");
@@ -77,6 +85,8 @@ export const AuthProvider = ({ children }) => {
     profileLoading,
     registerUser,
     loginUser,
+    resetPassword,
+    resendVerification,
     logoutUser,
     setBackendUser,
     fetchUserProfile,
