@@ -1,6 +1,7 @@
 import Logo from "./Logo";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
+import SiteCreditBar from "./SiteCreditBar";
 
 const Footer = () => {
   const { user } = useAuth();
@@ -14,7 +15,8 @@ const Footer = () => {
   const homeworkLink = memberLink("/dashboard/homeworks");
 
   return (
-    <footer className="relative bg-base-100/70 backdrop-blur-xl border-t border-white/5 pt-12 pb-6 px-4 lg:px-12 mt-auto">
+    <>
+      <footer className="relative bg-base-100/70 backdrop-blur-xl border-t border-white/5 pt-12 pb-6 px-4 lg:px-12 mt-auto">
       <div className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-primary to-secondary opacity-50" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
@@ -126,7 +128,9 @@ const Footer = () => {
         <p>© {new Date().getFullYear()} EWU Cyber Security Club. All rights reserved.</p>
         <p>Member portal access requires verified EWU identity and club approval.</p>
       </div>
-    </footer>
+      </footer>
+      <SiteCreditBar />
+    </>
   );
 };
 

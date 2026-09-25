@@ -17,6 +17,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ThemeToggle from "../components/ThemeToggle";
 import { useAuth } from "../hooks/useAuth";
+import SiteCreditBar from "../components/SiteCreditBar";
 
 const staffLinks = (role) => {
   const links = [
@@ -246,6 +247,7 @@ const DashboardLayout = () => {
         <main className="min-h-[calc(100vh-4rem)]">
           <Outlet />
         </main>
+        <SiteCreditBar compact />
       </div>
     </div>
   );
