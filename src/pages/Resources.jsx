@@ -30,7 +30,7 @@ const resources = [
     description: "A curated landing page for the technical references shared by the Vice President (Technical).",
     href: "/vp-resources/index.html",
     icon: <FaBookOpen />,
-    credit: "Zaber Mahmud",
+    credit: "A Gift from the VP ✦",
   },
   {
     title: "Web Security Field Notes",
@@ -38,7 +38,7 @@ const resources = [
     description: "Standalone web-security reference notes intended for responsible, authorized testing and club practice.",
     href: "/vp-resources/web-security-field-notes.html",
     icon: <FaGlobe />,
-    credit: "Zaber Mahmud",
+    credit: "A Gift from the VP ✦",
   },
   {
     title: "Linux & Security Field Guide",
@@ -46,7 +46,7 @@ const resources = [
     description: "A detailed Linux and security reference covering practical commands, concepts and workflows.",
     href: "/vp-resources/linux-security-field-guide.html",
     icon: <FaTerminal />,
-    credit: "Zaber Mahmud",
+    credit: "A Gift from the VP ✦",
   },
   {
     title: "Reverse Engineering Field Notes",
@@ -54,7 +54,7 @@ const resources = [
     description: "Reverse-engineering and Linux CTF reference material for binary analysis and related practice.",
     href: "/vp-resources/reverse-engineering-field-notes.html",
     icon: <FaCode />,
-    credit: "Zaber Mahmud",
+    credit: "A Gift from the VP ✦",
   },
   {
     title: "EWUCSC Toolkit",
@@ -62,7 +62,7 @@ const resources = [
     description: "A searchable categorized directory of cybersecurity tools with links to their official sources.",
     href: "/vp-resources/ewucsc-toolkit.html",
     icon: <FaToolbox />,
-    credit: "Zaber Mahmud",
+    credit: "A Gift from the VP ✦",
   },
   {
     title: "PortSwigger Web Security Academy",
@@ -204,7 +204,7 @@ const Resources = () => {
             </p>
             {item.credit && (
               <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-accent/70">
-                Shared by {item.credit}
+                {item.credit}
               </p>
             )}
             <span className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.14em] text-secondary">
