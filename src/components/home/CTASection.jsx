@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router";
+import { isExternalHref, technicalHubUrl } from "../../config/siteLinks";
 
 const CTASection = () => {
   return (
@@ -22,8 +23,8 @@ const CTASection = () => {
         </h2>
 
         <p className="text-base md:text-lg text-base-content/75 leading-relaxed">
-          Learn, compete, build discipline, and become part of a future-ready
-          cybersecurity ecosystem at East West University.
+          Join the club community here, then use the dedicated technical hub for
+          structured learning and resources.
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center gap-4 pt-2">
@@ -34,12 +35,23 @@ const CTASection = () => {
             Create Account
           </Link>
 
-          <Link
-            to="/learning"
-            className="btn btn-lg btn-outline btn-secondary rounded-full hover:scale-105 active:scale-95 transition-all duration-300"
-          >
-            Explore Learning Path
-          </Link>
+          {isExternalHref(technicalHubUrl) ? (
+            <a
+              href={technicalHubUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="btn btn-lg btn-outline btn-secondary rounded-full hover:scale-105 active:scale-95 transition-all duration-300"
+            >
+              Open Technical Hub
+            </a>
+          ) : (
+            <Link
+              to={technicalHubUrl}
+              className="btn btn-lg btn-outline btn-secondary rounded-full hover:scale-105 active:scale-95 transition-all duration-300"
+            >
+              Open Technical Hub
+            </Link>
+          )}
         </div>
       </div>
     </motion.section>

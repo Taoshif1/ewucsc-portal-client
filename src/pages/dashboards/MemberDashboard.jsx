@@ -9,27 +9,34 @@ import {
   FaListCheck,
   FaRankingStar,
   FaTerminal,
+  FaTrophy,
   FaUserAstronaut,
 } from "react-icons/fa6";
 import { useAuth } from "../../hooks/useAuth";
 import PortalActionCard from "../../components/dashboard/PortalActionCard";
 import UpcomingCtfs from "../../components/ctf/UpcomingCtfs";
+import {
+  ctfEventUrl,
+  isExternalHref,
+  technicalLearningUrl,
+  technicalResourcesUrl,
+} from "../../config/siteLinks";
 
 const portalCards = [
   {
     to: "/dashboard/ctf",
     icon: <FaFlag />,
-    eyebrow: "Compete",
-    title: "CTF Arena",
-    description: "Private EWUCSC challenges, flags, solves and competition practice.",
+    eyebrow: "Practice",
+    title: "CTF Practice Arena",
+    description: "Private EWUCSC practice challenges, flags, solves and internal scoring.",
     accent: "secondary",
   },
   {
     to: "/dashboard/leaderboard",
     icon: <FaRankingStar />,
     eyebrow: "Ranking",
-    title: "Leaderboard",
-    description: "Track club standings, points and challenge-solving momentum.",
+    title: "Practice Leaderboard",
+    description: "Track member practice standings, points and challenge-solving momentum.",
     accent: "warning",
   },
   {
@@ -41,17 +48,17 @@ const portalCards = [
     accent: "accent",
   },
   {
-    to: "/learning",
+    href: technicalLearningUrl,
     icon: <FaGraduationCap />,
-    eyebrow: "Grow",
+    eyebrow: "Technical Hub",
     title: "Learning Path",
-    description: "Follow EWUCSC learning tracks and the Arsenal roadmap.",
+    description: "Follow EWUCSC learning tracks and the migrated Arsenal roadmap.",
     accent: "primary",
   },
   {
-    to: "/resources",
+    href: technicalResourcesUrl,
     icon: <FaBookOpen />,
-    eyebrow: "Research",
+    eyebrow: "Technical Hub",
     title: "Technical Resources",
     description: "Open the cybersecurity library, tools, references and labs.",
     accent: "secondary",
@@ -70,6 +77,20 @@ const MemberDashboard = () => {
   const { backendUser } = useAuth();
   const displayName = backendUser?.name || "EWUCSC Member";
   const firstName = displayName.split(" ")[0];
+
+  const cards = ctfEventUrl
+    ? [
+        ...portalCards,
+        {
+          href: ctfEventUrl,
+          icon: <FaTrophy />,
+          eyebrow: "Public Event",
+          title: "CTF Event Platform",
+          description: "Open the separate public/inter-university contest platform.",
+          accent: "accent",
+        },
+      ]
+    : portalCards;
 
   return (
     <div className="relative overflow-hidden pb-20">
@@ -92,20 +113,31 @@ const MemberDashboard = () => {
                 Welcome back, {firstName}.
                 <br />
                 <span className="bg-gradient-to-r from-secondary via-primary to-accent bg-clip-text text-transparent">
-                  Your cyber operations hub.
+                  Your EWUCSC member hub.
                 </span>
               </h1>
               <p className="mt-6 max-w-2xl text-base md:text-lg leading-relaxed text-base-content/65">
-                Enter challenges, follow assignments, track your ranking and continue
-                learning from one member-only EWUCSC space.
+                Follow assignments, practice privately, track your member ranking and
+                jump to the separate technical hub from one approved-member space.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link to="/dashboard/ctf" className="btn btn-primary rounded-full px-7">
-                  <FaTerminal /> Enter CTF Arena
+                  <FaTerminal /> Open Practice Arena
                 </Link>
-                <Link to="/learning" className="btn btn-outline btn-secondary rounded-full px-7">
-                  Explore Learning
-                </Link>
+                {isExternalHref(technicalLearningUrl) ? (
+                  <a
+                    href={technicalLearningUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn btn-outline btn-secondary rounded-full px-7"
+                  >
+                    Technical Hub
+                  </a>
+                ) : (
+                  <Link to={technicalLearningUrl} className="btn btn-outline btn-secondary rounded-full px-7">
+                    Technical Hub
+                  </Link>
+                )}
               </div>
             </div>
 
@@ -124,7 +156,7 @@ const MemberDashboard = () => {
                   <p className="mt-1 uppercase font-bold text-primary">{backendUser?.role || "member"}</p>
                 </div>
                 <div>
-                  <p className="text-base-content/40">CTF SCORE</p>
+                  <p className="text-base-content/40">PRACTICE SCORE</p>
                   <p className="mt-1 text-2xl font-black text-warning">{backendUser?.ctfScore || 0}</p>
                 </div>
               </div>
@@ -144,9 +176,9 @@ const MemberDashboard = () => {
           </div>
 
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {portalCards.map((card, index) => (
+            {cards.map((card, index) => (
               <motion.div
-                key={card.to}
+                key={card.href || card.to}
                 initial={{ opacity: 0, y: 22 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.15 }}
@@ -166,12 +198,19 @@ const MemberDashboard = () => {
             </div>
             <h2 className="mt-4 text-2xl font-black">Upcoming external CTFs</h2>
             <p className="mt-3 mb-6 text-base-content/60">
-              External competitions from CTFtime. EWUCSC private challenges stay inside the protected Arena.
+              External competitions from CTFtime. EWUCSC member practice stays private,
+              while official public contests will use a separate event platform.
             </p>
             <UpcomingCtfs limit={2} compact />
-            <Link to="/dashboard/ctf" className="btn btn-sm btn-outline btn-secondary mt-6 rounded-full">
-              Open private Arena
-            </Link>
+            {ctfEventUrl ? (
+              <a href={ctfEventUrl} target="_blank" rel="noreferrer" className="btn btn-sm btn-outline btn-secondary mt-6 rounded-full">
+                Open official event platform
+              </a>
+            ) : (
+              <Link to="/dashboard/ctf" className="btn btn-sm btn-outline btn-secondary mt-6 rounded-full">
+                Open private practice
+              </Link>
+            )}
           </div>
 
           <div className="rounded-[1.5rem] border border-white/5 bg-base-100/65 p-6 md:p-8">
@@ -182,7 +221,7 @@ const MemberDashboard = () => {
               {backendUser?.email}
             </p>
             <span className="mt-6 inline-flex rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-accent">
-              Approved member
+              Approved EWU member
             </span>
           </div>
         </section>

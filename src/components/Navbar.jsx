@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 import { useAuth } from "../hooks/useAuth";
+import { isExternalHref, technicalHubUrl } from "../config/siteLinks";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,13 +49,25 @@ const Navbar = () => {
       </li>
 
       <li>
-        <NavLink
-          to="/learning"
-          className={navLinkClass}
-          onClick={closeMobileMenu}
-        >
-          Learning Path
-        </NavLink>
+        {isExternalHref(technicalHubUrl) ? (
+          <a
+            href={technicalHubUrl}
+            onClick={closeMobileMenu}
+            target="_blank"
+            rel="noreferrer"
+            className="text-base-content/70 hover:text-primary transition-colors duration-200"
+          >
+            Technical Hub
+          </a>
+        ) : (
+          <NavLink
+            to={technicalHubUrl}
+            className={navLinkClass}
+            onClick={closeMobileMenu}
+          >
+            Technical Hub
+          </NavLink>
+        )}
       </li>
 
       {user && (
@@ -134,11 +147,6 @@ const Navbar = () => {
             <li>
               <NavLink to="/about" onClick={closeMobileMenu}>
                 About Us
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/resources" onClick={closeMobileMenu}>
-                Resources
               </NavLink>
             </li>
             <li>
