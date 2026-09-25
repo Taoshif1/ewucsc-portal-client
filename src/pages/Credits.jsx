@@ -40,7 +40,7 @@ const Credits = () => (
     <PageHero
       badge="Build & Stewardship"
       title="Built with care."
-      highlight="Run by EWUCSC."
+      highlight="Operated by EWUCSC."
       description="The portal is developed and maintained as a club system for East West University Cyber Security Club."
     />
 
@@ -60,7 +60,7 @@ const Credits = () => (
           Built & managed by <span className="text-primary">Gazi Taoshif</span>
         </h1>
         <p className="mt-5 max-w-3xl leading-relaxed text-base-content/60">
-          Developed, integrated and maintained through Taoshiflex Studio, with the
+          Gazi Taoshif is the owner of Taoshiflex Studio. The portal was developed, integrated and maintained through the studio, with the
           platform handed over as an operational EWUCSC system rather than a personal
           project.
         </p>
