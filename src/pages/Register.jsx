@@ -111,7 +111,7 @@ const Register = () => {
               Join EWUCSC
             </h1>
             <p className="text-center text-sm text-base-content/60 mt-2 mb-7">
-              EWU students only • Admin approval required
+              EWU students only • Email verification + admin approval
             </p>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -172,8 +172,9 @@ const Register = () => {
               />
 
               <div className="rounded-xl border border-warning/15 bg-warning/5 p-4 text-xs leading-relaxed text-base-content/60">
-                Registration does not unlock the member portal immediately. Verify your
-                EWU email first; an EWUCSC admin must then approve your membership.
+                Registration uses two checks. Firebase sends a verification link to your
+                derived EWU student email; after you verify it, an EWUCSC admin must
+                approve the membership before portal access is enabled.
               </div>
 
               <button

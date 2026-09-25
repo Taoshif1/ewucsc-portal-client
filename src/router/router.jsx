@@ -17,6 +17,11 @@ import MemberDashboard from "../pages/dashboards/MemberDashboard";
 import PortalCTF from "../pages/PortalCTF";
 import PortalHomeworks from "../pages/PortalHomeworks";
 import PortalLeaderboard from "../pages/PortalLeaderboard";
+import AdminUsers from "../pages/AdminUsers";
+import OperationsProblems from "../pages/OperationsProblems";
+import OperationsAnalytics from "../pages/OperationsAnalytics";
+import OperationsContent from "../pages/OperationsContent";
+import OperationsSubmissions from "../pages/OperationsSubmissions";
 
 import Members from "../pages/Members";
 import ExecutivePanel2425 from "../pages/ExecutivePanel2425";
@@ -102,6 +107,46 @@ export const router = createBrowserRouter([
         element: (
           <RoleRoute allowedRoles={["member"]}>
             <MemberDashboard />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "manage/users",
+        element: (
+          <RoleRoute allowedRoles={["admin"]}>
+            <AdminUsers />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "manage/problems",
+        element: (
+          <RoleRoute allowedRoles={["admin", "executive"]}>
+            <OperationsProblems />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "manage/analytics",
+        element: (
+          <RoleRoute allowedRoles={["admin", "executive"]}>
+            <OperationsAnalytics />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "manage/content",
+        element: (
+          <RoleRoute allowedRoles={["admin", "executive"]}>
+            <OperationsContent />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "manage/submissions",
+        element: (
+          <RoleRoute allowedRoles={["admin", "executive", "sub-executive"]}>
+            <OperationsSubmissions />
           </RoleRoute>
         ),
       },
