@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FaBullhorn, FaCalendarDays } from "react-icons/fa6";
 import PageHero from "../components/PageHero";
 import { publicApi } from "../services/api";
+import { resolveMediaUrl } from "../utils/mediaUrl";
 
 const formatDate = (value) =>
   value
@@ -66,7 +67,7 @@ const Announcements = () => {
                   {images.slice(0, 4).map((imageUrl, index) => (
                     <div key={imageUrl} className="relative overflow-hidden">
                       <img
-                        src={imageUrl}
+                        src={resolveMediaUrl(imageUrl)}
                         alt={item.title}
                         className={`w-full object-cover ${
                           images.length === 1 ? "h-48" : "h-36"
