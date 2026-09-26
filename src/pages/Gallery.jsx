@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FaCalendarDays, FaImages } from "react-icons/fa6";
 import PageHero from "../components/PageHero";
 import { publicApi } from "../services/api";
+import { resolveMediaUrl } from "../utils/mediaUrl";
 
 const formatDate = (value) =>
   value
@@ -56,7 +57,7 @@ const Gallery = () => {
             >
               <div className="overflow-hidden">
                 <img
-                  src={item.imageUrl}
+                  src={resolveMediaUrl(item.imageUrl)}
                   alt={item.title || item.caption || "EWUCSC gallery"}
                   loading="lazy"
                   className="w-full object-cover transition duration-500 group-hover:scale-[1.03]"

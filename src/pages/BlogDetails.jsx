@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router";
 import { FaArrowLeft, FaCalendarDays } from "react-icons/fa6";
 import { publicApi } from "../services/api";
 import Spinner from "../components/common/Spinner";
+import { resolveMediaUrl } from "../utils/mediaUrl";
 
 const formatDate = (value) =>
   value
@@ -61,7 +62,7 @@ const BlogDetails = () => {
               className="overflow-hidden rounded-[1.75rem] border border-white/5 shadow-2xl"
             >
               <img
-                src={imageUrl}
+                src={resolveMediaUrl(imageUrl)}
                 alt={index === 0 ? item.title : `${item.title} photo ${index + 1}`}
                 className="max-h-[34rem] w-full object-cover"
               />
