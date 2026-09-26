@@ -5,6 +5,8 @@ import {
   FaEnvelope,
   FaGithub,
   FaGlobe,
+  FaHouse,
+  FaAddressCard,
   FaLinkedin,
   FaShieldHalved,
   FaUserAstronaut,
@@ -141,6 +143,32 @@ const Credits = () => (
               <div>
                 <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-base-content/35">Technical contact</p>
                 <p className="font-bold">hello@zabermahmud.me</p>
+              </div>
+            </a>
+
+            <a
+              href="/"
+              className="flex items-center gap-4 rounded-2xl border border-white/5 bg-base-200/35 p-5 transition hover:border-primary/25"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <FaHouse />
+              </div>
+              <div>
+                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-base-content/35">Club website</p>
+                <p className="font-bold">EWUCSC Homepage</p>
+              </div>
+            </a>
+
+            <a
+              href="/contact"
+              className="flex items-center gap-4 rounded-2xl border border-white/5 bg-base-200/35 p-5 transition hover:border-accent/25"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                <FaAddressCard />
+              </div>
+              <div>
+                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-base-content/35">Contact page</p>
+                <p className="font-bold">Official EWUCSC Contact</p>
               </div>
             </a>
           </div>
