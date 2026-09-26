@@ -22,7 +22,9 @@ import Map from "../components/Map";
 import { publicApi } from "../services/api";
 import { authRegisterUrl } from "../config/siteLinks";
 
-const gmailCompose = (email) => "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(email);\n\nconst Contact = () => {
+const gmailCompose = (email) => "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(email);
+
+const Contact = () => {
   const [loading, setLoading] = useState(false);
 
   const sendMessage = async (event) => {
