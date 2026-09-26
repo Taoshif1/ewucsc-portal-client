@@ -3,6 +3,8 @@ import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import SiteCreditBar from "./SiteCreditBar";
 import {
+  authCtfUrl,
+  authHomeworksUrl,
   authLoginUrl,
   isExternalHref,
   technicalLearningUrl,
@@ -19,7 +21,7 @@ const SmartHref = ({ href, children, className }) =>
 const Footer = () => {
   const { user } = useAuth();
 
-  const memberDestination = (pathname) => (user ? pathname : authLoginUrl);
+  const memberDestination = (memberUrl) => (user ? memberUrl : authLoginUrl);
   const linkClass = "hover:text-secondary transition-colors";
 
   return (
@@ -43,7 +45,7 @@ const Footer = () => {
             <ul className="space-y-2 text-sm">
               <li><Link to="/" className={linkClass}>Home</Link></li>
               <li>
-                <SmartHref href={memberDestination("/dashboard/ctf")} className={linkClass}>
+                <SmartHref href={memberDestination(authCtfUrl)} className={linkClass}>
                   Member CTF
                 </SmartHref>
               </li>
@@ -53,7 +55,7 @@ const Footer = () => {
                 </SmartHref>
               </li>
               <li>
-                <SmartHref href={memberDestination("/dashboard/homeworks")} className={linkClass}>
+                <SmartHref href={memberDestination(authHomeworksUrl)} className={linkClass}>
                   Member Homework
                 </SmartHref>
               </li>
