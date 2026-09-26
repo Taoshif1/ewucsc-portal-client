@@ -223,7 +223,7 @@ const Resources = () => {
           Live event discovery is fetched through the EWUCSC backend from CTFtime.
           Club-only challenge content stays inside the authenticated member portal.
         </p>
-        <UpcomingCtfs limit={6} />
+        <UpcomingCtfs limit={12} />
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
