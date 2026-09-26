@@ -41,6 +41,7 @@ import Credits from "../pages/Credits";
 import Gallery from "../pages/Gallery";
 import GalleryAdmin from "../pages/GalleryAdmin";
 import FormsAdmin from "../pages/FormsAdmin";
+import RecruitmentForm from "../pages/RecruitmentForm";
 
 import PrivateRoute from "./PrivateRouter";
 import RoleRoute from "./RoleRouter";
@@ -69,6 +70,7 @@ export const router = createBrowserRouter([
       { path: "contact", element: <Contact /> },
       { path: "credits", element: <Credits /> },
       { path: "gallery", element: <Gallery /> },
+      { path: "apply/:formKey", element: <RecruitmentForm /> },
       {
         path: "learning-paths",
         element: (
