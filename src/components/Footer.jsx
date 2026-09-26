@@ -18,7 +18,9 @@ const SmartHref = ({ href, children, className }) =>
     <Link to={href} className={className}>{children}</Link>
   );
 
-const gmailCompose = (email) => "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(email);\n\nconst Footer = () => {
+const gmailCompose = (email) => "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(email);
+
+const Footer = () => {
   const { user } = useAuth();
 
   const memberDestination = (memberUrl) => (user ? memberUrl : authLoginUrl);
