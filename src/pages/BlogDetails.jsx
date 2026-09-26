@@ -1,8 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
-import { FaArrowLeft } from "react-icons/fa6";
+import { FaArrowLeft, FaCalendarDays } from "react-icons/fa6";
 import { publicApi } from "../services/api";
 import Spinner from "../components/common/Spinner";
+
+const formatDate = (value) =>
+  value
+    ? new Date(value.includes("T") ? value : value + "T00:00:00").toLocaleDateString(
+        undefined,
+        { day: "numeric", month: "long", year: "numeric" },
+      )
+    : "";
 
 const BlogDetails = () => {
   const { slug } = useParams();
@@ -37,18 +45,35 @@ const BlogDetails = () => {
       <Link to="/blogs" className="btn btn-sm btn-ghost mb-8">
         <FaArrowLeft /> Blogs
       </Link>
+
+      {item.imageUrl && (
+        <div className="mb-8 overflow-hidden rounded-[1.75rem] border border-white/5 shadow-2xl">
+          <img
+            src={item.imageUrl}
+            alt={item.title}
+            className="max-h-[34rem] w-full object-cover"
+          />
+        </div>
+      )}
+
       <p className="font-mono text-xs uppercase tracking-[0.2em] text-secondary">
         // EWUCSC knowledge hub
       </p>
       <h1 className="mt-4 text-4xl font-black leading-tight md:text-6xl">{item.title}</h1>
+
       {item.excerpt && (
         <p className="mt-6 text-lg leading-relaxed text-base-content/65">{item.excerpt}</p>
       )}
-      {item.publishedAt && (
-        <p className="mt-5 font-mono text-xs text-base-content/35">
-          Published {new Date(item.publishedAt).toLocaleDateString()}
-        </p>
-      )}
+
+      <div className="mt-5 flex flex-wrap gap-4 font-mono text-xs text-base-content/35">
+        {item.eventDate && (
+          <span className="flex items-center gap-2 text-primary/70">
+            <FaCalendarDays /> Event date: {formatDate(item.eventDate)}
+          </span>
+        )}
+        {item.publishedAt && <span>Published {formatDate(item.publishedAt)}</span>}
+      </div>
+
       <div className="mt-10 whitespace-pre-wrap rounded-[1.5rem] border border-white/5 bg-base-100/65 p-6 text-base leading-8 text-base-content/80 md:p-9">
         {item.body}
       </div>
