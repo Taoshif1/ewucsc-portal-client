@@ -41,6 +41,14 @@ import PrivateRoute from "./PrivateRouter";
 import RoleRoute from "./RoleRouter";
 import ErrorPage from "../pages/ErrorPage";
 import PublicOnlyRoute from "./PublicOnlyRoute";
+import SubdomainRoute from "./SubdomainRoute";
+import {
+  authLoginUrl,
+  authPendingUrl,
+  authRegisterUrl,
+  technicalLearningUrl,
+  technicalResourcesUrl,
+} from "../config/siteLinks";
 
 export const router = createBrowserRouter([
   {
@@ -49,13 +57,13 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
-      { path: "learning", element: <Learning /> },
+      { path: "learning", element: <SubdomainRoute href={technicalLearningUrl}><Learning /></SubdomainRoute> },
       { path: "announcements", element: <Announcements /> },
       { path: "blogs", element: <Blogs /> },
       { path: "blogs/:slug", element: <BlogDetails /> },
       { path: "partners", element: <Partners /> },
       { path: "about", element: <About /> },
-      { path: "resources", element: <Resources /> },
+      { path: "resources", element: <SubdomainRoute href={technicalResourcesUrl}><Resources /></SubdomainRoute> },
       { path: "contact", element: <Contact /> },
       { path: "credits", element: <Credits /> },
       {
@@ -160,21 +168,29 @@ export const router = createBrowserRouter([
   {
     path: "/login",
     element: (
-      <PublicOnlyRoute>
-        <Login />
-      </PublicOnlyRoute>
+      <SubdomainRoute href={authLoginUrl}>
+        <PublicOnlyRoute>
+          <Login />
+        </PublicOnlyRoute>
+      </SubdomainRoute>
     ),
   },
   {
     path: "/register",
     element: (
-      <PublicOnlyRoute>
-        <Register />
-      </PublicOnlyRoute>
+      <SubdomainRoute href={authRegisterUrl}>
+        <PublicOnlyRoute>
+          <Register />
+        </PublicOnlyRoute>
+      </SubdomainRoute>
     ),
   },
   {
     path: "/pending-approval",
-    element: <PendingApproval />,
+    element: (
+      <SubdomainRoute href={authPendingUrl}>
+        <PendingApproval />
+      </SubdomainRoute>
+    ),
   },
 ]);
