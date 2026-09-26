@@ -57,8 +57,8 @@ const EMPTY = {
   openAt: "",
   closeAt: "",
   sections: DEFAULT_SECTIONS,
-  activityOptions: DEFAULT_ACTIVITIES,
-  specializationOptions: DEFAULT_SPECIALIZATIONS,
+  activityOptionsText: DEFAULT_ACTIVITIES.join("\n"),
+  specializationOptionsText: DEFAULT_SPECIALIZATIONS.join("\n"),
 };
 
 const toInputDate = (value) => {
@@ -112,8 +112,8 @@ const FormsAdmin = () => {
       openAt: toInputDate(form.openAt),
       closeAt: toInputDate(form.closeAt),
       sections: { ...DEFAULT_SECTIONS, ...(form.sections || {}) },
-      activityOptions: form.activityOptions || DEFAULT_ACTIVITIES,
-      specializationOptions: form.specializationOptions || DEFAULT_SPECIALIZATIONS,
+      activityOptionsText: (form.activityOptions || DEFAULT_ACTIVITIES).join("\n"),
+      specializationOptionsText: (form.specializationOptions || DEFAULT_SPECIALIZATIONS).join("\n"),
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -125,6 +125,8 @@ const FormsAdmin = () => {
       setSaving(true);
       const payload = {
         ...draft,
+        activityOptions: linesToOptions(draft.activityOptionsText),
+        specializationOptions: linesToOptions(draft.specializationOptionsText),
         openAt: draft.openAt ? new Date(draft.openAt).toISOString() : null,
         closeAt: draft.closeAt ? new Date(draft.closeAt).toISOString() : null,
       };
@@ -294,16 +296,16 @@ const FormsAdmin = () => {
             <span className="mb-2 text-xs font-bold uppercase text-base-content/40">Club activity options · one per line</span>
             <textarea
               className="textarea textarea-bordered min-h-44 bg-base-100"
-              value={draft.activityOptions.join("\n")}
-              onChange={(e) => setDraft({ ...draft, activityOptions: linesToOptions(e.target.value) })}
+              value={draft.activityOptionsText}
+              onChange={(e) => setDraft({ ...draft, activityOptionsText: e.target.value })}
             />
           </label>
           <label className="form-control">
             <span className="mb-2 text-xs font-bold uppercase text-base-content/40">Specialization options · one per line</span>
             <textarea
               className="textarea textarea-bordered min-h-44 bg-base-100"
-              value={draft.specializationOptions.join("\n")}
-              onChange={(e) => setDraft({ ...draft, specializationOptions: linesToOptions(e.target.value) })}
+              value={draft.specializationOptionsText}
+              onChange={(e) => setDraft({ ...draft, specializationOptionsText: e.target.value })}
             />
           </label>
         </div>
