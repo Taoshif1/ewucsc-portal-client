@@ -7,6 +7,7 @@ import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 import { useAuth } from "../hooks/useAuth";
 import {
+  authDashboardUrl,
   authLoginUrl,
   isExternalHref,
   technicalHubUrl,
@@ -150,13 +151,23 @@ const Navbar = () => {
 
       {user && (
         <li>
-          <NavLink
-            to="/dashboard"
-            className={navLinkClass}
-            onClick={closeMobileMenu}
-          >
-            Dashboard
-          </NavLink>
+          {isExternalHref(authDashboardUrl) ? (
+            <a
+              href={authDashboardUrl}
+              onClick={closeMobileMenu}
+              className="text-base-content/70 transition-colors duration-200 hover:text-primary"
+            >
+              Dashboard
+            </a>
+          ) : (
+            <NavLink
+              to={authDashboardUrl}
+              className={navLinkClass}
+              onClick={closeMobileMenu}
+            >
+              Dashboard
+            </NavLink>
+          )}
         </li>
       )}
 
