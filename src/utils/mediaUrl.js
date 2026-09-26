@@ -1,5 +1,3 @@
-import { API_BASE_URL } from "../services/api";
-
 const INTERNAL_UPLOAD_PREFIX = "/api/uploads/";
 
 const extractInternalUploadPath = (value = "") => {
@@ -10,13 +8,22 @@ const extractInternalUploadPath = (value = "") => {
     return raw;
   }
 
+  if (raw.startsWith("/uploads/")) {
+    return "/api" + raw;
+  }
+
   try {
     const parsed = new URL(raw);
+
     if (parsed.pathname.startsWith(INTERNAL_UPLOAD_PREFIX)) {
       return parsed.pathname + parsed.search + parsed.hash;
     }
+
+    if (parsed.pathname.startsWith("/uploads/")) {
+      return "/api" + parsed.pathname + parsed.search + parsed.hash;
+    }
   } catch {
-    // Non-URL values are handled below.
+    // External/non-URL values are returned unchanged below.
   }
 
   return "";
@@ -28,10 +35,7 @@ export const resolveMediaUrl = (value = "") => {
 
   const internalPath = extractInternalUploadPath(raw);
 
-  if (internalPath) {
-    const suffix = internalPath.replace(/^\/api/, "");
-    return API_BASE_URL.replace(/\/$/, "") + suffix;
-  }
-
-  return raw;
+  // Always use the current browser origin for EWUCSC uploads.
+  // Vite proxies /api locally and Vercel rewrites /api in production.
+  return internalPath || raw;
 };
