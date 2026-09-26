@@ -1,0 +1,32 @@
+import { useEffect } from "react";
+import { isExternalHref } from "../config/siteLinks";
+
+const SubdomainRoute = ({ href, children }) => {
+  const shouldRedirect =
+    isExternalHref(href) &&
+    typeof window !== "undefined" &&
+    window.location.origin !== new URL(href).origin;
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      window.location.replace(href);
+    }
+  }, [href, shouldRedirect]);
+
+  if (shouldRedirect) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-base-100">
+        <div className="text-center">
+          <span className="loading loading-spinner loading-lg text-primary" />
+          <p className="mt-4 font-mono text-xs uppercase tracking-[0.18em] text-base-content/45">
+            Moving to the correct EWUCSC subdomain...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return children;
+};
+
+export default SubdomainRoute;
