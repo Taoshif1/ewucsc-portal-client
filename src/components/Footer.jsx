@@ -111,16 +111,26 @@ const Footer = () => {
           <h3 className="font-bold text-primary mb-4 uppercase tracking-wider text-sm">
             Contact
           </h3>
-          <a
-            href="mailto:ewucsc@ewubd.edu"
-            className="text-sm font-bold text-secondary hover:text-primary transition-colors"
-          >
-            ewucsc@ewubd.edu
-          </a>
-          <p className="mt-4 text-xs leading-relaxed text-base-content/50">
-            Official social links will be added only after the club provides
-            verified profile URLs.
-          </p>
+          <div className="space-y-3 text-sm">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-base-content/35">Club</p>
+              <a
+                href="mailto:ewcsc@ewubd.edu"
+                className="font-bold text-secondary transition-colors hover:text-primary"
+              >
+                ewcsc@ewubd.edu
+              </a>
+            </div>
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-base-content/35">Technical</p>
+              <a
+                href="mailto:hello@zabermahmud.me"
+                className="font-bold text-secondary transition-colors hover:text-primary"
+              >
+                hello@zabermahmud.me
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 
