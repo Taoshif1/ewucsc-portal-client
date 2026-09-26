@@ -48,17 +48,38 @@ const Announcements = () => {
         </div>
       ) : (
         <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {items.map((item) => (
+          {items.map((item) => {
+            const images =
+              item.imageUrls?.length > 0
+                ? item.imageUrls
+                : item.imageUrl
+                  ? [item.imageUrl]
+                  : [];
+
+            return (
             <article
               key={item.id}
               className="overflow-hidden rounded-[1.75rem] border border-white/5 bg-base-100/70 backdrop-blur-xl shadow-2xl"
             >
-              {item.imageUrl && (
-                <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  className="h-48 w-full object-cover"
-                />
+              {images.length > 0 && (
+                <div className={images.length > 1 ? "grid grid-cols-2 gap-1" : ""}>
+                  {images.slice(0, 4).map((imageUrl, index) => (
+                    <div key={imageUrl} className="relative overflow-hidden">
+                      <img
+                        src={imageUrl}
+                        alt={item.title}
+                        className={`w-full object-cover ${
+                          images.length === 1 ? "h-48" : "h-36"
+                        }`}
+                      />
+                      {index === 3 && images.length > 4 && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/55 text-xl font-black text-white">
+                          +{images.length - 4}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               )}
               <div className="p-6">
                 <span className="badge badge-primary badge-outline mb-4">Announcement</span>
@@ -80,7 +101,8 @@ const Announcements = () => {
                 </div>
               </div>
             </article>
-          ))}
+            );
+          })}
         </section>
       )}
     </div>

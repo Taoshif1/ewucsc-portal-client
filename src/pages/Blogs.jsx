@@ -49,17 +49,32 @@ const Blogs = () => {
         </div>
       ) : (
         <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {items.map((item) => (
+          {items.map((item) => {
+            const images =
+              item.imageUrls?.length > 0
+                ? item.imageUrls
+                : item.imageUrl
+                  ? [item.imageUrl]
+                  : [];
+
+            return (
             <article
               key={item.id}
               className="group overflow-hidden rounded-[1.75rem] border border-white/5 bg-base-100/70 backdrop-blur-xl shadow-2xl"
             >
-              {item.imageUrl && (
-                <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  className="h-48 w-full object-cover transition duration-500 group-hover:scale-[1.02]"
-                />
+              {images.length > 0 && (
+                <div className="relative overflow-hidden">
+                  <img
+                    src={images[0]}
+                    alt={item.title}
+                    className="h-48 w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+                  />
+                  {images.length > 1 && (
+                    <span className="absolute bottom-3 right-3 rounded-full bg-black/70 px-3 py-1 text-xs font-bold text-white">
+                      +{images.length - 1} photos
+                    </span>
+                  )}
+                </div>
               )}
               <div className="p-6">
                 <span className="badge badge-secondary badge-outline mb-4">Blog</span>
@@ -84,7 +99,8 @@ const Blogs = () => {
                 </Link>
               </div>
             </article>
-          ))}
+            );
+          })}
         </section>
       )}
     </div>

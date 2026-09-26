@@ -15,10 +15,9 @@ import AssetDropzone from "../components/admin/AssetDropzone";
 const EMPTY = {
   title: "",
   caption: "",
-  imageUrl: "",
-  assetId: "",
   eventDate: "",
   published: true,
+  assets: [],
 };
 
 const GalleryAdmin = () => {
@@ -60,20 +59,45 @@ const GalleryAdmin = () => {
   const save = async (event) => {
     event.preventDefault();
 
-    if (!draft.imageUrl) {
-      toast.error("Upload an image first.");
+    if (!draft.assets.length) {
+      toast.error("Upload at least one image first.");
       return;
     }
 
     try {
       setBusy(true);
+
       if (editingId) {
-        await api.patch("/gallery/admin/" + editingId, draft);
+        const asset = draft.assets[0];
+        await api.patch("/gallery/admin/" + editingId, {
+          title: draft.title,
+          caption: draft.caption,
+          eventDate: draft.eventDate,
+          published: draft.published,
+          imageUrl: asset.url,
+          assetId: asset.id,
+        });
         toast.success("Gallery item updated.");
       } else {
-        await api.post("/gallery/admin", draft);
-        toast.success("Gallery image added.");
+        await Promise.all(
+          draft.assets.map((asset) =>
+            api.post("/gallery/admin", {
+              title: draft.title,
+              caption: draft.caption,
+              eventDate: draft.eventDate,
+              published: draft.published,
+              imageUrl: asset.url,
+              assetId: asset.id,
+            }),
+          ),
+        );
+        toast.success(
+          draft.assets.length > 1
+            ? `${draft.assets.length} gallery photos added.`
+            : "Gallery image added.",
+        );
       }
+
       reset();
       await load();
     } catch (error) {
@@ -88,10 +112,15 @@ const GalleryAdmin = () => {
     setDraft({
       title: item.title || "",
       caption: item.caption || "",
-      imageUrl: item.imageUrl || "",
-      assetId: item.assetId || "",
       eventDate: item.eventDate || "",
       published: Boolean(item.published),
+      assets: [
+        {
+          id: item.assetId || "",
+          url: item.imageUrl,
+          name: item.title || "Current image",
+        },
+      ],
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -140,7 +169,7 @@ const GalleryAdmin = () => {
             <FaImages /> Gallery Admin
           </h1>
           <p className="mt-3 text-base-content/55">
-            Drag in club photos, add an optional event date, then publish them to the public Gallery.
+            Drop one photo or a whole event batch, then publish them to the public Gallery.
           </p>
         </div>
         <button type="button" onClick={load} className="btn btn-sm btn-ghost">
@@ -151,7 +180,7 @@ const GalleryAdmin = () => {
       <div className="mt-7 grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
         <form onSubmit={save} className="space-y-4 rounded-[1.5rem] border border-white/5 bg-base-100/65 p-5">
           <div className="flex items-center justify-between">
-            <h2 className="font-black">{editingId ? "Edit photo" : "Add photo"}</h2>
+            <h2 className="font-black">{editingId ? "Edit photo" : "Add photos"}</h2>
             {editingId && (
               <button type="button" onClick={reset} className="btn btn-xs btn-ghost">
                 <FaXmark /> Cancel
@@ -162,23 +191,54 @@ const GalleryAdmin = () => {
           <AssetDropzone
             scope="gallery"
             accept="image/*"
-            label="Drop a gallery photo here or click to upload"
-            helper="Images only · maximum 10 MB"
+            multiple={!editingId}
+            maxFiles={20}
+            label={
+              editingId
+                ? "Drop a replacement photo here or click to upload"
+                : "Drop up to 20 gallery photos here or click to upload"
+            }
+            helper="Images only · maximum 10 MB each"
             onUploaded={(asset) =>
               setDraft((current) => ({
                 ...current,
-                imageUrl: asset.url,
-                assetId: asset.id,
+                assets: editingId
+                  ? [asset]
+                  : [...current.assets, asset].slice(0, 20),
               }))
             }
           />
 
-          {draft.imageUrl && (
-            <img
-              src={draft.imageUrl}
-              alt="Gallery preview"
-              className="max-h-72 w-full rounded-2xl object-cover"
-            />
+          {draft.assets.length > 0 && (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {draft.assets.map((asset) => (
+                <div key={asset.id || asset.url} className="relative overflow-hidden rounded-xl border border-white/5">
+                  <img src={asset.url} alt="" className="h-28 w-full object-cover" />
+                  {!editingId && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setDraft((current) => ({
+                          ...current,
+                          assets: current.assets.filter((item) => item.id !== asset.id),
+                        }))
+                      }
+                      className="btn btn-xs btn-circle btn-error absolute right-2 top-2"
+                      aria-label="Remove selected photo"
+                    >
+                      <FaXmark />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!editingId && draft.assets.length > 1 && (
+            <p className="rounded-xl border border-primary/10 bg-primary/5 p-3 text-xs text-base-content/55">
+              {draft.assets.length} photos selected. The title, caption and date below will be applied
+              to all of them. You can edit each photo separately afterward.
+            </p>
           )}
 
           <input
@@ -218,7 +278,13 @@ const GalleryAdmin = () => {
           </label>
 
           <button type="submit" disabled={busy} className="btn btn-secondary w-full">
-            {busy ? "Saving..." : editingId ? "Update Photo" : "Add to Gallery"}
+            {busy
+              ? "Saving..."
+              : editingId
+                ? "Update Photo"
+                : draft.assets.length > 1
+                  ? `Add ${draft.assets.length} Photos`
+                  : "Add to Gallery"}
           </button>
         </form>
 

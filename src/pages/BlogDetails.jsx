@@ -40,19 +40,33 @@ const BlogDetails = () => {
     );
   }
 
+  const images =
+    item.imageUrls?.length > 0
+      ? item.imageUrls
+      : item.imageUrl
+        ? [item.imageUrl]
+        : [];
+
   return (
     <article className="mx-auto max-w-4xl py-8 md:py-14">
       <Link to="/blogs" className="btn btn-sm btn-ghost mb-8">
         <FaArrowLeft /> Blogs
       </Link>
 
-      {item.imageUrl && (
-        <div className="mb-8 overflow-hidden rounded-[1.75rem] border border-white/5 shadow-2xl">
-          <img
-            src={item.imageUrl}
-            alt={item.title}
-            className="max-h-[34rem] w-full object-cover"
-          />
+      {images.length > 0 && (
+        <div className={`mb-8 grid gap-3 ${images.length > 1 ? "md:grid-cols-2" : ""}`}>
+          {images.map((imageUrl, index) => (
+            <div
+              key={imageUrl}
+              className="overflow-hidden rounded-[1.75rem] border border-white/5 shadow-2xl"
+            >
+              <img
+                src={imageUrl}
+                alt={index === 0 ? item.title : `${item.title} photo ${index + 1}`}
+                className="max-h-[34rem] w-full object-cover"
+              />
+            </div>
+          ))}
         </div>
       )}
 
