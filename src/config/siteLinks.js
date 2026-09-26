@@ -26,9 +26,9 @@ export const authCtfUrl = appendPath(authPortalUrl, "/dashboard/ctf");
 export const authHomeworksUrl = appendPath(authPortalUrl, "/dashboard/homeworks");
 
 export const technicalLearningUrl = isExternalHref(technicalHubUrl)
-  ? technicalHubUrl + "/learning"
-  : "/learning";
+  ? technicalHubUrl + "/learning-paths"
+  : "/learning-paths";
 
 export const technicalResourcesUrl = isExternalHref(technicalHubUrl)
-  ? technicalHubUrl + "/resources"
+  ? technicalHubUrl
   : "/resources";
