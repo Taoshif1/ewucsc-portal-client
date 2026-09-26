@@ -10,6 +10,7 @@ import {
   FaLaptopCode,
   FaScrewdriverWrench,
   FaUsers,
+  FaGift,
 } from "react-icons/fa6";
 
 const groups = [
@@ -20,6 +21,7 @@ const groups = [
     links: [
       { to: "/learning-paths", title: "Learning Paths", icon: <FaGraduationCap /> },
       { to: "/wiki", title: "Wiki & Cheatsheets", icon: <FaBookOpen /> },
+      { to: "/vp-collection", title: "A Gift from the VP", icon: <FaGift /> },
     ],
   },
   {
@@ -98,6 +100,25 @@ const TechnicalHub = () => (
           </div>
         </article>
       ))}
+    </section>
+
+    <section className="rounded-[1.75rem] border border-primary/15 bg-primary/5 p-7 md:p-8">
+      <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        <div>
+          <div className="flex items-center gap-3 text-primary">
+            <FaGift className="text-2xl" />
+            <p className="font-mono text-xs uppercase tracking-[0.22em]">// VP technical references</p>
+          </div>
+          <h2 className="mt-3 text-2xl font-black md:text-3xl">A Gift from the VP ✦</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-base-content/60">
+            Open the Admin-managed collection of technical references contributed by the Vice President (Technical).
+            Published additions from Content & Inbox appear here automatically.
+          </p>
+        </div>
+        <Link to="/vp-collection" className="btn btn-primary shrink-0 rounded-full">
+          Open Collection →
+        </Link>
+      </div>
     </section>
 
     <section className="grid gap-5 md:grid-cols-2">
