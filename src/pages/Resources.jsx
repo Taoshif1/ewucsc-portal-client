@@ -120,13 +120,6 @@ const resources = [
     href: "https://ctftime.org/",
     icon: <FaFlag />,
   },
-  {
-    title: "UITS Cyber Security Wing",
-    category: "Community",
-    description: "Reference community site shared by EWUCSC leadership for resource inspiration.",
-    href: "https://uitssec.xyz/index.html",
-    icon: <FaGraduationCap />,
-  },
 ];
 
 const Resources = () => {
