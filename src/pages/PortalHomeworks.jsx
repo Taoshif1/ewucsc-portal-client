@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa6";
 import { api } from "../services/api";
 import Spinner from "../components/common/Spinner";
+import AttachmentList from "../components/common/AttachmentList";
 
 const PortalHomeworks = () => {
   const [homeworks, setHomeworks] = useState([]);
@@ -106,6 +107,8 @@ const PortalHomeworks = () => {
                 <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-base-content/65">
                   {homework.description}
                 </p>
+
+                <AttachmentList attachments={homework.attachments || []} />
 
                 {homework.submission && (
                   <div className="mt-5 flex items-center gap-2 rounded-xl border border-success/15 bg-success/5 p-3 text-sm font-bold text-success">
