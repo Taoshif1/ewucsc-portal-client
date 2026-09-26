@@ -4,6 +4,10 @@ import MainLayout from "../layouts/MainLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
 
 import Home from "../pages/Home";
+import SiteHome from "../pages/SiteHome";
+import TechnicalHub from "../pages/TechnicalHub";
+import TechnicalLearningPath from "../pages/TechnicalLearningPath";
+import TechnicalSection, { TechnicalCtf } from "../pages/TechnicalSection";
 import Learning from "../pages/Learning";
 import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login";
@@ -56,7 +60,7 @@ export const router = createBrowserRouter([
     element: <MainLayout />,
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <Home /> },
+      { index: true, element: <SiteHome /> },
       { path: "learning", element: <SubdomainRoute href={technicalHubUrl} preservePath><Learning /></SubdomainRoute> },
       { path: "announcements", element: <Announcements /> },
       { path: "blogs", element: <Blogs /> },
@@ -67,6 +71,78 @@ export const router = createBrowserRouter([
       { path: "contact", element: <Contact /> },
       { path: "credits", element: <Credits /> },
       { path: "gallery", element: <Gallery /> },
+      {
+        path: "learning-paths",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalLearningPath />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "learning-paths/:track",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalLearningPath />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "tools",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalSection />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "ctf",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalCtf />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "writeups",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalSection />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "labs",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalSection />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "wiki",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalSection />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "events",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalSection />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "projects",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalSection />
+          </SubdomainRoute>
+        ),
+      },
       {
         path: "members",
         children: [
