@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa6";
 import { api } from "../services/api";
 import AssetDropzone from "../components/admin/AssetDropzone";
+import { resolveMediaUrl } from "../utils/mediaUrl";
 
 const EMPTY = {
   title: "",
@@ -213,7 +214,7 @@ const GalleryAdmin = () => {
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {draft.assets.map((asset) => (
                 <div key={asset.id || asset.url} className="relative overflow-hidden rounded-xl border border-white/5">
-                  <img src={asset.url} alt="" className="h-28 w-full object-cover" />
+                  <img src={resolveMediaUrl(asset.url)} alt="" className="h-28 w-full object-cover" />
                   {!editingId && (
                     <button
                       type="button"
@@ -317,7 +318,7 @@ const GalleryAdmin = () => {
                   key={item.id}
                   className="overflow-hidden rounded-2xl border border-white/5 bg-base-100/65"
                 >
-                  <img src={item.imageUrl} alt="" className="h-40 w-full object-cover" />
+                  <img src={resolveMediaUrl(item.imageUrl)} alt="" className="h-40 w-full object-cover" />
                   <div className="p-4">
                     <div className="flex flex-wrap gap-2">
                       <span className={`badge badge-sm badge-outline ${item.published ? "badge-success" : ""}`}>
