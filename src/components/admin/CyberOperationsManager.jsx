@@ -29,7 +29,7 @@ const emptyHomework = {
   description: "",
   dueAt: "",
   attachments: [],
-  published: false,
+  published: true,
 };
 
 const CyberOperationsManager = () => {
@@ -87,7 +87,7 @@ const CyberOperationsManager = () => {
         ...homework,
         dueAt: homework.dueAt || null,
       });
-      toast.success("Homework created.");
+      toast.success(homework.published ? "Homework created and published." : "Homework saved as draft.");
       setHomework(emptyHomework);
       await load();
     } catch (error) {
@@ -246,7 +246,7 @@ const CyberOperationsManager = () => {
                 onChange={(e) => setChallenge({ ...challenge, published: e.target.checked })}
                 className="toggle toggle-secondary"
               />
-              Publish immediately
+              Publish immediately (members only see published homework)
             </label>
             <button type="submit" disabled={busy} className="btn btn-secondary w-full">
               <FaCirclePlus /> {busy ? "Creating..." : "Create Challenge"}
