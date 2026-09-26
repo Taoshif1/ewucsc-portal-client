@@ -20,6 +20,7 @@ import {
 import PageHero from "../components/PageHero";
 import Map from "../components/Map";
 import { publicApi } from "../services/api";
+import { authRegisterUrl } from "../config/siteLinks";
 
 const Contact = () => {
   const [loading, setLoading] = useState(false);
@@ -172,10 +173,10 @@ const Contact = () => {
                 </div>
               ))}
             </div>
-            <button className="btn btn-primary btn-lg rounded-2xl px-10 group">
+            <a href={authRegisterUrl} className="btn btn-primary btn-lg rounded-2xl px-10 group">
               Apply for Membership{" "}
               <HiOutlineArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />
-            </button>
+            </a>
           </motion.div>
 
           <div className="grid sm:grid-cols-2 gap-6">
