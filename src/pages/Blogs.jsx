@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { FaArrowRight, FaCalendarDays, FaNewspaper } from "react-icons/fa6";
 import PageHero from "../components/PageHero";
 import { publicApi } from "../services/api";
+import { resolveMediaUrl } from "../utils/mediaUrl";
 
 const formatDate = (value) =>
   value
@@ -65,7 +66,7 @@ const Blogs = () => {
               {images.length > 0 && (
                 <div className="relative overflow-hidden">
                   <img
-                    src={images[0]}
+                    src={resolveMediaUrl(images[0])}
                     alt={item.title}
                     className="h-48 w-full object-cover transition duration-500 group-hover:scale-[1.02]"
                   />
