@@ -8,6 +8,7 @@ import HeroTerminal from "./HeroTerminal";
 import CodeRain from "./CodeRain";
 import { useAuth } from "../../hooks/useAuth";
 import {
+  authCtfUrl,
   authLoginUrl,
   authRegisterUrl,
   isExternalHref,
@@ -17,7 +18,7 @@ import {
 
 const SmartLink = ({ href, children, className, state }) =>
   isExternalHref(href) ? (
-    <a href={href} target="_blank" rel="noreferrer" className={className}>
+    <a href={href} className={className}>
       {children}
     </a>
   ) : (
@@ -41,7 +42,7 @@ const HeroSection = () => {
     delaySpeed: 1800,
   });
 
-  const ctfDestination = user ? "/dashboard/ctf" : authLoginUrl;
+  const ctfDestination = user ? authCtfUrl : authLoginUrl;
   const ctfLoginState = user
     ? undefined
     : { from: { pathname: "/dashboard/ctf" } };
