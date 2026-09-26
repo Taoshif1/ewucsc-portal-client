@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa6";
 import ContentManager from "../components/admin/ContentManager";
 import ContactInbox from "../components/admin/ContactInbox";
+import VPResourcesManager from "../components/admin/VPResourcesManager";
 import { useAuth } from "../hooks/useAuth";
 import { api, publicApi } from "../services/api";
 
@@ -146,6 +147,7 @@ const OperationsContent = () => {
         </form>
       )}
 
+      {backendUser?.role === "admin" && <VPResourcesManager />}
       <ContentManager />
       <ContactInbox />
     </div>
