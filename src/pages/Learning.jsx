@@ -129,7 +129,7 @@ const Learning = () => {
             </p>
           </div>
           <Link
-            to="/vp-resources"
+            to="/vp-collection"
             className="btn btn-primary btn-outline rounded-full"
           >
             Open Collection <FaArrowUpRightFromSquare />
