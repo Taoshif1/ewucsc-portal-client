@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
+import TechnicalNavbar from "./TechnicalNavbar";
 import { useAuth } from "../hooks/useAuth";
 import {
   authDashboardUrl,
@@ -21,6 +22,11 @@ const Navbar = () => {
 
   const { user, logoutUser } = useAuth();
   const navigate = useNavigate();
+
+  const onTechnicalHost =
+    typeof window !== "undefined" &&
+    isExternalHref(technicalHubUrl) &&
+    window.location.origin === new URL(technicalHubUrl).origin;
 
   const closeDropdowns = () => setOpenDropdown(null);
   const closeMobileMenu = () => {
@@ -181,13 +187,17 @@ const Navbar = () => {
 
       <Dropdown id="more" label="More" widthClass="w-72">
         <li><NavLink to="/announcements" onClick={closeMobileMenu}>Latest Announcements & Posts</NavLink></li>
-        <li><NavLink to="/blogs" onClick={closeMobileMenu}>Latest Blogs</NavLink></li>
+        <li><NavLink to="/blogs" onClick={closeMobileMenu}>Latest Blogs</NavLink></li>\n        <li><NavLink to="/gallery" onClick={closeMobileMenu}>Gallery</NavLink></li>
         <li><NavLink to="/partners" onClick={closeMobileMenu}>Sponsors / Club Partners</NavLink></li>
         <li><NavLink to="/about" onClick={closeMobileMenu}>About Us</NavLink></li>
         <li><NavLink to="/contact" onClick={closeMobileMenu}>Contact Us</NavLink></li>
       </Dropdown>
     </>
   );
+
+  if (onTechnicalHost) {
+    return <TechnicalNavbar />;
+  }
 
   return (
     <div

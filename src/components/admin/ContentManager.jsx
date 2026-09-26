@@ -14,6 +14,7 @@ import {
   FaXmark,
 } from "react-icons/fa6";
 import { api } from "../../services/api";
+import AssetDropzone from "./AssetDropzone";
 
 const EMPTY_DRAFT = {
   title: "",
@@ -231,14 +232,14 @@ const ContentManager = () => {
 
           <div>
             <label className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-base-content/45">
-              <FaImage /> Image URL <span className="font-normal normal-case tracking-normal">(optional)</span>
+              <FaImage /> Cover image <span className="font-normal normal-case tracking-normal">(optional)</span>
             </label>
-            <input
-              type="url"
-              value={draft.imageUrl}
-              onChange={(event) => setDraft({ ...draft, imageUrl: event.target.value })}
-              placeholder="https://example.com/event-photo.jpg"
-              className="input input-bordered w-full bg-base-100"
+            <AssetDropzone
+              scope="content"
+              accept="image/*"
+              label="Drop a post image here or click to upload"
+              helper="JPG, PNG, WebP, GIF or AVIF · max 10 MB"
+              onUploaded={(asset) => setDraft((current) => ({ ...current, imageUrl: asset.url }))}
             />
             {draft.imageUrl && (
               <div className="mt-3 overflow-hidden rounded-xl border border-white/5 bg-base-300/30">
@@ -246,8 +247,17 @@ const ContentManager = () => {
                   src={draft.imageUrl}
                   alt="Post preview"
                   className="h-40 w-full object-cover"
-                  onError={(event) => { event.currentTarget.style.display = "none"; }}
                 />
+                <div className="flex items-center justify-between gap-3 p-3">
+                  <span className="truncate text-xs text-base-content/45">Image attached</span>
+                  <button
+                    type="button"
+                    onClick={() => setDraft((current) => ({ ...current, imageUrl: "" }))}
+                    className="btn btn-xs btn-ghost text-error"
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
             )}
           </div>

@@ -3,7 +3,9 @@ import { createBrowserRouter } from "react-router";
 import MainLayout from "../layouts/MainLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
 
-import Home from "../pages/Home";
+import SiteHome from "../pages/SiteHome";
+import TechnicalLearningPath from "../pages/TechnicalLearningPath";
+import TechnicalSection, { TechnicalCtf } from "../pages/TechnicalSection";
 import Learning from "../pages/Learning";
 import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login";
@@ -36,6 +38,9 @@ import Contact from "../pages/Contact";
 import Blogs from "../pages/Blogs";
 import BlogDetails from "../pages/BlogDetails";
 import Credits from "../pages/Credits";
+import Gallery from "../pages/Gallery";
+import GalleryAdmin from "../pages/GalleryAdmin";
+import FormsAdmin from "../pages/FormsAdmin";
 
 import PrivateRoute from "./PrivateRouter";
 import RoleRoute from "./RoleRouter";
@@ -53,7 +58,7 @@ export const router = createBrowserRouter([
     element: <MainLayout />,
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <Home /> },
+      { index: true, element: <SiteHome /> },
       { path: "learning", element: <SubdomainRoute href={technicalHubUrl} preservePath><Learning /></SubdomainRoute> },
       { path: "announcements", element: <Announcements /> },
       { path: "blogs", element: <Blogs /> },
@@ -63,6 +68,103 @@ export const router = createBrowserRouter([
       { path: "resources", element: <SubdomainRoute href={technicalHubUrl} preservePath><Resources /></SubdomainRoute> },
       { path: "contact", element: <Contact /> },
       { path: "credits", element: <Credits /> },
+      { path: "gallery", element: <Gallery /> },
+      {
+        path: "learning-paths",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalLearningPath />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "learning-paths/:track",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalLearningPath />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "tools",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalSection />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "ctf",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalCtf />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "ctf/upcoming",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalCtf />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "ctf/archive",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalCtf />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "ctf/practice",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalCtf />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "writeups",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalSection />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "labs",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalSection />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "wiki",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalSection />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "events",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalSection />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "projects",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalSection />
+          </SubdomainRoute>
+        ),
+      },
       {
         path: "members",
         children: [
@@ -148,6 +250,22 @@ export const router = createBrowserRouter([
         element: (
           <RoleRoute allowedRoles={["admin", "executive"]}>
             <OperationsContent />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "manage/gallery",
+        element: (
+          <RoleRoute allowedRoles={["admin", "executive"]}>
+            <GalleryAdmin />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "manage/forms",
+        element: (
+          <RoleRoute allowedRoles={["admin"]}>
+            <FormsAdmin />
           </RoleRoute>
         ),
       },

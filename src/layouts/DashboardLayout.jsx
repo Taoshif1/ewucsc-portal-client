@@ -8,6 +8,8 @@ import {
   FaClipboardCheck,
   FaFlag,
   FaHouse,
+  FaImages,
+  FaFileCsv,
   FaRankingStar,
   FaShieldHalved,
   FaUsersGear,
@@ -34,11 +36,18 @@ const staffLinks = (role) => {
   ];
 
   if (role === "admin") {
-    links.push({
-      to: "/dashboard/manage/users",
-      label: "Manage Users",
-      icon: <FaUsersGear />,
-    });
+    links.push(
+      {
+        to: "/dashboard/manage/users",
+        label: "Manage Users",
+        icon: <FaUsersGear />,
+      },
+      {
+        to: "/dashboard/manage/forms",
+        label: "Form Data",
+        icon: <FaFileCsv />,
+      },
+    );
   }
 
   if (["admin", "executive"].includes(role)) {
@@ -57,6 +66,11 @@ const staffLinks = (role) => {
         to: "/dashboard/manage/content",
         label: "Content & Inbox",
         icon: <FaBullhorn />,
+      },
+      {
+        to: "/dashboard/manage/gallery",
+        label: "Gallery Admin",
+        icon: <FaImages />,
       },
     );
   }

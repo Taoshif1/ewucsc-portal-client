@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa6";
 import { api } from "../services/api";
 import Spinner from "../components/common/Spinner";
+import AttachmentList from "../components/common/AttachmentList";
 
 const difficultyClass = {
   Easy: "badge-success",
@@ -158,6 +159,8 @@ const PortalCTF = () => {
                 <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-base-content/65">
                   {challenge.description}
                 </p>
+
+                <AttachmentList attachments={challenge.attachments || []} />
 
                 {challenge.hint && (
                   <details className="mt-5 rounded-xl border border-warning/10 bg-warning/5 p-4">

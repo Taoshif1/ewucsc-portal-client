@@ -4,6 +4,7 @@ import {
   FaBan,
   FaCheck,
   FaDownload,
+  FaKey,
   FaRotate,
   FaUsersGear,
   FaXmark,
@@ -15,7 +16,7 @@ const ROLES = ["admin", "executive", "sub-executive", "member"];
 const FILTERS = ["all", "pending", "approved", "rejected", "suspended"];
 
 const AdminUsers = () => {
-  const { backendUser } = useAuth();
+  const { backendUser, resetPassword } = useAuth();
   const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState("pending");
   const [loading, setLoading] = useState(true);
@@ -83,6 +84,31 @@ const AdminUsers = () => {
     }
   };
 
+  const sendPasswordReset = async (user) => {
+    if (!user.email) {
+      toast.error("This account has no email address.");
+      return;
+    }
+
+    if (!window.confirm(`Send a Firebase password-reset email to ${user.email}?`)) {
+      return;
+    }
+
+    try {
+      setBusyUid(user.uid);
+      await resetPassword(user.email);
+      toast.success("Password-reset email sent to the member.");
+    } catch (error) {
+      if (error.code === "auth/too-many-requests") {
+        toast.error("Too many reset requests. Please wait and try again.");
+      } else {
+        toast.error("Could not send the reset email.");
+      }
+    } finally {
+      setBusyUid(null);
+    }
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -126,6 +152,15 @@ const AdminUsers = () => {
                       </td>
                       <td className="text-sm opacity-55">{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "—"}</td>
                       <td><div className="flex justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => sendPasswordReset(user)}
+                          disabled={busy || !user.email}
+                          className="btn btn-sm btn-outline"
+                          title="Send Firebase password-reset email"
+                        >
+                          <FaKey /> Reset Password
+                        </button>
                         {user.approvalStatus !== "approved" && <button type="button" onClick={() => updateApproval(user.uid, "approved")} disabled={busy} className="btn btn-sm btn-success btn-outline"><FaCheck /> Approve</button>}
                         {user.approvalStatus === "approved" && user.uid !== backendUser?.uid && <button type="button" onClick={() => updateApproval(user.uid, "suspended")} disabled={busy} className="btn btn-sm btn-warning btn-outline"><FaBan /> Suspend</button>}
                         {user.approvalStatus !== "rejected" && user.uid !== backendUser?.uid && <button type="button" onClick={() => updateApproval(user.uid, "rejected")} disabled={busy} className="btn btn-sm btn-error btn-outline"><FaXmark /> Reject</button>}

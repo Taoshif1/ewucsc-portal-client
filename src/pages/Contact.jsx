@@ -22,6 +22,8 @@ import Map from "../components/Map";
 import { publicApi } from "../services/api";
 import { authRegisterUrl } from "../config/siteLinks";
 
+const gmailCompose = (email) => "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(email);
+
 const Contact = () => {
   const [loading, setLoading] = useState(false);
 
@@ -186,11 +188,11 @@ const Contact = () => {
                 <p className="text-xs uppercase opacity-40 font-mono">
                   Club Email
                 </p>
-                <a href="mailto:ewcsc@ewubd.edu" className="font-bold hover:text-primary">
+                <a href={gmailCompose("ewcsc@ewubd.edu")} target="_blank" rel="noreferrer" className="font-bold hover:text-primary">
                   ewcsc@ewubd.edu
                 </a>
                 <a
-                  href="mailto:hello@zabermahmud.me"
+                  href={gmailCompose("hello@zabermahmud.me")} target="_blank" rel="noreferrer"
                   className="mt-1 block text-xs font-semibold text-secondary hover:text-primary"
                 >
                   Technical: hello@zabermahmud.me
@@ -262,7 +264,7 @@ const Contact = () => {
 
           <div className="mt-10 text-center">
             <a
-              href="mailto:ewcsc@ewubd.edu"
+              href={gmailCompose("ewcsc@ewubd.edu")} target="_blank" rel="noreferrer"
               className="link link-secondary text-sm font-bold"
             >
               Prefer email? Contact ewcsc@ewubd.edu
