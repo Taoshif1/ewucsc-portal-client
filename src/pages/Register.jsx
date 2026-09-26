@@ -10,9 +10,8 @@ import toast from "react-hot-toast";
 import Footer from "../components/Footer";
 import ButtonLoader from "../components/common/ButtonLoader";
 import {
-  isValidStudentId,
-  normalizeStudentId,
-  studentIdToEmail,
+  isAuthorizedAdminEmail,
+  resolvePortalIdentity,
 } from "../utils/ewuIdentity";
 
 const Register = () => {
@@ -21,18 +20,24 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit, watch } = useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const watchedStudentId = watch("studentId", "");
-  const derivedEmail = isValidStudentId(watchedStudentId)
-    ? studentIdToEmail(watchedStudentId)
-    : "";
+  const watchedIdentity = watch("studentId", "");
+  const resolvedIdentity = resolvePortalIdentity(watchedIdentity);
+  const derivedEmail = resolvedIdentity?.email || "";
 
   const onSubmit = async (data) => {
-    const studentId = normalizeStudentId(data.studentId);
+    const identity = resolvePortalIdentity(data.studentId);
 
-    if (!isValidStudentId(studentId)) {
-      toast.error("Enter a valid EWU Student ID, e.g. 2020-1-10-40");
+    if (!identity) {
+      toast.error("Enter a valid EWU Student ID or authorized EWUCSC admin email.");
       return;
     }
+
+    if (identity.type === "email" && !isAuthorizedAdminEmail(identity.email)) {
+      toast.error("Only the authorized EWUCSC admin email can register directly by email.");
+      return;
+    }
+
+    const { studentId, email } = identity;
 
     if (data.password.length < 8) {
       toast.error("Password must be at least 8 characters.");
@@ -44,7 +49,6 @@ const Register = () => {
       return;
     }
 
-    const email = studentIdToEmail(studentId);
     const loadingToast = toast.loading("Submitting EWUCSC registration...");
     setIsSubmitting(true);
     let createdFirebaseUser = null;
@@ -72,9 +76,12 @@ const Register = () => {
       backendProfileSaved = true;
       await logoutUser();
 
-      toast.success("Registration submitted. Check your EWU email.", {
-        id: loadingToast,
-      });
+      toast.success(
+        identity.type === "email"
+          ? "Admin account created. Check ewucsc@ewubd.edu for the verification link."
+          : "Registration submitted. Check your EWU email.",
+        { id: loadingToast },
+      );
       navigate("/pending-approval", { state: { email }, replace: true });
     } catch (error) {
       if (createdFirebaseUser && !backendProfileSaved) {
@@ -88,7 +95,7 @@ const Register = () => {
       const message =
         error.response?.data?.message ||
         (error.code === "auth/email-already-in-use"
-          ? "An account already exists for this Student ID."
+          ? "An account already exists for this EWU identity."
           : "Registration failed. Please check your information and try again.");
 
       toast.error(message, { id: loadingToast });
@@ -111,7 +118,7 @@ const Register = () => {
               Join EWUCSC
             </h1>
             <p className="text-center text-sm text-base-content/60 mt-2 mb-7">
-              EWU students only • Email verification + admin approval
+              EWU students • Official EWUCSC admin email supported
             </p>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -129,7 +136,7 @@ const Register = () => {
                 <input
                   {...register("studentId")}
                   type="text"
-                  placeholder="EWU Student ID — 2020-1-10-40"
+                  placeholder="EWU Student ID or ewucsc@ewubd.edu"
                   className="input input-bordered w-full bg-base-200/50"
                   autoComplete="username"
                   required
@@ -137,7 +144,7 @@ const Register = () => {
                 <p className="mt-2 px-1 text-xs text-base-content/45">
                   {derivedEmail
                     ? `EWU email: ${derivedEmail}`
-                    : "Your institutional email will be generated from your Student ID."}
+                    : "Students can enter their ID; the official EWUCSC admin can enter its email directly."}
                 </p>
               </div>
 
@@ -172,9 +179,9 @@ const Register = () => {
               />
 
               <div className="rounded-xl border border-warning/15 bg-warning/5 p-4 text-xs leading-relaxed text-base-content/60">
-                Registration uses two checks. Firebase sends a verification link to your
-                derived EWU student email; after you verify it, an EWUCSC admin must
-                approve the membership before portal access is enabled.
+                Firebase sends a verification link to the resolved EWU email. Student
+                accounts still need admin approval. The official EWUCSC admin account is
+                pre-approved, but must verify ownership of ewucsc@ewubd.edu before login.
               </div>
 
               <button
@@ -189,7 +196,7 @@ const Register = () => {
             <p className="text-center text-sm mt-6">
               Already registered?{" "}
               <Link to="/login" className="font-bold text-secondary hover:text-primary">
-                Login with Student ID
+                Login with ID or email
               </Link>
             </p>
           </div>
