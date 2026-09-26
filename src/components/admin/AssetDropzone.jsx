@@ -9,6 +9,7 @@ const AssetDropzone = ({
   scope,
   accept = "image/*,.pdf,.txt,.md,.json,.csv,.zip,.7z,.rar,.pcap,.pcapng",
   multiple = false,
+  maxFiles = 8,
   onUploaded,
   label = "Drop files here or click to browse",
   helper = "Maximum 10 MB per file",
@@ -44,7 +45,7 @@ const AssetDropzone = ({
     const files = Array.from(fileList || []);
     if (!files.length) return;
 
-    const selected = multiple ? files.slice(0, 8) : files.slice(0, 1);
+    const selected = multiple ? files.slice(0, Math.max(1, maxFiles)) : files.slice(0, 1);
 
     try {
       setUploading(true);
