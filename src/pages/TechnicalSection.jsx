@@ -137,14 +137,14 @@ export const TechnicalCtf = () => (
     </section>
 
     <div className="mt-7 grid gap-5 md:grid-cols-3">
-      <div className="rounded-[1.5rem] border border-white/5 bg-base-100/60 p-6">
+      <Link to="/ctf/upcoming" className="rounded-[1.5rem] border border-white/5 bg-base-100/60 p-6 transition hover:-translate-y-1 hover:border-secondary/25">
         <h2 className="text-xl font-black">/ctf/upcoming</h2>
         <p className="mt-2 text-sm text-base-content/55">External competition calendar from CTFtime.</p>
-      </div>
-      <div className="rounded-[1.5rem] border border-white/5 bg-base-100/60 p-6">
+      </Link>
+      <Link to="/ctf/archive" className="rounded-[1.5rem] border border-white/5 bg-base-100/60 p-6 transition hover:-translate-y-1 hover:border-secondary/25">
         <h2 className="text-xl font-black">/ctf/archive</h2>
         <p className="mt-2 text-sm text-base-content/55">Past EWUCSC-hosted CTFs will be archived here.</p>
-      </div>
+      </Link>
       <div className="rounded-[1.5rem] border border-white/5 bg-base-100/60 p-6">
         <h2 className="text-xl font-black">/ctf/practice</h2>
         <p className="mt-2 text-sm text-base-content/55">In-house practice stays behind member authentication.</p>
