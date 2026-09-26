@@ -1,7 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { isExternalHref } from "../config/siteLinks";
 
-const SubdomainRoute = ({ href, children }) => {
+const SubdomainRoute = ({ href, preservePath = false, children }) => {
+  const target = useMemo(() => {
+    if (!isExternalHref(href) || typeof window === "undefined") return href;
+
+    if (!preservePath) return href;
+
+    const base = new URL(href);
+    return new URL(
+      window.location.pathname + window.location.search + window.location.hash,
+      base.origin,
+    ).toString();
+  }, [href, preservePath]);
+
   const shouldRedirect =
     isExternalHref(href) &&
     typeof window !== "undefined" &&
@@ -9,9 +21,9 @@ const SubdomainRoute = ({ href, children }) => {
 
   useEffect(() => {
     if (shouldRedirect) {
-      window.location.replace(href);
+      window.location.replace(target);
     }
-  }, [href, shouldRedirect]);
+  }, [shouldRedirect, target]);
 
   if (shouldRedirect) {
     return (
