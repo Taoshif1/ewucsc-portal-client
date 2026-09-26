@@ -28,7 +28,7 @@ const resources = [
     title: "Technical Resource Drop",
     category: "EWUCSC",
     description: "A curated technical collection contributed to EWUCSC as a gift from the Vice President (Technical).",
-    href: "/vp-resources",
+    href: "/vp-collection",
     icon: <FaBookOpen />,
     credit: "A Gift from the VP ✦",
   },

@@ -73,7 +73,7 @@ export const router = createBrowserRouter([
       { path: "gallery", element: <Gallery /> },
       { path: "apply/:formKey", element: <RecruitmentForm /> },
       {
-        path: "vp-resources",
+        path: "vp-collection",
         element: (
           <SubdomainRoute href={technicalHubUrl} preservePath>
             <VPResources />
