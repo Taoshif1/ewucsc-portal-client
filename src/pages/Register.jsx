@@ -118,7 +118,7 @@ const Register = () => {
               Join EWUCSC
             </h1>
             <p className="text-center text-sm text-base-content/60 mt-2 mb-7">
-              EWU students • Official EWUCSC admin email supported
+              EWU students • Official EWUCSC admin access supported
             </p>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
