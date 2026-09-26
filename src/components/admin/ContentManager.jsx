@@ -15,6 +15,7 @@ import {
 } from "react-icons/fa6";
 import { api } from "../../services/api";
 import AssetDropzone from "./AssetDropzone";
+import { resolveMediaUrl } from "../../utils/mediaUrl";
 
 const EMPTY_DRAFT = {
   title: "",
@@ -266,7 +267,7 @@ const ContentManager = () => {
                     className="relative overflow-hidden rounded-xl border border-white/5 bg-base-300/30"
                   >
                     <img
-                      src={imageUrl}
+                      src={resolveMediaUrl(imageUrl)}
                       alt={index === 0 ? "Post cover preview" : "Post image preview"}
                       className="h-32 w-full object-cover"
                     />
@@ -359,7 +360,7 @@ const ContentManager = () => {
                     {(item.imageUrls?.[0] || item.imageUrl) && (
                       <div className="relative shrink-0">
                         <img
-                          src={item.imageUrls?.[0] || item.imageUrl}
+                          src={resolveMediaUrl(item.imageUrls?.[0] || item.imageUrl)}
                           alt=""
                           className="h-24 w-full rounded-xl object-cover sm:w-32"
                         />
