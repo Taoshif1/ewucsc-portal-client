@@ -8,11 +8,7 @@ import { FaEye, FaEyeSlash, FaShieldHalved } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import Footer from "../components/Footer";
 import ButtonLoader from "../components/common/ButtonLoader";
-import {
-  isValidStudentId,
-  normalizeStudentId,
-  studentIdToEmail,
-} from "../utils/ewuIdentity";
+import { resolvePortalIdentity } from "../utils/ewuIdentity";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -30,23 +26,14 @@ const Login = () => {
   const [resettingPassword, setResettingPassword] = useState(false);
   const [resendingVerification, setResendingVerification] = useState(false);
 
-  const resolveEmail = (identityValue = "") => {
-    const identity = identityValue.trim();
-    const studentId = normalizeStudentId(identity);
-    const isLegacyEmail = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(identity);
-
-    if (!isValidStudentId(studentId) && !isLegacyEmail) {
-      return null;
-    }
-
-    return isLegacyEmail ? identity.toLowerCase() : studentIdToEmail(studentId);
-  };
+  const resolveEmail = (identityValue = "") =>
+    resolvePortalIdentity(identityValue)?.email || null;
 
   const handleForgotPassword = async () => {
     const email = resolveEmail(getValues("studentId"));
 
     if (!email) {
-      toast.error("Enter your EWU Student ID first.");
+      toast.error("Enter your EWU Student ID or email first.");
       return;
     }
 
@@ -59,7 +46,7 @@ const Login = () => {
         toast.error("Too many requests. Please wait a little and try again.");
       } else {
         toast.success(
-          "If an account exists for this Student ID, a password reset email has been requested.",
+          "If an account exists for this EWU identity, a password reset email has been requested.",
         );
       }
     } finally {
@@ -72,7 +59,7 @@ const Login = () => {
     const password = getValues("password");
 
     if (!email) {
-      toast.error("Enter your EWU Student ID first.");
+      toast.error("Enter your EWU Student ID or email first.");
       return;
     }
 
@@ -96,7 +83,7 @@ const Login = () => {
       if (error.code === "auth/too-many-requests") {
         toast.error("Too many requests. Please wait a little and try again.");
       } else {
-        toast.error("Could not resend verification. Check your Student ID and password.");
+        toast.error("Could not resend verification. Check your ID/email and password.");
       }
     } finally {
       await logoutUser().catch(() => {});
@@ -105,16 +92,14 @@ const Login = () => {
   };
 
   const onSubmit = async (data) => {
-    const identity = data.studentId.trim();
-    const studentId = normalizeStudentId(identity);
-    const isLegacyEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identity);
+    const identity = resolvePortalIdentity(data.studentId);
 
-    if (!isValidStudentId(studentId) && !isLegacyEmail) {
-      toast.error("Enter a valid EWU Student ID.");
+    if (!identity) {
+      toast.error("Enter a valid EWU Student ID or email.");
       return;
     }
 
-    const email = isLegacyEmail ? identity.toLowerCase() : studentIdToEmail(studentId);
+    const email = identity.email;
     const loadingToast = toast.loading("Authenticating...");
     setIsSubmitting(true);
 
@@ -157,7 +142,7 @@ const Login = () => {
           id: loadingToast,
         });
       } else {
-        toast.error("Invalid Student ID or password.", { id: loadingToast });
+        toast.error("Invalid ID/email or password.", { id: loadingToast });
       }
     } finally {
       setIsSubmitting(false);
@@ -185,7 +170,7 @@ const Login = () => {
               <input
                 {...register("studentId")}
                 type="text"
-                placeholder="EWU Student ID"
+                placeholder="EWU Student ID or email"
                 className="input input-bordered w-full bg-base-200/50"
                 autoComplete="username"
                 required
@@ -231,9 +216,8 @@ const Login = () => {
               </div>
 
               <p className="px-1 text-[11px] leading-relaxed text-base-content/40">
-                Password reset only needs your Student ID. Resending verification requires
-                your Student ID and current password. New member accounts use the EWU email
-                derived from their Student ID.
+                Password reset accepts your Student ID or registered email. Resending
+                verification requires the same identity and current password.
               </p>
 
               <button
@@ -248,7 +232,7 @@ const Login = () => {
             <p className="text-center text-sm mt-6">
               New member?{" "}
               <Link to="/register" className="font-bold text-secondary hover:text-primary">
-                Register with EWU ID
+                Register
               </Link>
             </p>
           </div>
