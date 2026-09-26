@@ -8,6 +8,9 @@ import HeroTerminal from "./HeroTerminal";
 import CodeRain from "./CodeRain";
 import { useAuth } from "../../hooks/useAuth";
 import {
+  authCtfUrl,
+  authLoginUrl,
+  authRegisterUrl,
   isExternalHref,
   technicalLearningUrl,
   technicalResourcesUrl,
@@ -15,7 +18,7 @@ import {
 
 const SmartLink = ({ href, children, className, state }) =>
   isExternalHref(href) ? (
-    <a href={href} target="_blank" rel="noreferrer" className={className}>
+    <a href={href} className={className}>
       {children}
     </a>
   ) : (
@@ -39,7 +42,7 @@ const HeroSection = () => {
     delaySpeed: 1800,
   });
 
-  const ctfDestination = user ? "/dashboard/ctf" : "/login";
+  const ctfDestination = user ? authCtfUrl : authLoginUrl;
   const ctfLoginState = user
     ? undefined
     : { from: { pathname: "/dashboard/ctf" } };
@@ -112,20 +115,20 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <Link
-            to="/register"
+          <SmartLink
+            href={authRegisterUrl}
             className="btn btn-lg border-none text-white rounded-full px-8 bg-gradient-to-r from-primary via-secondary to-accent hover:saturate-150 hover:scale-105 active:scale-95 transition-all duration-500 shadow-xl shadow-primary/20"
           >
             Join the Club <FaArrowRight />
-          </Link>
+          </SmartLink>
 
-          <Link
-            to={ctfDestination}
+          <SmartLink
+            href={ctfDestination}
             state={ctfLoginState}
             className="btn btn-lg btn-outline btn-accent rounded-full px-8 hover:scale-105 active:scale-95 transition-all duration-300"
           >
             {user ? "Open Member Practice" : "Member Portal"}
-          </Link>
+          </SmartLink>
         </motion.div>
 
         <motion.div

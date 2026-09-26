@@ -120,8 +120,8 @@ const AdminUsers = () => {
                       <td><div className="font-bold">{user.name}</div><div className="font-mono text-xs text-secondary">{user.studentId || "Legacy account"}</div><div className="text-xs opacity-45">{user.email}</div></td>
                       <td><span className={`badge badge-outline capitalize ${user.approvalStatus === "approved" ? "badge-success" : user.approvalStatus === "pending" ? "badge-warning" : "badge-error"}`}>{user.approvalStatus}</span></td>
                       <td>
-                        <select className="select select-sm select-bordered min-w-40 bg-base-200/60" value={user.role || "member"} disabled={busy} onChange={(event) => updateRole(user.uid, event.target.value)}>
-                          {ROLES.map((role) => <option key={role} value={role}>{role}</option>)}
+                        <select className="select select-sm select-bordered relative z-10 min-w-40 bg-base-100 text-base-content shadow-lg focus:z-50 focus:border-primary/40" value={user.role || "member"} disabled={busy} onChange={(event) => updateRole(user.uid, event.target.value)}>
+                          {ROLES.map((role) => <option key={role} value={role} className="bg-base-100 text-base-content">{role}</option>)}
                         </select>
                       </td>
                       <td className="text-sm opacity-55">{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "—"}</td>

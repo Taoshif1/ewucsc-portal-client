@@ -20,6 +20,7 @@ import {
 import PageHero from "../components/PageHero";
 import Map from "../components/Map";
 import { publicApi } from "../services/api";
+import { authRegisterUrl } from "../config/siteLinks";
 
 const Contact = () => {
   const [loading, setLoading] = useState(false);
@@ -42,7 +43,7 @@ const Contact = () => {
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-          "Unable to send your message right now. Please email ewucsc@ewubd.edu.",
+          "Unable to send your message right now. Please email ewcsc@ewubd.edu.",
       );
     } finally {
       setLoading(false);
@@ -172,10 +173,10 @@ const Contact = () => {
                 </div>
               ))}
             </div>
-            <button className="btn btn-primary btn-lg rounded-2xl px-10 group">
+            <a href={authRegisterUrl} className="btn btn-primary btn-lg rounded-2xl px-10 group">
               Apply for Membership{" "}
               <HiOutlineArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />
-            </button>
+            </a>
           </motion.div>
 
           <div className="grid sm:grid-cols-2 gap-6">
@@ -183,9 +184,17 @@ const Contact = () => {
               <HiOutlineMail className="text-4xl text-primary" />
               <div>
                 <p className="text-xs uppercase opacity-40 font-mono">
-                  Email Us
+                  Club Email
                 </p>
-                <p className="font-bold">ewucsc@ewubd.edu</p>
+                <a href="mailto:ewcsc@ewubd.edu" className="font-bold hover:text-primary">
+                  ewcsc@ewubd.edu
+                </a>
+                <a
+                  href="mailto:hello@zabermahmud.me"
+                  className="mt-1 block text-xs font-semibold text-secondary hover:text-primary"
+                >
+                  Technical: hello@zabermahmud.me
+                </a>
               </div>
             </div>
             <div className="p-8 rounded-3xl border border-white/5 bg-base-100/60 flex items-center gap-6 hover:border-accent/20 transition-all">
@@ -253,10 +262,10 @@ const Contact = () => {
 
           <div className="mt-10 text-center">
             <a
-              href="mailto:ewucsc@ewubd.edu"
+              href="mailto:ewcsc@ewubd.edu"
               className="link link-secondary text-sm font-bold"
             >
-              Prefer email? Contact ewucsc@ewubd.edu
+              Prefer email? Contact ewcsc@ewubd.edu
             </a>
           </div>
         </motion.div>

@@ -1,39 +1,105 @@
-# EWUCSC Domain Split
+# EWUCSC Domain & Subdomain Setup
 
-The club portal and a future public CTF event should be treated as separate surfaces.
+The application is prepared for three separate browser surfaces. The final domain name is intentionally not hard-coded.
 
 ## Recommended structure
 
-- Main club site: club-facing pages such as Home, About/Mission, Members, Announcements, Blogs, Partners, and Contact.
-- Technical hub: a separate subdomain for Resources, Learning Path / Roadmap, Cheatsheets, and other technical references.
-- CTF event platform: a separate subdomain/application for public or inter-university contests. Do not reuse the club-member portal as the public contest platform.
+Example only, if the club later owns `example.com`:
 
-Example only:
+- `example.com` or `www.example.com` — public club website
+- `portal.example.com` — Login, Register, approval flow and member/staff portal
+- `resources.example.com` — Learning Path, Arsenal, VP resource drop and technical resources
+- `ctf.example.com` — future public/inter-university CTF platform
 
-- `www.example.com`
-- `resources.example.com`
-- `ctf.example.com`
+The public CTF platform is a separate future system and should not be coupled to the EWU-only member portal.
 
-Do not configure production DNS until the final domain name is confirmed.
+## Important concept: route vs subdomain
 
-## Environment variables
+A React route:
 
-The client uses:
+```text
+example.com/about
+example.com/blogs
+```
+
+A subdomain:
+
+```text
+portal.example.com
+resources.example.com
+```
+
+React Router controls the path after the domain. DNS/Vercel controls which hostname reaches which deployment.
+
+You do **not** add an Express route such as `/portal.example.com`.
+
+## Client environment variables
 
 ```env
+VITE_AUTH_PORTAL_URL=https://portal.example.com
 VITE_TECHNICAL_HUB_URL=https://resources.example.com
 VITE_CTF_EVENT_URL=https://ctf.example.com
 ```
 
-When these values are empty, local development falls back to the current internal learning/resources routes and hides the external contest shortcut.
+When `VITE_AUTH_PORTAL_URL` is empty, Login/Register stay on local/internal routes for development.
 
-## Vercel handover checklist
+When `VITE_TECHNICAL_HUB_URL` is empty, Learning/Resources stay on local/internal routes.
 
-1. Add the purchased domain to the main club Vercel project.
-2. Create or select the technical-hub deployment/project and add the resources subdomain.
-3. Create a separate contest deployment/project and add the CTF subdomain.
-4. Add the two public URLs above as environment variables in the club portal.
-5. Add each production origin to the API server CORS allowlist when that origin needs authenticated API access.
-6. Verify HTTPS, redirects, login, logout, and deep links after DNS propagation.
+Once a real URL is configured:
 
-The public CTF event platform should have its own participant/team model and load-testing plan. The EWUCSC member portal remains restricted to approved EWU members/staff.
+- public Member Portal / Join links use the auth subdomain;
+- direct main-site `/login`, `/register`, and `/pending-approval` requests forward to the auth host;
+- direct main-site `/learning` and `/resources` requests forward to the technical host.
+
+## Recommended Vercel workflow
+
+The cleanest long-term setup is three Vercel projects/deployments:
+
+1. **Club site project** — main domain.
+2. **Member portal project** — auth/member subdomain.
+3. **Technical hub project** — resources subdomain.
+
+They can initially come from the same GitHub repository while the code is being separated, then the technical hub can move to its own repository later if desired.
+
+For the member portal, keep Firebase + API configuration available because Login/Register/Dashboard need them.
+
+For the technical hub, the static Arsenal and VP resource pages do not need authenticated API access unless a later feature requires it.
+
+## DNS
+
+You buy/own the base domain once. Subdomains normally do not require separate purchases.
+
+After adding each custom domain inside Vercel, Vercel shows the DNS record that the domain provider must receive. Use the exact values Vercel gives for the project rather than guessing an A/CNAME record from an old tutorial.
+
+## API / CORS
+
+The Express API does not need new routes just because the frontend has a new hostname.
+
+It only needs to permit frontend origins that call the API. Add the final origins to server environment variables, for example:
+
+```env
+ALLOWED_ORIGINS=https://example.com,https://portal.example.com,https://resources.example.com
+```
+
+The auth/member portal definitely needs API access. The technical hub only needs it if a technical page calls protected or dynamic endpoints.
+
+## Firebase
+
+Keep the same Firebase project unless there is a deliberate migration.
+
+After the real auth hostname exists:
+
+1. add the auth hostname to Firebase Authentication authorized domains;
+2. verify registration, verification-email links, password reset, login and logout;
+3. verify the backend receives valid Firebase ID tokens from the new host.
+
+## Cutover checklist
+
+1. Confirm the exact base domain with EWUCSC leadership.
+2. Purchase it or obtain an official EWU subdomain.
+3. Create the Vercel projects/domains.
+4. Configure `VITE_AUTH_PORTAL_URL` and `VITE_TECHNICAL_HUB_URL`.
+5. Add final frontend origins to server CORS.
+6. Add auth hostname to Firebase authorized domains.
+7. Redeploy.
+8. Smoke-test desktop + mobile, registration, email verification, approval, login, password reset, dashboards, learning/resources and direct/deep URLs.

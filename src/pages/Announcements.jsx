@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
-import { FaBullhorn } from "react-icons/fa6";
+import { FaBullhorn, FaCalendarDays } from "react-icons/fa6";
 import PageHero from "../components/PageHero";
 import { publicApi } from "../services/api";
+
+const formatDate = (value) =>
+  value
+    ? new Date(value.includes("T") ? value : value + "T00:00:00").toLocaleDateString(
+        undefined,
+        { day: "numeric", month: "long", year: "numeric" },
+      )
+    : "";
 
 const Announcements = () => {
   const [items, setItems] = useState([]);
@@ -27,7 +35,7 @@ const Announcements = () => {
       {loading ? (
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3].map((item) => (
-            <div key={item} className="h-52 animate-pulse rounded-[1.5rem] bg-base-200/50" />
+            <div key={item} className="h-72 animate-pulse rounded-[1.5rem] bg-base-200/50" />
           ))}
         </div>
       ) : items.length === 0 ? (
@@ -43,18 +51,34 @@ const Announcements = () => {
           {items.map((item) => (
             <article
               key={item.id}
-              className="rounded-[1.75rem] border border-white/5 bg-base-100/70 p-6 backdrop-blur-xl shadow-2xl"
+              className="overflow-hidden rounded-[1.75rem] border border-white/5 bg-base-100/70 backdrop-blur-xl shadow-2xl"
             >
-              <span className="badge badge-primary badge-outline mb-4">Announcement</span>
-              <h2 className="text-xl font-black">{item.title}</h2>
-              <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-base-content/65">
-                {item.excerpt || item.body}
-              </p>
-              {item.publishedAt && (
-                <p className="mt-5 font-mono text-[10px] uppercase tracking-[0.15em] text-base-content/35">
-                  {new Date(item.publishedAt).toLocaleDateString()}
-                </p>
+              {item.imageUrl && (
+                <img
+                  src={item.imageUrl}
+                  alt={item.title}
+                  className="h-48 w-full object-cover"
+                />
               )}
+              <div className="p-6">
+                <span className="badge badge-primary badge-outline mb-4">Announcement</span>
+                <h2 className="text-xl font-black">{item.title}</h2>
+                <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-base-content/65">
+                  {item.excerpt || item.body}
+                </p>
+
+                <div className="mt-5 space-y-2 font-mono text-[10px] uppercase tracking-[0.15em] text-base-content/35">
+                  {item.eventDate && (
+                    <p className="flex items-center gap-2 text-primary/70">
+                      <FaCalendarDays />
+                      Event date: {formatDate(item.eventDate)}
+                    </p>
+                  )}
+                  {item.publishedAt && (
+                    <p>Published {formatDate(item.publishedAt)}</p>
+                  )}
+                </div>
+              </div>
             </article>
           ))}
         </section>

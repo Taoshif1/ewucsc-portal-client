@@ -1,6 +1,10 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router";
-import { isExternalHref, technicalHubUrl } from "../../config/siteLinks";
+import {
+  authRegisterUrl,
+  isExternalHref,
+  technicalHubUrl,
+} from "../../config/siteLinks";
 
 const CTASection = () => {
   return (
@@ -23,23 +27,30 @@ const CTASection = () => {
         </h2>
 
         <p className="text-base md:text-lg text-base-content/75 leading-relaxed">
-          Join the club community here, then use the dedicated technical hub for
-          structured learning and resources.
+          Join through the dedicated member-access portal, then use the technical hub
+          for structured learning and resources.
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center gap-4 pt-2">
-          <Link
-            to="/register"
-            className="btn btn-lg rounded-full border-none text-white bg-gradient-to-r from-primary via-secondary to-accent hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-primary/20"
-          >
-            Create Account
-          </Link>
+          {isExternalHref(authRegisterUrl) ? (
+            <a
+              href={authRegisterUrl}
+              className="btn btn-lg rounded-full border-none text-white bg-gradient-to-r from-primary via-secondary to-accent hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-primary/20"
+            >
+              Join EWUCSC
+            </a>
+          ) : (
+            <Link
+              to={authRegisterUrl}
+              className="btn btn-lg rounded-full border-none text-white bg-gradient-to-r from-primary via-secondary to-accent hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-primary/20"
+            >
+              Join EWUCSC
+            </Link>
+          )}
 
           {isExternalHref(technicalHubUrl) ? (
             <a
               href={technicalHubUrl}
-              target="_blank"
-              rel="noreferrer"
               className="btn btn-lg btn-outline btn-secondary rounded-full hover:scale-105 active:scale-95 transition-all duration-300"
             >
               Open Technical Hub

@@ -1,21 +1,55 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaChevronDown, FaTimes } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 import { useAuth } from "../hooks/useAuth";
-import { isExternalHref, technicalHubUrl } from "../config/siteLinks";
+import {
+  authDashboardUrl,
+  authLoginUrl,
+  isExternalHref,
+  technicalHubUrl,
+} from "../config/siteLinks";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
   const [logoutLoading, setLogoutLoading] = useState(false);
+  const navbarRef = useRef(null);
 
   const { user, logoutUser } = useAuth();
   const navigate = useNavigate();
 
-  const closeMobileMenu = () => setIsOpen(false);
+  const closeDropdowns = () => setOpenDropdown(null);
+  const closeMobileMenu = () => {
+    setIsOpen(false);
+    closeDropdowns();
+  };
+
+  useEffect(() => {
+    const handlePointerDown = (event) => {
+      if (!event.target.closest("[data-nav-dropdown]")) {
+        closeDropdowns();
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        closeDropdowns();
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const handleLogout = async () => {
     const loadingToast = toast.loading("Logging out...");
@@ -40,6 +74,51 @@ const Navbar = () => {
         : "text-base-content/70 hover:text-primary"
     }`;
 
+  const Dropdown = ({ id, label, children, widthClass = "w-64" }) => {
+    const open = openDropdown === id;
+
+    return (
+      <li className="relative" data-nav-dropdown>
+        <button
+          type="button"
+          onClick={() => setOpenDropdown((current) => (current === id ? null : id))}
+          className="flex items-center gap-1.5 text-base-content/70 transition-colors duration-200 hover:text-primary"
+          aria-expanded={open}
+        >
+          {label}
+          <FaChevronDown
+            size={10}
+            className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          />
+        </button>
+
+        {open && (
+          <ul
+            className={`menu z-[80] mt-2 rounded-box border border-base-content/10 bg-base-100 p-2 shadow-2xl lg:absolute lg:left-0 lg:top-full ${widthClass}`}
+          >
+            {children}
+          </ul>
+        )}
+      </li>
+    );
+  };
+
+  const authPortalButton = isExternalHref(authLoginUrl) ? (
+    <a
+      href={authLoginUrl}
+      className="btn btn-sm rounded-full border-none bg-gradient-to-r from-primary to-secondary px-6 font-bold text-white shadow-lg shadow-primary/30 transition-all duration-300 hover:scale-105"
+    >
+      Member Portal
+    </a>
+  ) : (
+    <Link
+      to={authLoginUrl}
+      className="btn btn-sm rounded-full border-none bg-gradient-to-r from-primary to-secondary px-6 font-bold text-white shadow-lg shadow-primary/30 transition-all duration-300 hover:scale-105"
+    >
+      Member Portal
+    </Link>
+  );
+
   const Links = (
     <>
       <li>
@@ -55,7 +134,7 @@ const Navbar = () => {
             onClick={closeMobileMenu}
             target="_blank"
             rel="noreferrer"
-            className="text-base-content/70 hover:text-primary transition-colors duration-200"
+            className="text-base-content/70 transition-colors duration-200 hover:text-primary"
           >
             Technical Hub
           </a>
@@ -72,101 +151,57 @@ const Navbar = () => {
 
       {user && (
         <li>
-          <NavLink
-            to="/dashboard"
-            className={navLinkClass}
-            onClick={closeMobileMenu}
-          >
-            Dashboard
-          </NavLink>
+          {isExternalHref(authDashboardUrl) ? (
+            <a
+              href={authDashboardUrl}
+              onClick={closeMobileMenu}
+              className="text-base-content/70 transition-colors duration-200 hover:text-primary"
+            >
+              Dashboard
+            </a>
+          ) : (
+            <NavLink
+              to={authDashboardUrl}
+              className={navLinkClass}
+              onClick={closeMobileMenu}
+            >
+              Dashboard
+            </NavLink>
+          )}
         </li>
       )}
 
-      <li>
-        <details>
-          <summary className="text-base-content/70 hover:text-primary transition-colors duration-200 cursor-pointer">
-            Members
-          </summary>
-          <ul className="p-2 bg-base-100 rounded-box w-64 border border-base-content/10 shadow-2xl">
-            <li>
-              <NavLink to="/members" onClick={closeMobileMenu}>
-                Panels
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/members/current" onClick={closeMobileMenu}>
-                Current Members
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/members/moderators" onClick={closeMobileMenu}>
-                Moderators
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/members/executive-panel-24-25"
-                onClick={closeMobileMenu}
-              >
-                Executive Panel 24–25
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/members/executive-panel-25-26"
-                onClick={closeMobileMenu}
-              >
-                Executive Panel 25–26
-              </NavLink>
-            </li>
-          </ul>
-        </details>
-      </li>
+      <Dropdown id="members" label="Members" widthClass="w-64">
+        <li><NavLink to="/members" onClick={closeMobileMenu}>Panels</NavLink></li>
+        <li><NavLink to="/members/current" onClick={closeMobileMenu}>Current Members</NavLink></li>
+        <li><NavLink to="/members/moderators" onClick={closeMobileMenu}>Moderators</NavLink></li>
+        <li><NavLink to="/members/executive-panel-24-25" onClick={closeMobileMenu}>Executive Panel 24–25</NavLink></li>
+        <li><NavLink to="/members/executive-panel-25-26" onClick={closeMobileMenu}>Executive Panel 25–26</NavLink></li>
+      </Dropdown>
 
-      <li>
-        <details>
-          <summary className="text-base-content/70 hover:text-primary transition-colors duration-200 cursor-pointer">
-            More
-          </summary>
-          <ul className="p-2 bg-base-100 rounded-box w-72 border border-base-content/10 shadow-2xl">
-            <li>
-              <NavLink to="/announcements" onClick={closeMobileMenu}>
-                Latest Announcements & Posts
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/blogs" onClick={closeMobileMenu}>
-                Latest Blogs
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/partners" onClick={closeMobileMenu}>
-                Sponsors / Club Partners
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/about" onClick={closeMobileMenu}>
-                About Us
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/contact" onClick={closeMobileMenu}>
-                Contact Us
-              </NavLink>
-            </li>
-          </ul>
-        </details>
-      </li>
+      <Dropdown id="more" label="More" widthClass="w-72">
+        <li><NavLink to="/announcements" onClick={closeMobileMenu}>Latest Announcements & Posts</NavLink></li>
+        <li><NavLink to="/blogs" onClick={closeMobileMenu}>Latest Blogs</NavLink></li>
+        <li><NavLink to="/partners" onClick={closeMobileMenu}>Sponsors / Club Partners</NavLink></li>
+        <li><NavLink to="/about" onClick={closeMobileMenu}>About Us</NavLink></li>
+        <li><NavLink to="/contact" onClick={closeMobileMenu}>Contact Us</NavLink></li>
+      </Dropdown>
     </>
   );
 
   return (
-    <div className="navbar relative bg-base-100/70 backdrop-blur-xl sticky top-0 z-50 px-4 lg:px-12 border-b border-white/5 shadow-[0_10px_30px_-15px_rgba(37,99,235,0.2)] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:bg-gradient-to-r after:from-transparent after:via-primary after:to-secondary after:opacity-50">
+    <div
+      ref={navbarRef}
+      className="navbar relative sticky top-0 z-50 border-b border-white/5 bg-base-100/70 px-4 shadow-[0_10px_30px_-15px_rgba(37,99,235,0.2)] backdrop-blur-xl after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:bg-gradient-to-r after:from-transparent after:via-primary after:to-secondary after:opacity-50 lg:px-12"
+    >
       <div className="navbar-start">
         <button
           type="button"
-          className="btn btn-ghost lg:hidden text-base-content"
-          onClick={() => setIsOpen((prev) => !prev)}
+          className="btn btn-ghost text-base-content lg:hidden"
+          onClick={() => {
+            setIsOpen((prev) => !prev);
+            closeDropdowns();
+          }}
           aria-label="Toggle menu"
         >
           {isOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
@@ -174,7 +209,7 @@ const Navbar = () => {
 
         <NavLink
           to="/"
-          className="btn btn-ghost hover:bg-transparent normal-case"
+          className="btn btn-ghost normal-case hover:bg-transparent"
           onClick={closeMobileMenu}
         >
           <Logo className="h-10 w-10" />
@@ -182,7 +217,7 @@ const Navbar = () => {
       </div>
 
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1 gap-4 font-medium">
+        <ul className="menu menu-horizontal gap-4 px-1 font-medium">
           {Links}
         </ul>
       </div>
@@ -194,7 +229,7 @@ const Navbar = () => {
           <button
             onClick={handleLogout}
             disabled={logoutLoading}
-            className="btn btn-sm px-8 rounded-full text-white font-bold border-none bg-gradient-to-r from-error to-secondary hover:from-secondary hover:to-error hover:scale-105 active:scale-95 transition-all duration-500 ease-in-out shadow-lg shadow-primary/30 cursor-pointer disabled:opacity-70"
+            className="btn btn-sm cursor-pointer rounded-full border-none bg-gradient-to-r from-error to-secondary px-8 font-bold text-white shadow-lg shadow-primary/30 transition-all duration-500 ease-in-out hover:scale-105 hover:from-secondary hover:to-error active:scale-95 disabled:opacity-70"
           >
             {logoutLoading ? (
               <>
@@ -206,40 +241,26 @@ const Navbar = () => {
             )}
           </button>
         ) : (
-          <div className="flex items-center gap-2">
-            <Link
-              to="/login"
-              className="btn btn-sm px-6 rounded-full text-white font-bold border-none bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary hover:scale-105 active:scale-95 transition-all duration-500 ease-in-out shadow-lg shadow-primary/30 cursor-pointer"
-            >
-              Login
-            </Link>
-
-            <Link
-              to="/register"
-              className="btn btn-sm px-6 rounded-full font-bold border border-primary/20 bg-base-100 hover:bg-primary/10 transition-all duration-300"
-            >
-              Register
-            </Link>
-          </div>
+          authPortalButton
         )}
       </div>
 
       <div
-        className={`absolute top-full left-0 w-full lg:hidden transition-all duration-300 ease-in-out ${
+        className={`absolute left-0 top-full w-full transition-all duration-300 ease-in-out lg:hidden ${
           isOpen
-            ? "opacity-100 translate-y-0 visible"
-            : "opacity-0 -translate-y-3 invisible"
+            ? "visible translate-y-0 opacity-100"
+            : "invisible -translate-y-3 opacity-0"
         }`}
       >
-        <div className="mx-4 mt-3 rounded-2xl border border-base-content/10 bg-base-100/95 backdrop-blur-xl shadow-2xl">
-          <ul className="menu p-4 gap-2 font-medium">{Links}</ul>
+        <div className="mx-4 mt-3 rounded-2xl border border-base-content/10 bg-base-100/95 shadow-2xl backdrop-blur-xl">
+          <ul className="menu gap-2 p-4 font-medium">{Links}</ul>
 
           <div className="p-4 pt-0">
             {user ? (
               <button
                 onClick={handleLogout}
                 disabled={logoutLoading}
-                className="btn w-full rounded-xl text-white font-bold border-none bg-gradient-to-r from-error to-secondary disabled:opacity-70"
+                className="btn w-full rounded-xl border-none bg-gradient-to-r from-error to-secondary font-bold text-white disabled:opacity-70"
               >
                 {logoutLoading ? (
                   <>
@@ -250,15 +271,14 @@ const Navbar = () => {
                   "Logout"
                 )}
               </button>
+            ) : isExternalHref(authLoginUrl) ? (
+              <a href={authLoginUrl} className="btn btn-primary w-full" onClick={closeMobileMenu}>
+                Member Portal
+              </a>
             ) : (
-              <div className="grid gap-2">
-                <Link to="/login" onClick={closeMobileMenu} className="btn btn-primary">
-                  Login
-                </Link>
-                <Link to="/register" onClick={closeMobileMenu} className="btn btn-outline">
-                  Register
-                </Link>
-              </div>
+              <Link to={authLoginUrl} onClick={closeMobileMenu} className="btn btn-primary w-full">
+                Member Portal
+              </Link>
             )}
           </div>
         </div>
