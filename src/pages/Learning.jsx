@@ -3,7 +3,6 @@ import { Link } from "react-router";
 import {
   FaArrowUpRightFromSquare,
   FaBookOpen,
-  FaCode,
   FaFlag,
   FaGlobe,
   FaLinux,
@@ -11,7 +10,6 @@ import {
   FaRoute,
   FaShieldHalved,
   FaTerminal,
-  FaToolbox,
 } from "react-icons/fa6";
 import PageHero from "../components/PageHero";
 import VpResourceIcon from "../components/vp/VpResourceIcon";
