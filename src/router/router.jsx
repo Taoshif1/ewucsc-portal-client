@@ -36,6 +36,9 @@ import Contact from "../pages/Contact";
 import Blogs from "../pages/Blogs";
 import BlogDetails from "../pages/BlogDetails";
 import Credits from "../pages/Credits";
+import Gallery from "../pages/Gallery";
+import GalleryAdmin from "../pages/GalleryAdmin";
+import FormsAdmin from "../pages/FormsAdmin";
 
 import PrivateRoute from "./PrivateRouter";
 import RoleRoute from "./RoleRouter";
@@ -63,6 +66,7 @@ export const router = createBrowserRouter([
       { path: "resources", element: <SubdomainRoute href={technicalHubUrl} preservePath><Resources /></SubdomainRoute> },
       { path: "contact", element: <Contact /> },
       { path: "credits", element: <Credits /> },
+      { path: "gallery", element: <Gallery /> },
       {
         path: "members",
         children: [
@@ -148,6 +152,22 @@ export const router = createBrowserRouter([
         element: (
           <RoleRoute allowedRoles={["admin", "executive"]}>
             <OperationsContent />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "manage/gallery",
+        element: (
+          <RoleRoute allowedRoles={["admin", "executive"]}>
+            <GalleryAdmin />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "manage/forms",
+        element: (
+          <RoleRoute allowedRoles={["admin"]}>
+            <FormsAdmin />
           </RoleRoute>
         ),
       },
