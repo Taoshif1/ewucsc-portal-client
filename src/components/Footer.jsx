@@ -18,7 +18,7 @@ const SmartHref = ({ href, children, className }) =>
     <Link to={href} className={className}>{children}</Link>
   );
 
-const Footer = () => {
+const gmailCompose = (email) => "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(email);\n\nconst Footer = () => {
   const { user } = useAuth();
 
   const memberDestination = (memberUrl) => (user ? memberUrl : authLoginUrl);
@@ -71,7 +71,7 @@ const Footer = () => {
               <li><Link to="/announcements" className={linkClass}>Announcements & Posts</Link></li>
               <li><Link to="/blogs" className={linkClass}>Club Blogs</Link></li>
               <li><Link to="/partners" className={linkClass}>Sponsors / Partners</Link></li>
-              <li><Link to="/about" className={linkClass}>About Us</Link></li>
+              <li><Link to="/about" className={linkClass}>About Us</Link></li>\n              <li><Link to="/gallery" className={linkClass}>Gallery</Link></li>\n              <li><Link to="/credits" className={linkClass}>Build Credits</Link></li>
               <li>
                 <SmartHref href={technicalResourcesUrl} className={linkClass}>
                   Technical Resources
@@ -89,7 +89,7 @@ const Footer = () => {
               <div>
                 <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-base-content/35">Club</p>
                 <a
-                  href="mailto:ewcsc@ewubd.edu"
+                  href={gmailCompose("ewcsc@ewubd.edu")} target="_blank" rel="noreferrer"
                   className="font-bold text-secondary transition-colors hover:text-primary"
                 >
                   ewcsc@ewubd.edu
@@ -98,7 +98,7 @@ const Footer = () => {
               <div>
                 <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-base-content/35">Technical</p>
                 <a
-                  href="mailto:hello@zabermahmud.me"
+                  href={gmailCompose("hello@zabermahmud.me")} target="_blank" rel="noreferrer"
                   className="font-bold text-secondary transition-colors hover:text-primary"
                 >
                   hello@zabermahmud.me
