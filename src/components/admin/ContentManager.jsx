@@ -20,7 +20,7 @@ const EMPTY_DRAFT = {
   title: "",
   excerpt: "",
   body: "",
-  imageUrl: "",
+  imageUrls: [],
   eventDate: "",
   published: false,
 };
@@ -70,11 +70,16 @@ const ContentManager = () => {
     try {
       setBusy(true);
 
+      const payload = {
+        ...draft,
+        imageUrl: draft.imageUrls[0] || "",
+      };
+
       if (editingId) {
-        await api.patch("/content/" + type + "/admin/" + editingId, draft);
+        await api.patch("/content/" + type + "/admin/" + editingId, payload);
         toast.success(type === "blogs" ? "Blog updated." : "Announcement updated.");
       } else {
-        await api.post("/content/" + type + "/admin", draft);
+        await api.post("/content/" + type + "/admin", payload);
         toast.success(type === "blogs" ? "Blog created." : "Announcement created.");
       }
 
@@ -93,7 +98,12 @@ const ContentManager = () => {
       title: item.title || "",
       excerpt: item.excerpt || "",
       body: item.body || "",
-      imageUrl: item.imageUrl || "",
+      imageUrls:
+        item.imageUrls?.length > 0
+          ? item.imageUrls
+          : item.imageUrl
+            ? [item.imageUrl]
+            : [],
       eventDate: item.eventDate || "",
       published: Boolean(item.published),
     });
@@ -163,7 +173,7 @@ const ContentManager = () => {
           </p>
           <h2 className="mt-2 text-2xl font-black">Announcements & Blogs</h2>
           <p className="mt-2 max-w-3xl text-sm text-base-content/50">
-            Publish current updates or historical event recaps, attach an image URL,
+            Publish current updates or historical event recaps, attach multiple images,
             edit existing content, archive it for later, or permanently delete it.
           </p>
         </div>
@@ -232,32 +242,52 @@ const ContentManager = () => {
 
           <div>
             <label className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-base-content/45">
-              <FaImage /> Cover image <span className="font-normal normal-case tracking-normal">(optional)</span>
+              <FaImage /> Post images <span className="font-normal normal-case tracking-normal">(optional · first image is the cover)</span>
             </label>
             <AssetDropzone
               scope="content"
               accept="image/*"
-              label="Drop a post image here or click to upload"
-              helper="JPG, PNG, WebP, GIF or AVIF · max 10 MB"
-              onUploaded={(asset) => setDraft((current) => ({ ...current, imageUrl: asset.url }))}
+              multiple
+              maxFiles={10}
+              label="Drop up to 10 post images here or click to upload"
+              helper="JPG, PNG, WebP, GIF or AVIF · max 10 MB each"
+              onUploaded={(asset) =>
+                setDraft((current) => ({
+                  ...current,
+                  imageUrls: [...current.imageUrls, asset.url].slice(0, 10),
+                }))
+              }
             />
-            {draft.imageUrl && (
-              <div className="mt-3 overflow-hidden rounded-xl border border-white/5 bg-base-300/30">
-                <img
-                  src={draft.imageUrl}
-                  alt="Post preview"
-                  className="h-40 w-full object-cover"
-                />
-                <div className="flex items-center justify-between gap-3 p-3">
-                  <span className="truncate text-xs text-base-content/45">Image attached</span>
-                  <button
-                    type="button"
-                    onClick={() => setDraft((current) => ({ ...current, imageUrl: "" }))}
-                    className="btn btn-xs btn-ghost text-error"
+            {draft.imageUrls.length > 0 && (
+              <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {draft.imageUrls.map((imageUrl, index) => (
+                  <div
+                    key={imageUrl}
+                    className="relative overflow-hidden rounded-xl border border-white/5 bg-base-300/30"
                   >
-                    Remove
-                  </button>
-                </div>
+                    <img
+                      src={imageUrl}
+                      alt={index === 0 ? "Post cover preview" : "Post image preview"}
+                      className="h-32 w-full object-cover"
+                    />
+                    <div className="absolute left-2 top-2 rounded-full bg-black/65 px-2 py-1 text-[10px] font-bold text-white">
+                      {index === 0 ? "Cover" : index + 1}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setDraft((current) => ({
+                          ...current,
+                          imageUrls: current.imageUrls.filter((url) => url !== imageUrl),
+                        }))
+                      }
+                      className="btn btn-xs btn-circle btn-error absolute right-2 top-2"
+                      aria-label="Remove post image"
+                    >
+                      <FaXmark />
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -326,12 +356,19 @@ const ContentManager = () => {
                   }`}
                 >
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                    {item.imageUrl && (
-                      <img
-                        src={item.imageUrl}
-                        alt=""
-                        className="h-24 w-full rounded-xl object-cover sm:w-32"
-                      />
+                    {(item.imageUrls?.[0] || item.imageUrl) && (
+                      <div className="relative shrink-0">
+                        <img
+                          src={item.imageUrls?.[0] || item.imageUrl}
+                          alt=""
+                          className="h-24 w-full rounded-xl object-cover sm:w-32"
+                        />
+                        {(item.imageUrls?.length || 0) > 1 && (
+                          <span className="absolute bottom-2 right-2 rounded-full bg-black/70 px-2 py-1 text-[10px] font-bold text-white">
+                            +{item.imageUrls.length - 1}
+                          </span>
+                        )}
+                      </div>
                     )}
 
                     <div className="min-w-0 flex-1">
