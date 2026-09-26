@@ -3,9 +3,7 @@ import { createBrowserRouter } from "react-router";
 import MainLayout from "../layouts/MainLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
 
-import Home from "../pages/Home";
 import SiteHome from "../pages/SiteHome";
-import TechnicalHub from "../pages/TechnicalHub";
 import TechnicalLearningPath from "../pages/TechnicalLearningPath";
 import TechnicalSection, { TechnicalCtf } from "../pages/TechnicalSection";
 import Learning from "../pages/Learning";
@@ -97,6 +95,30 @@ export const router = createBrowserRouter([
       },
       {
         path: "ctf",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalCtf />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "ctf/upcoming",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalCtf />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "ctf/archive",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <TechnicalCtf />
+          </SubdomainRoute>
+        ),
+      },
+      {
+        path: "ctf/practice",
         element: (
           <SubdomainRoute href={technicalHubUrl} preservePath>
             <TechnicalCtf />
