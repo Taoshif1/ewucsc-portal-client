@@ -10,6 +10,11 @@ import {
   FaUsers,
 } from "react-icons/fa6";
 import { publicApi } from "../services/api";
+import {
+  isValidStudentId,
+  normalizeStudentId,
+  studentIdToEmail,
+} from "../utils/ewuIdentity";
 
 const EMPTY = {
   "Full Name": "",
@@ -99,6 +104,11 @@ const RecruitmentForm = () => {
   const sections = form?.sections || {};
   const activityOptions = form?.activityOptions || [];
   const specializationOptions = form?.specializationOptions || [];
+  const normalizedStudentId = normalizeStudentId(values["Student ID"]);
+  const validStudentId = isValidStudentId(normalizedStudentId);
+  const derivedUniversityEmail = validStudentId
+    ? studentIdToEmail(normalizedStudentId)
+    : "";
 
   const statusMessage = useMemo(() => {
     if (!form) return "";
@@ -128,11 +138,22 @@ const RecruitmentForm = () => {
     event.preventDefault();
     if (!form?.acceptingSubmissions) return;
 
+    if (sections.personal && !validStudentId) {
+      toast.error("Enter a valid EWU Student ID, e.g. 2023-3-60-375");
+      return;
+    }
+
+    const submissionData = {
+      ...values,
+      "Student ID": normalizedStudentId,
+      "University Email": derivedUniversityEmail,
+    };
+
     try {
       setSubmitting(true);
       await publicApi.post("/forms/" + form.formKey, {
         source: window.location.href,
-        data: values,
+        data: submissionData,
       });
       setSubmitted(true);
       toast.success("Application submitted successfully.");
@@ -237,8 +258,30 @@ const RecruitmentForm = () => {
               <SectionHeader number="01" title="Personal Information" description="Tell us a little about yourself." />
               <div className="grid gap-4 md:grid-cols-2">
                 <input required className={inputClass} placeholder="Full Name *" value={values["Full Name"]} onChange={(e) => setField("Full Name", e.target.value)} />
-                <input required className={inputClass} placeholder="Student ID *" value={values["Student ID"]} onChange={(e) => setField("Student ID", e.target.value)} />
-                <input required type="email" className={inputClass} placeholder="University Email *" value={values["University Email"]} onChange={(e) => setField("University Email", e.target.value)} />
+                <div>
+                  <input
+                    required
+                    className={inputClass}
+                    placeholder="EWU Student ID * — 2023-3-60-375"
+                    value={values["Student ID"]}
+                    onChange={(e) => setField("Student ID", e.target.value)}
+                  />
+                  <p className="mt-2 px-1 text-xs text-base-content/45">
+                    Enter your Student ID only. Your EWU email is generated automatically.
+                  </p>
+                </div>
+                <div>
+                  <input
+                    readOnly
+                    type="email"
+                    className={inputClass + " cursor-not-allowed opacity-80"}
+                    placeholder="University Email — auto-generated"
+                    value={derivedUniversityEmail}
+                  />
+                  <p className="mt-2 px-1 text-xs text-base-content/45">
+                    {derivedUniversityEmail || "Example: 2023-3-60-375@std.ewubd.edu"}
+                  </p>
+                </div>
                 <input className={inputClass} placeholder="Contact Number" value={values["Contact Number"]} onChange={(e) => setField("Contact Number", e.target.value)} />
                 <input required className={inputClass} placeholder="Department *" value={values.Department} onChange={(e) => setField("Department", e.target.value)} />
                 <input required className={inputClass} placeholder="Current Semester *" value={values["Current Semester"]} onChange={(e) => setField("Current Semester", e.target.value)} />
