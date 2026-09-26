@@ -21,6 +21,9 @@ const appendPath = (base, path) => {
 export const authLoginUrl = appendPath(authPortalUrl, "/login");
 export const authRegisterUrl = appendPath(authPortalUrl, "/register");
 export const authPendingUrl = appendPath(authPortalUrl, "/pending-approval");
+export const authDashboardUrl = appendPath(authPortalUrl, "/dashboard");
+export const authCtfUrl = appendPath(authPortalUrl, "/dashboard/ctf");
+export const authHomeworksUrl = appendPath(authPortalUrl, "/dashboard/homeworks");
 
 export const technicalLearningUrl = isExternalHref(technicalHubUrl)
   ? technicalHubUrl + "/learning"
