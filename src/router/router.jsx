@@ -43,11 +43,8 @@ import ErrorPage from "../pages/ErrorPage";
 import PublicOnlyRoute from "./PublicOnlyRoute";
 import SubdomainRoute from "./SubdomainRoute";
 import {
-  authLoginUrl,
-  authPendingUrl,
-  authRegisterUrl,
-  technicalLearningUrl,
-  technicalResourcesUrl,
+  authPortalUrl,
+  technicalHubUrl,
 } from "../config/siteLinks";
 
 export const router = createBrowserRouter([
@@ -57,13 +54,13 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
-      { path: "learning", element: <SubdomainRoute href={technicalLearningUrl}><Learning /></SubdomainRoute> },
+      { path: "learning", element: <SubdomainRoute href={technicalHubUrl} preservePath><Learning /></SubdomainRoute> },
       { path: "announcements", element: <Announcements /> },
       { path: "blogs", element: <Blogs /> },
       { path: "blogs/:slug", element: <BlogDetails /> },
       { path: "partners", element: <Partners /> },
       { path: "about", element: <About /> },
-      { path: "resources", element: <SubdomainRoute href={technicalResourcesUrl}><Resources /></SubdomainRoute> },
+      { path: "resources", element: <SubdomainRoute href={technicalHubUrl} preservePath><Resources /></SubdomainRoute> },
       { path: "contact", element: <Contact /> },
       { path: "credits", element: <Credits /> },
       {
@@ -81,9 +78,11 @@ export const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: (
-      <PrivateRoute>
-        <DashboardLayout />
-      </PrivateRoute>
+      <SubdomainRoute href={authPortalUrl} preservePath>
+        <PrivateRoute>
+          <DashboardLayout />
+        </PrivateRoute>
+      </SubdomainRoute>
     ),
     errorElement: <ErrorPage />,
     children: [
@@ -168,7 +167,7 @@ export const router = createBrowserRouter([
   {
     path: "/login",
     element: (
-      <SubdomainRoute href={authLoginUrl}>
+      <SubdomainRoute href={authPortalUrl} preservePath>
         <PublicOnlyRoute>
           <Login />
         </PublicOnlyRoute>
@@ -178,7 +177,7 @@ export const router = createBrowserRouter([
   {
     path: "/register",
     element: (
-      <SubdomainRoute href={authRegisterUrl}>
+      <SubdomainRoute href={authPortalUrl} preservePath>
         <PublicOnlyRoute>
           <Register />
         </PublicOnlyRoute>
@@ -188,7 +187,7 @@ export const router = createBrowserRouter([
   {
     path: "/pending-approval",
     element: (
-      <SubdomainRoute href={authPendingUrl}>
+      <SubdomainRoute href={authPortalUrl} preservePath>
         <PendingApproval />
       </SubdomainRoute>
     ),
