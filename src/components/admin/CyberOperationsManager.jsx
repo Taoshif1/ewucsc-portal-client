@@ -10,6 +10,7 @@ import {
   FaRotate,
 } from "react-icons/fa6";
 import { api } from "../../services/api";
+import AssetDropzone, { UploadedAssetPill } from "./AssetDropzone";
 
 const emptyChallenge = {
   title: "",
@@ -19,6 +20,7 @@ const emptyChallenge = {
   points: 100,
   flag: "",
   hint: "",
+  attachments: [],
   published: false,
 };
 
@@ -26,6 +28,7 @@ const emptyHomework = {
   title: "",
   description: "",
   dueAt: "",
+  attachments: [],
   published: false,
 };
 
@@ -210,6 +213,32 @@ const CyberOperationsManager = () => {
               placeholder="Hint (optional)"
               className="textarea textarea-bordered w-full bg-base-100/60"
             />
+            <div className="space-y-3">
+              <AssetDropzone
+                scope="challenge"
+                multiple
+                label="Drop challenge images/files here or click to upload"
+                helper="Up to 8 attachments · images, PDF, text, ZIP/7z/RAR, JSON/CSV or PCAP · 10 MB each"
+                onUploaded={(asset) =>
+                  setChallenge((current) => ({
+                    ...current,
+                    attachments: [...current.attachments, asset].slice(0, 8),
+                  }))
+                }
+              />
+              {challenge.attachments.map((asset) => (
+                <UploadedAssetPill
+                  key={asset.id}
+                  asset={asset}
+                  onRemove={() =>
+                    setChallenge((current) => ({
+                      ...current,
+                      attachments: current.attachments.filter((item) => item.id !== asset.id),
+                    }))
+                  }
+                />
+              ))}
+            </div>
             <label className="flex items-center gap-3 text-sm">
               <input
                 type="checkbox"
@@ -241,7 +270,9 @@ const CyberOperationsManager = () => {
                         <span className="badge badge-outline">{item.difficulty}</span>
                       </div>
                       <h3 className="mt-3 font-black">{item.title}</h3>
-                      <p className="mt-1 text-xs text-base-content/45">{item.points} points</p>
+                      <p className="mt-1 text-xs text-base-content/45">
+                        {item.points} points{item.attachments?.length ? ` · ${item.attachments.length} attachment(s)` : ""}
+                      </p>
                     </div>
                     <button
                       type="button"
@@ -284,6 +315,32 @@ const CyberOperationsManager = () => {
               onChange={(e) => setHomework({ ...homework, dueAt: e.target.value })}
               className="input input-bordered w-full bg-base-100/60"
             />
+            <div className="space-y-3">
+              <AssetDropzone
+                scope="homework"
+                multiple
+                label="Drop homework images/files here or click to upload"
+                helper="Up to 8 attachments · images, PDF, text, ZIP/7z/RAR, JSON/CSV or PCAP · 10 MB each"
+                onUploaded={(asset) =>
+                  setHomework((current) => ({
+                    ...current,
+                    attachments: [...current.attachments, asset].slice(0, 8),
+                  }))
+                }
+              />
+              {homework.attachments.map((asset) => (
+                <UploadedAssetPill
+                  key={asset.id}
+                  asset={asset}
+                  onRemove={() =>
+                    setHomework((current) => ({
+                      ...current,
+                      attachments: current.attachments.filter((item) => item.id !== asset.id),
+                    }))
+                  }
+                />
+              ))}
+            </div>
             <label className="flex items-center gap-3 text-sm">
               <input
                 type="checkbox"
@@ -313,6 +370,7 @@ const CyberOperationsManager = () => {
                       <h3 className="font-black">{item.title}</h3>
                       <p className="mt-1 text-xs text-base-content/45">
                         {item.dueAt ? `Due ${new Date(item.dueAt).toLocaleString()}` : "No deadline"}
+                        {item.attachments?.length ? ` · ${item.attachments.length} attachment(s)` : ""}
                       </p>
                     </div>
                     <button
