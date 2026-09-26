@@ -1,8 +1,8 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import {
   FaArrowUpRightFromSquare,
   FaBookOpen,
-  FaCode,
   FaFlag,
   FaGlobe,
   FaLinux,
@@ -10,9 +10,10 @@ import {
   FaRoute,
   FaShieldHalved,
   FaTerminal,
-  FaToolbox,
 } from "react-icons/fa6";
 import PageHero from "../components/PageHero";
+import VpResourceIcon from "../components/vp/VpResourceIcon";
+import { publicApi } from "../services/api";
 
 const tracks = [
   { icon: <FaShieldHalved />, phase: "01", title: "Cybersecurity Foundations", description: "Core security concepts, ethics, threat models, authentication and defensive thinking." },
@@ -39,34 +40,16 @@ const arsenalModules = [
   ["Red / Blue / Purple", "red_blue_purple.html", "Offensive, defensive and collaborative security operations."],
 ];
 
-const vpResources = [
-  {
-    title: "Web Security Field Notes",
-    href: "/vp-resources/web-security-field-notes.html",
-    description: "Web-security field notes for responsible, authorized practice.",
-    icon: <FaGlobe />,
-  },
-  {
-    title: "Linux & Security Field Guide",
-    href: "/vp-resources/linux-security-field-guide.html",
-    description: "A detailed Linux and security command/reference guide.",
-    icon: <FaLinux />,
-  },
-  {
-    title: "Reverse Engineering Field Notes",
-    href: "/vp-resources/reverse-engineering-field-notes.html",
-    description: "Reverse-engineering and Linux CTF reference material.",
-    icon: <FaCode />,
-  },
-  {
-    title: "EWUCSC Toolkit",
-    href: "/vp-resources/ewucsc-toolkit.html",
-    description: "A categorized directory of cybersecurity tools and official sources.",
-    icon: <FaToolbox />,
-  },
-];
-
 const Learning = () => {
+  const [vpResources, setVpResources] = useState([]);
+
+  useEffect(() => {
+    publicApi
+      .get("/vp-resources")
+      .then((res) => setVpResources(res.data.items || []))
+      .catch(() => setVpResources([]));
+  }, []);
+
   return (
     <div className="space-y-16 pb-20">
       <PageHero
@@ -108,7 +91,7 @@ const Learning = () => {
               The legacy Arsenal HTML/CSS/JS learning modules are now bundled inside this website, so the learning path no longer depends on a separate external deployment.
             </p>
           </div>
-          <a href="/arsenal/index.html" target="_blank" rel="noreferrer" className="btn btn-accent rounded-full">
+          <a href="https://blog.zabermahmud.me/posts/cyber-arsenal/index.html" target="_blank" rel="noreferrer" className="btn btn-accent rounded-full">
             Open Full Arsenal <FaArrowUpRightFromSquare />
           </a>
         </div>
@@ -145,27 +128,25 @@ const Learning = () => {
               technical-subdomain use.
             </p>
           </div>
-          <a
-            href="/vp-resources/index.html"
-            target="_blank"
-            rel="noreferrer"
+          <Link
+            to="/vp-resources"
             className="btn btn-primary btn-outline rounded-full"
           >
             Open Collection <FaArrowUpRightFromSquare />
-          </a>
+          </Link>
         </div>
 
         <div className="mt-7 grid gap-4 md:grid-cols-2">
           {vpResources.map((item) => (
             <a
-              key={item.href}
-              href={item.href}
+              key={item.id}
+              href={item.resourceUrl}
               target="_blank"
               rel="noreferrer"
               className="group flex gap-4 rounded-2xl border border-white/5 bg-base-200/35 p-5 transition hover:-translate-y-1 hover:border-primary/25"
             >
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-xl text-primary">
-                {item.icon}
+                <VpResourceIcon icon={item.icon} />
               </div>
               <div>
                 <h3 className="font-black group-hover:text-primary">{item.title}</h3>

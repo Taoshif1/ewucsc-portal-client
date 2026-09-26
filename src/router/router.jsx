@@ -42,6 +42,7 @@ import Gallery from "../pages/Gallery";
 import GalleryAdmin from "../pages/GalleryAdmin";
 import FormsAdmin from "../pages/FormsAdmin";
 import RecruitmentForm from "../pages/RecruitmentForm";
+import VPResources from "../pages/VPResources";
 
 import PrivateRoute from "./PrivateRouter";
 import RoleRoute from "./RoleRouter";
@@ -71,6 +72,14 @@ export const router = createBrowserRouter([
       { path: "credits", element: <Credits /> },
       { path: "gallery", element: <Gallery /> },
       { path: "apply/:formKey", element: <RecruitmentForm /> },
+      {
+        path: "vp-resources",
+        element: (
+          <SubdomainRoute href={technicalHubUrl} preservePath>
+            <VPResources />
+          </SubdomainRoute>
+        ),
+      },
       {
         path: "learning-paths",
         element: (
