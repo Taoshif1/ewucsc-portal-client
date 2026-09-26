@@ -22,6 +22,6 @@
   const credit = document.createElement("div");
   credit.dataset.ewucscCredit = "true";
   credit.className = "ewucsc-build-credit";
-  credit.innerHTML = 'Built by <a href="https://taoshiflexstudio.me/" target="_blank" rel="noreferrer">Taoshiflex Studio</a><span class="sep">•</span><a href="/credits">Build &amp; management</a>';
+  credit.innerHTML = 'Built &amp; managed by <a href="/credits">Gazi Taoshif</a><span class="sep">•</span><a href="https://taoshiflexstudio.me/" target="_blank" rel="noreferrer">Taoshiflex Studio</a>';
   document.body.appendChild(credit);
 })();
