@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router";
 import { FaBars, FaChevronDown, FaTimes } from "react-icons/fa";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
+import { publicSiteUrl } from "../config/siteLinks";
 
 const navClass = ({ isActive }) =>
   isActive
@@ -35,7 +36,7 @@ const TechnicalNavbar = () => {
 
   const links = (
     <>
-      <li><NavLink to="/" className={navClass} onClick={() => setMobileOpen(false)}>Home</NavLink></li>
+      <li><a href={publicSiteUrl} className={navClass({ isActive: false })} onClick={() => setMobileOpen(false)}>Home</a></li>
       <li><NavLink to="/learning-paths" className={navClass} onClick={() => setMobileOpen(false)}>Learning Paths</NavLink></li>
       <li><NavLink to="/tools" className={navClass} onClick={() => setMobileOpen(false)}>Tools</NavLink></li>
       <li><NavLink to="/ctf" className={navClass} onClick={() => setMobileOpen(false)}>CTF</NavLink></li>
