@@ -65,7 +65,7 @@ const PortalNavbar = () => {
             href={publicSiteUrl}
             className="btn btn-sm btn-outline hidden rounded-full sm:inline-flex"
           >
-            Public Site
+            Home
           </a>
 
           <ThemeToggle />
