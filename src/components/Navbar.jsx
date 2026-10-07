@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 import TechnicalNavbar from "./TechnicalNavbar";
+import PortalNavbar from "./PortalNavbar";
 import { useAuth } from "../hooks/useAuth";
 import {
   authDashboardUrl,
@@ -27,6 +28,11 @@ const Navbar = () => {
     typeof window !== "undefined" &&
     isExternalHref(technicalHubUrl) &&
     window.location.origin === new URL(technicalHubUrl).origin;
+
+  const onPortalHost =
+    typeof window !== "undefined" &&
+    isExternalHref(authPortalUrl) &&
+    window.location.origin === new URL(authPortalUrl).origin;
 
   const closeDropdowns = () => setOpenDropdown(null);
   const closeMobileMenu = () => {
@@ -198,6 +204,10 @@ const Navbar = () => {
 
   if (onTechnicalHost) {
     return <TechnicalNavbar />;
+  }
+
+  if (onPortalHost) {
+    return <PortalNavbar />;
   }
 
   return (
