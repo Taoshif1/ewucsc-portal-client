@@ -194,10 +194,10 @@ GitHub Actions runs lint + production build on the feature branch, PRs and `main
 
 Target production structure:
 
-- `ewucsc.org` — public/non-technical club website
-- `resources.ewucsc.org` — technical learning/resources
-- `portal.ewucsc.org` — registration, login and member portal
-- `api.ewucsc.org` — Express API
+- `ewucsc.com` — public/non-technical club website
+- `resources.ewucsc.com` — technical learning/resources
+- `portal.ewucsc.com` — registration, login and member portal
+- `api.ewucsc.com` — Express API
 
 The current single React app can serve these surfaces first; the domains can be split/routed during deployment without rebuilding the feature architecture.
 
