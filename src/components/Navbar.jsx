@@ -11,6 +11,7 @@ import { useAuth } from "../hooks/useAuth";
 import {
   authDashboardUrl,
   authLoginUrl,
+  authPortalUrl,
   isExternalHref,
   technicalHubUrl,
 } from "../config/siteLinks";
