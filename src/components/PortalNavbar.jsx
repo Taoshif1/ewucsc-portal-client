@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import { FaArrowRightFromBracket, FaHouse, FaShieldHalved } from "react-icons/fa6";
 
@@ -10,6 +10,7 @@ import { authDashboardUrl, publicSiteUrl } from "../config/siteLinks";
 const PortalNavbar = () => {
   const { user, logoutUser } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [logoutLoading, setLogoutLoading] = useState(false);
 
   const handleLogout = async () => {
@@ -85,6 +86,13 @@ const PortalNavbar = () => {
                 {logoutLoading ? "Logging Out..." : "Logout"}
               </span>
             </button>
+          ) : pathname === "/login" ? (
+            <Link
+              to="/register"
+              className="btn btn-sm rounded-full border-none bg-gradient-to-r from-primary to-secondary px-5 font-bold text-white"
+            >
+              Register
+            </Link>
           ) : (
             <Link
               to="/login"
