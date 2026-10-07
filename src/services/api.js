@@ -4,7 +4,7 @@ const configuredApiUrl = import.meta.env.VITE_API_URL?.trim().replace(/\/$/, "")
 
 export const API_BASE_URL = import.meta.env.DEV
   ? configuredApiUrl || "http://localhost:5000/api"
-  : "/api";
+  : configuredApiUrl || "https://api.ewucsc.com/api";
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
