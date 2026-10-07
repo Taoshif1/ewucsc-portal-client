@@ -7,6 +7,9 @@ export const technicalHubUrl =
 export const authPortalUrl =
   normalizeConfiguredUrl(import.meta.env.VITE_AUTH_PORTAL_URL) || "";
 
+export const publicSiteUrl =
+  normalizeConfiguredUrl(import.meta.env.VITE_PUBLIC_SITE_URL) || "https://ewucsc.com";
+
 export const ctfEventUrl =
   normalizeConfiguredUrl(import.meta.env.VITE_CTF_EVENT_URL) || "";
 
