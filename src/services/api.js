@@ -2,13 +2,13 @@ import axios from "axios";
 
 const configuredApiUrl = import.meta.env.VITE_API_URL?.trim().replace(/\/$/, "");
 
-// Keep the development default local. In production, use the verified Vercel
-// server alias unless an explicit VITE_API_URL is configured for this deployment.
-// The old api.ewucsc.com hostname is not attached to the connected Vercel server
-// project, which can route new API endpoints to a stale/404 backend.
+// Keep the development default local. Production falls back to the original
+// API host used by the existing live configuration. The Vercel server project
+// currently lacks SUPABASE_URL, so routing production here avoids its 500s
+// while that backend's environment is configured.
 export const API_BASE_URL = import.meta.env.DEV
   ? configuredApiUrl || "http://localhost:5000/api"
-  : configuredApiUrl || "https://ewucsc-portal-server.vercel.app/api";
+  : configuredApiUrl || "https://api.ewucsc.com/api";
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
