@@ -16,6 +16,8 @@ import {
 import { api } from "../../services/api";
 import AssetDropzone from "./AssetDropzone";
 import { resolveMediaUrl } from "../../utils/mediaUrl";
+import { usePagination } from "../../hooks/usePagination";
+import Pagination from "../common/Pagination";
 
 const EMPTY_DRAFT = {
   title: "",
@@ -64,6 +66,8 @@ const ContentManager = () => {
     if (statusFilter === "active") return items.filter((item) => !item.archived);
     return items;
   }, [items, statusFilter]);
+
+  const pagination = usePagination(visibleItems);
 
   const save = async (event) => {
     event.preventDefault();
@@ -186,14 +190,14 @@ const ContentManager = () => {
       <div className="mt-6 flex flex-wrap gap-2">
         <button
           type="button"
-          onClick={() => setType("announcements")}
+          onClick={() => { setType("announcements"); pagination.resetPage(); }}
           className={"btn btn-sm rounded-full " + (type === "announcements" ? "btn-primary" : "btn-ghost")}
         >
           <FaBullhorn /> Announcements
         </button>
         <button
           type="button"
-          onClick={() => setType("blogs")}
+          onClick={() => { setType("blogs"); pagination.resetPage(); }}
           className={"btn btn-sm rounded-full " + (type === "blogs" ? "btn-secondary" : "btn-ghost")}
         >
           <FaNewspaper /> Blogs
@@ -329,7 +333,7 @@ const ContentManager = () => {
               <button
                 key={filter}
                 type="button"
-                onClick={() => setStatusFilter(filter)}
+                onClick={() => { setStatusFilter(filter); pagination.resetPage(); }}
                 className={`btn btn-xs rounded-full capitalize ${statusFilter === filter ? "btn-neutral" : "btn-ghost"}`}
               >
                 {filter}
@@ -347,7 +351,7 @@ const ContentManager = () => {
                 No content in this view.
               </div>
             ) : (
-              visibleItems.map((item) => (
+              pagination.pageItems.map((item) => (
                 <article
                   key={item.id}
                   className={`overflow-hidden rounded-2xl border p-5 ${
@@ -434,6 +438,7 @@ const ContentManager = () => {
                 </article>
               ))
             )}
+            {!loading && visibleItems.length > 0 && <Pagination pagination={pagination} />}
           </div>
         </div>
       </div>
