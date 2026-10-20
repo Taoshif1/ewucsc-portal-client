@@ -1,3 +1,5 @@
+import { API_BASE_URL } from "../services/api";
+
 const INTERNAL_UPLOAD_PREFIX = "/api/uploads/";
 
 const extractInternalUploadPath = (value = "") => {
@@ -34,8 +36,14 @@ export const resolveMediaUrl = (value = "") => {
   if (!raw) return "";
 
   const internalPath = extractInternalUploadPath(raw);
+  if (!internalPath) return raw;
 
-  // Always use the current browser origin for EWUCSC uploads.
-  // Vite proxies /api locally and Vercel rewrites /api in production.
-  return internalPath || raw;
+  // Resolve internal media through the configured API host, not the frontend
+  // host. Otherwise images on a separate frontend origin hit its /api path.
+  try {
+    return new URL(internalPath, API_BASE_URL).toString();
+  } catch {
+    // Keep the old relative behavior only if the API URL cannot be parsed.
+    return internalPath;
+  }
 };
