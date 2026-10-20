@@ -4,8 +4,6 @@ import { api } from "../services/api";
 import Spinner from "../components/common/Spinner";
 import { usePagination } from "../hooks/usePagination";
 import Pagination from "../components/common/Pagination";
-import { usePagination } from "../hooks/usePagination";
-import Pagination from "../components/common/Pagination";
 
 const PortalLeaderboard = () => {
   const [rows, setRows] = useState([]);
