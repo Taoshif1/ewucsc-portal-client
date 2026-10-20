@@ -11,7 +11,7 @@ const MainLayout = () => {
   }, [pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col pb-10">
       <Navbar />
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6 md:px-6 lg:px-8">
         <Outlet />
