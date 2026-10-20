@@ -13,8 +13,6 @@ import Spinner from "../components/common/Spinner";
 import AttachmentList from "../components/common/AttachmentList";
 import { usePagination } from "../hooks/usePagination";
 import Pagination from "../components/common/Pagination";
-import { usePagination } from "../hooks/usePagination";
-import Pagination from "../components/common/Pagination";
 
 const PortalHomeworks = () => {
   const [homeworks, setHomeworks] = useState([]);
