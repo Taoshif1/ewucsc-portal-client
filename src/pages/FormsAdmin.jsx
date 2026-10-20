@@ -12,6 +12,8 @@ import {
   FaXmark,
 } from "react-icons/fa6";
 import { api } from "../services/api";
+import { usePagination } from "../hooks/usePagination";
+import Pagination from "../components/common/Pagination";
 
 const DEFAULT_SECTIONS = {
   personal: true,
@@ -224,6 +226,9 @@ const FormsAdmin = () => {
     return [...set].filter((key) => key !== "website");
   }, [responses]);
 
+  const formsPagination = usePagination(forms);
+  const responsePagination = usePagination(responses?.rows || []);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -324,7 +329,7 @@ const FormsAdmin = () => {
             <p className="mt-2 text-sm text-base-content/50">Create one above when the club opens recruitment.</p>
           </div>
         ) : (
-          forms.map((form) => (
+          formsPagination.pageItems.map((form) => (
             <article key={form.id} className="rounded-2xl border border-white/5 bg-base-100/65 p-5">
               <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                 <div>
@@ -363,6 +368,7 @@ const FormsAdmin = () => {
             </article>
           ))
         )}
+        {!loading && forms.length > 0 && <Pagination pagination={formsPagination} />}
       </section>
 
       {responses && (
@@ -387,7 +393,7 @@ const FormsAdmin = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {responses.rows.map((row) => (
+                  {responsePagination.pageItems.map((row) => (
                     <tr key={row.id}>
                       <td className="whitespace-nowrap">{new Date(row.submittedAt).toLocaleString()}</td>
                       {responseColumns.map((column) => <td key={column} className="max-w-xs whitespace-normal">{row.data?.[column] || ""}</td>)}
@@ -397,6 +403,7 @@ const FormsAdmin = () => {
               </table>
             </div>
           )}
+          {responses.rows.length > 0 && <Pagination pagination={responsePagination} />}
         </section>
       )}
     </div>
