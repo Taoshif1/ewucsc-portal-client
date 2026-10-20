@@ -9,7 +9,6 @@ import {
 } from "react-icons/fa6";
 import Logo from "./Logo";
 import { useAuth } from "../hooks/useAuth";
-import SiteCreditBar from "./SiteCreditBar";
 import { publicApi } from "../services/api";
 import {
   authCtfUrl,
@@ -193,7 +192,6 @@ const Footer = () => {
           <p>Member portal access requires verified EWU identity and club approval.</p>
         </div>
       </footer>
-      <SiteCreditBar />
     </>
   );
 };
