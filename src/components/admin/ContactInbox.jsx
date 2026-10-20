@@ -7,6 +7,8 @@ import {
   FaRotate,
 } from "react-icons/fa6";
 import { api } from "../../services/api";
+import { usePagination } from "../../hooks/usePagination";
+import Pagination from "../common/Pagination";
 
 const statusClass = {
   new: "badge-warning",
@@ -18,6 +20,7 @@ const ContactInbox = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState(null);
+  const pagination = usePagination(messages);
 
   const load = async () => {
     try {
@@ -80,7 +83,7 @@ const ContactInbox = () => {
         </div>
       ) : (
         <div className="mt-6 space-y-4">
-          {messages.map((item) => (
+          {pagination.pageItems.map((item) => (
             <article
               key={item.id}
               className="rounded-2xl border border-white/5 bg-base-200/35 p-5"
@@ -134,6 +137,7 @@ const ContactInbox = () => {
           ))}
         </div>
       )}
+      {!loading && messages.length > 0 && <Pagination pagination={pagination} />}
     </section>
   );
 };
