@@ -31,6 +31,28 @@ const AssetDropzone = ({
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  const uploadLegacy = async (file, mimeType) => {
+    const bytes = await file.arrayBuffer();
+    const response = await api.post(`/uploads/${scope}`, bytes, {
+      headers: {
+        "Content-Type": "application/octet-stream",
+        "X-File-Name": encodeURIComponent(file.name),
+        "X-File-Type": mimeType,
+      },
+      onUploadProgress: (event) => {
+        if (event.total) {
+          setProgress(Math.round((event.loaded / event.total) * 100));
+        }
+      },
+    });
+
+    if (!response.data?.asset) {
+      throw new Error("The API returned an incomplete upload response. Refresh the portal and try again.");
+    }
+
+    return response.data.asset;
+  };
+
   const uploadFile = async (file) => {
     if (file.size > MAX_BYTES) {
       throw new Error(`${file.name} is larger than 10 MB.`);
@@ -45,6 +67,21 @@ const AssetDropzone = ({
         size: file.size,
       });
     } catch (error) {
+      // Older API deployments do not expose the signed-upload route yet.
+      // Fall back only on 404; auth/config/server failures must stay visible.
+      if (error?.response?.status === 404) {
+        try {
+          return await uploadLegacy(file, mimeType);
+        } catch (legacyError) {
+          throw new Error(
+            requestFailureMessage(
+              legacyError,
+              "Could not upload the file through the compatible API endpoint",
+            ),
+          );
+        }
+      }
+
       throw new Error(requestFailureMessage(error, "Could not prepare the upload"));
     }
     const intent = intentResponse.data.upload;
