@@ -13,6 +13,8 @@ import {
 } from "react-icons/fa6";
 import { api } from "../../services/api";
 import AssetDropzone, { UploadedAssetPill } from "./AssetDropzone";
+import { usePagination } from "../../hooks/usePagination";
+import Pagination from "../common/Pagination";
 
 const emptyChallenge = {
   title: "",
@@ -44,6 +46,8 @@ const CyberOperationsManager = () => {
   const [busy, setBusy] = useState(false);
   const [editingChallengeId, setEditingChallengeId] = useState(null);
   const [editingHomeworkId, setEditingHomeworkId] = useState(null);
+  const challengePagination = usePagination(challenges);
+  const homeworkPagination = usePagination(homeworks);
 
   const load = async () => {
     try {
@@ -342,7 +346,7 @@ const CyberOperationsManager = () => {
                 No challenges created yet.
               </div>
             ) : (
-              challenges.map((item) => (
+              challengePagination.pageItems.map((item) => (
                 <div key={item.id} className="rounded-2xl border border-white/5 bg-base-200/35 p-5">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
@@ -376,6 +380,7 @@ const CyberOperationsManager = () => {
                 </div>
               ))
             )}
+            {!loading && challenges.length > 0 && <Pagination pagination={challengePagination} />}
           </div>
         </div>
       ) : (
@@ -459,7 +464,7 @@ const CyberOperationsManager = () => {
                 No homework created yet.
               </div>
             ) : (
-              homeworks.map((item) => (
+              homeworkPagination.pageItems.map((item) => (
                 <div key={item.id} className="rounded-2xl border border-white/5 bg-base-200/35 p-5">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
@@ -490,6 +495,7 @@ const CyberOperationsManager = () => {
                 </div>
               ))
             )}
+            {!loading && homeworks.length > 0 && <Pagination pagination={homeworkPagination} />}
           </div>
         </div>
       )}
