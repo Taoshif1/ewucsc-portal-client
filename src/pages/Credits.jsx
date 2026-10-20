@@ -64,10 +64,10 @@ const Credits = () => (
             <FaUserAstronaut />
           </div>
           <p className="mt-5 font-mono text-xs uppercase tracking-[0.2em] text-primary">
-            // builder
+            // developer
           </p>
           <h2 className="mt-2 text-3xl font-black">Gazi Taoshif</h2>
-          <p className="mt-2 font-semibold text-secondary">Owner · Taoshiflex Studio</p>
+          <p className="mt-2 font-semibold text-secondary">Founder · Taoshiflex Studio</p>
           <p className="mt-4 leading-relaxed text-base-content/60">
             Built, integrated and maintained the EWUCSC website and member portal,
             with the codebase prepared for club handover and future maintainers.
