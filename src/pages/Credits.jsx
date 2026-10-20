@@ -19,7 +19,7 @@ const gmailCompose = (email) =>
 const builderLinks = [
   {
     label: "Portfolio",
-    value: "Gazi Taoshif",
+    value: "Taoshiflex",
     href: "https://webdevportfolio-three.vercel.app/",
     icon: <FaUserAstronaut />,
   },
@@ -31,13 +31,13 @@ const builderLinks = [
   },
   {
     label: "LinkedIn",
-    value: "linkedin.com/in/taoshif1",
+    value: "taoshif1",
     href: "https://www.linkedin.com/in/taoshif1/",
     icon: <FaLinkedin />,
   },
   {
     label: "GitHub",
-    value: "github.com/Taoshif1",
+    value: "Taoshif1",
     href: "https://github.com/Taoshif1",
     icon: <FaGithub />,
   },

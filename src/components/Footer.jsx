@@ -189,7 +189,7 @@ const Footer = () => {
 
         <div className="flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-6 text-xs text-base-content/50 md:flex-row">
           <p>© {new Date().getFullYear()} EWU Cyber Security Club. All rights reserved.</p>
-          <p>Member portal access requires verified EWU identity and club approval.</p>
+          <p className="mr-12">Member portal access requires verified EWU identity and club approval.</p>
         </div>
       </footer>
     </>
