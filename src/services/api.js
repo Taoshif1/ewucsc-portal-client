@@ -1,14 +1,23 @@
 import axios from "axios";
 
 const configuredApiUrl = import.meta.env.VITE_API_URL?.trim().replace(/\/$/, "");
+const productionApiFallback = "https://api.ewucsc.com/api";
+const isLoopbackUrl = (value = "") =>
+  /^https?:\/\/(?:localhost|127(?:\.\d{1,3}){3}|0\.0\.0\.0|\[::1\])(?::\d+)?(?:\/|$)/i.test(
+    value,
+  );
 
-// Keep the development default local. Production falls back to the original
-// API host used by the existing live configuration. The Vercel server project
-// currently lacks SUPABASE_URL, so routing production here avoids its 500s
-// while that backend's environment is configured.
+// Never ship a local development API address into a production browser bundle.
+// Vite variables are embedded at build time, so removing a bad variable later
+// requires a fresh production build to change the already-deployed JavaScript.
+const productionApiUrl =
+  configuredApiUrl && !isLoopbackUrl(configuredApiUrl)
+    ? configuredApiUrl
+    : productionApiFallback;
+
 export const API_BASE_URL = import.meta.env.DEV
   ? configuredApiUrl || "http://localhost:5000/api"
-  : configuredApiUrl || "https://api.ewucsc.com/api";
+  : productionApiUrl;
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
