@@ -11,10 +11,33 @@ const AttachmentList = ({ attachments = [] }) => {
   const openAsset = async (asset) => {
     try {
       setBusyId(asset.id);
-      const response = await api.get(`${asset.apiPath}/link`);
+
+      let linkResponse;
+      try {
+        linkResponse = await api.get(`${asset.apiPath}/link`);
+      } catch (error) {
+        // Older API deployments expose the authenticated private-file route
+        // but not the signed-download /link endpoint.
+        if (error?.response?.status !== 404) throw error;
+
+        const fileResponse = await api.get(asset.apiPath, {
+          responseType: "blob",
+        });
+        const objectUrl = URL.createObjectURL(fileResponse.data);
+        const anchor = document.createElement("a");
+        anchor.href = objectUrl;
+        anchor.download = asset.name || "attachment";
+        anchor.rel = "noreferrer";
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+        return;
+      }
+
       const anchor = document.createElement("a");
-      anchor.href = response.data.url;
-      anchor.download = response.data.name || asset.name || "attachment";
+      anchor.href = linkResponse.data.url;
+      anchor.download = linkResponse.data.name || asset.name || "attachment";
       anchor.rel = "noreferrer";
       document.body.appendChild(anchor);
       anchor.click();
