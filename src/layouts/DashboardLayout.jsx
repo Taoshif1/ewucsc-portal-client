@@ -19,7 +19,6 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ThemeToggle from "../components/ThemeToggle";
 import { useAuth } from "../hooks/useAuth";
-import SiteCreditBar from "../components/SiteCreditBar";
 
 const staffLinks = (role) => {
   const links = [
@@ -185,7 +184,7 @@ const DashboardLayout = () => {
 
   if (!isStaff) {
     return (
-      <div className="min-h-screen flex flex-col bg-base-100">
+      <div className="min-h-screen flex flex-col bg-base-100 pb-10">
         <Navbar />
         <main className="flex-1">
           <Outlet />
@@ -196,7 +195,7 @@ const DashboardLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-base-100">
+    <div className="min-h-screen bg-base-100 pb-10">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 border-r border-white/5 bg-base-100/95 backdrop-blur-xl lg:block">
         <StaffNavigation role={role} onNavigate={() => {}} onLogout={logout} />
       </aside>
@@ -261,7 +260,6 @@ const DashboardLayout = () => {
         <main className="min-h-[calc(100vh-4rem)]">
           <Outlet />
         </main>
-        <SiteCreditBar compact />
       </div>
     </div>
   );
