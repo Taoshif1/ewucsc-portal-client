@@ -12,6 +12,8 @@ import {
 import { api } from "../services/api";
 import AssetDropzone from "../components/admin/AssetDropzone";
 import { resolveMediaUrl } from "../utils/mediaUrl";
+import { usePagination } from "../hooks/usePagination";
+import Pagination from "../components/common/Pagination";
 
 const EMPTY = {
   title: "",
@@ -51,6 +53,8 @@ const GalleryAdmin = () => {
     if (view === "active") return items.filter((item) => !item.archived);
     return items;
   }, [items, view]);
+
+  const pagination = usePagination(visible);
 
   const reset = () => {
     setDraft(EMPTY);
@@ -295,7 +299,7 @@ const GalleryAdmin = () => {
               <button
                 key={item}
                 type="button"
-                onClick={() => setView(item)}
+                onClick={() => { setView(item); pagination.resetPage(); }}
                 className={`btn btn-xs rounded-full capitalize ${view === item ? "btn-neutral" : "btn-ghost"}`}
               >
                 {item}
@@ -313,7 +317,7 @@ const GalleryAdmin = () => {
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
-              {visible.map((item) => (
+              {pagination.pageItems.map((item) => (
                 <article
                   key={item.id}
                   className="overflow-hidden rounded-2xl border border-white/5 bg-base-100/65"
@@ -365,6 +369,7 @@ const GalleryAdmin = () => {
               ))}
             </div>
           )}
+          {!loading && visible.length > 0 && <Pagination pagination={pagination} />}
         </div>
       </div>
     </div>
