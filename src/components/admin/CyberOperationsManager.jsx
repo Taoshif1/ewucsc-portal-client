@@ -7,7 +7,9 @@ import {
   FaEye,
   FaEyeSlash,
   FaFlag,
+  FaPen,
   FaRotate,
+  FaXmark,
 } from "react-icons/fa6";
 import { api } from "../../services/api";
 import AssetDropzone, { UploadedAssetPill } from "./AssetDropzone";
@@ -40,6 +42,8 @@ const CyberOperationsManager = () => {
   const [homeworks, setHomeworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [editingChallengeId, setEditingChallengeId] = useState(null);
+  const [editingHomeworkId, setEditingHomeworkId] = useState(null);
 
   const load = async () => {
     try {
@@ -61,40 +65,111 @@ const CyberOperationsManager = () => {
     load();
   }, []);
 
-  const createChallenge = async (event) => {
+  const saveChallenge = async (event) => {
     event.preventDefault();
     try {
       setBusy(true);
-      await api.post("/challenges/admin", {
+      const payload = {
         ...challenge,
         points: Number(challenge.points),
-      });
-      toast.success("Challenge created.");
+        // Flag hashes are never returned by the API. An empty edit field means
+        // keep the existing flag; admins can optionally set a new one.
+        flag: challenge.flag.trim() || undefined,
+      };
+
+      if (editingChallengeId) {
+        await api.patch(`/challenges/admin/${editingChallengeId}`, payload);
+        toast.success("Challenge updated.");
+      } else {
+        await api.post("/challenges/admin", payload);
+        toast.success("Challenge created.");
+      }
+
+      setEditingChallengeId(null);
       setChallenge(emptyChallenge);
       await load();
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to create challenge.");
+      toast.error(error.response?.data?.message || "Failed to save challenge.");
     } finally {
       setBusy(false);
     }
   };
 
-  const createHomework = async (event) => {
+  const editChallenge = (item) => {
+    setTab("ctf");
+    setEditingHomeworkId(null);
+    setEditingChallengeId(item.id);
+    setChallenge({
+      title: item.title || "",
+      description: item.description || "",
+      category: item.category || "web",
+      difficulty: item.difficulty || "Easy",
+      points: item.points ?? 100,
+      flag: "",
+      hint: item.hint || "",
+      attachments: Array.isArray(item.attachments) ? item.attachments : [],
+      published: Boolean(item.published),
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const cancelChallengeEdit = () => {
+    setEditingChallengeId(null);
+    setChallenge(emptyChallenge);
+  };
+
+  const saveHomework = async (event) => {
     event.preventDefault();
     try {
       setBusy(true);
-      await api.post("/homeworks/admin", {
+      const payload = {
         ...homework,
         dueAt: homework.dueAt || null,
-      });
-      toast.success(homework.published ? "Homework created and published." : "Homework saved as draft.");
+      };
+
+      if (editingHomeworkId) {
+        await api.patch(`/homeworks/admin/${editingHomeworkId}`, payload);
+        toast.success("Homework updated.");
+      } else {
+        await api.post("/homeworks/admin", payload);
+        toast.success(homework.published ? "Homework created and published." : "Homework saved as draft.");
+      }
+
+      setEditingHomeworkId(null);
       setHomework(emptyHomework);
       await load();
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to create homework.");
+      toast.error(error.response?.data?.message || "Failed to save homework.");
     } finally {
       setBusy(false);
     }
+  };
+
+  const editHomework = (item) => {
+    setTab("homework");
+    setEditingChallengeId(null);
+    setChallenge(emptyChallenge);
+    setEditingHomeworkId(item.id);
+    const dueDate = item.dueAt ? new Date(item.dueAt) : null;
+    const localDueAt = dueDate && !Number.isNaN(dueDate.getTime())
+      ? new Date(dueDate.getTime() - dueDate.getTimezoneOffset() * 60000)
+          .toISOString()
+          .slice(0, 16)
+      : "";
+
+    setHomework({
+      title: item.title || "",
+      description: item.description || "",
+      dueAt: localDueAt,
+      attachments: Array.isArray(item.attachments) ? item.attachments : [],
+      published: Boolean(item.published),
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const cancelHomeworkEdit = () => {
+    setEditingHomeworkId(null);
+    setHomework(emptyHomework);
   };
 
   const toggleChallenge = async (item) => {
@@ -154,10 +229,10 @@ const CyberOperationsManager = () => {
 
       {tab === "ctf" ? (
         <div className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-          <form onSubmit={createChallenge} className="rounded-2xl border border-secondary/10 bg-base-200/35 p-5 space-y-4">
+          <form onSubmit={saveChallenge} className="rounded-2xl border border-secondary/10 bg-base-200/35 p-5 space-y-4">
             <div className="flex items-center gap-2 text-secondary">
               <FaCirclePlus />
-              <h3 className="font-black">Create Challenge</h3>
+              <h3 className="font-black">{editingChallengeId ? "Edit Challenge" : "Create Challenge"}</h3>
             </div>
             <input
               value={challenge.title}
@@ -203,9 +278,9 @@ const CyberOperationsManager = () => {
             <input
               value={challenge.flag}
               onChange={(e) => setChallenge({ ...challenge, flag: e.target.value })}
-              placeholder="Flag — stored hashed, never returned to clients"
+              placeholder={editingChallengeId ? "Leave blank to keep the current flag" : "Flag — stored hashed, never returned to clients"}
               className="input input-bordered w-full bg-base-100/60 font-mono"
-              required
+              required={!editingChallengeId}
             />
             <textarea
               value={challenge.hint}
@@ -246,11 +321,17 @@ const CyberOperationsManager = () => {
                 onChange={(e) => setChallenge({ ...challenge, published: e.target.checked })}
                 className="toggle toggle-secondary"
               />
-              Publish immediately (members only see published homework)
+              Publish immediately (visible to members)
             </label>
             <button type="submit" disabled={busy} className="btn btn-secondary w-full">
-              <FaCirclePlus /> {busy ? "Creating..." : "Create Challenge"}
+              {editingChallengeId ? <FaCheck /> : <FaCirclePlus />}
+              {busy ? "Saving..." : editingChallengeId ? "Save Changes" : "Create Challenge"}
             </button>
+            {editingChallengeId && (
+              <button type="button" onClick={cancelChallengeEdit} disabled={busy} className="btn btn-ghost w-full">
+                <FaXmark /> Cancel Editing
+              </button>
+            )}
           </form>
 
           <div className="space-y-3">
@@ -274,14 +355,23 @@ const CyberOperationsManager = () => {
                         {item.points} points{item.attachments?.length ? ` · ${item.attachments.length} attachment(s)` : ""}
                       </p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => toggleChallenge(item)}
-                      className={`btn btn-sm ${item.published ? "btn-success btn-outline" : "btn-ghost border border-white/10"}`}
-                    >
-                      {item.published ? <FaEye /> : <FaEyeSlash />}
-                      {item.published ? "Published" : "Draft"}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => editChallenge(item)}
+                        className="btn btn-sm btn-outline"
+                      >
+                        <FaPen /> Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => toggleChallenge(item)}
+                        className={`btn btn-sm ${item.published ? "btn-success btn-outline" : "btn-ghost border border-white/10"}`}
+                      >
+                        {item.published ? <FaEye /> : <FaEyeSlash />}
+                        {item.published ? "Published" : "Draft"}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))
@@ -290,10 +380,10 @@ const CyberOperationsManager = () => {
         </div>
       ) : (
         <div className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-          <form onSubmit={createHomework} className="rounded-2xl border border-accent/10 bg-base-200/35 p-5 space-y-4">
+          <form onSubmit={saveHomework} className="rounded-2xl border border-accent/10 bg-base-200/35 p-5 space-y-4">
             <div className="flex items-center gap-2 text-accent">
               <FaCirclePlus />
-              <h3 className="font-black">Create Homework</h3>
+              <h3 className="font-black">{editingHomeworkId ? "Edit Homework" : "Create Homework"}</h3>
             </div>
             <input
               value={homework.title}
@@ -351,8 +441,14 @@ const CyberOperationsManager = () => {
               Publish immediately
             </label>
             <button type="submit" disabled={busy} className="btn btn-accent w-full">
-              <FaCirclePlus /> {busy ? "Creating..." : "Create Homework"}
+              {editingHomeworkId ? <FaCheck /> : <FaCirclePlus />}
+              {busy ? "Saving..." : editingHomeworkId ? "Save Changes" : "Create Homework"}
             </button>
+            {editingHomeworkId && (
+              <button type="button" onClick={cancelHomeworkEdit} disabled={busy} className="btn btn-ghost w-full">
+                <FaXmark /> Cancel Editing
+              </button>
+            )}
           </form>
 
           <div className="space-y-3">
@@ -373,14 +469,23 @@ const CyberOperationsManager = () => {
                         {item.attachments?.length ? ` · ${item.attachments.length} attachment(s)` : ""}
                       </p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => toggleHomework(item)}
-                      className={`btn btn-sm ${item.published ? "btn-success btn-outline" : "btn-ghost border border-white/10"}`}
-                    >
-                      {item.published ? <FaCheck /> : <FaEyeSlash />}
-                      {item.published ? "Published" : "Draft"}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => editHomework(item)}
+                        className="btn btn-sm btn-outline"
+                      >
+                        <FaPen /> Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => toggleHomework(item)}
+                        className={`btn btn-sm ${item.published ? "btn-success btn-outline" : "btn-ghost border border-white/10"}`}
+                      >
+                        {item.published ? <FaCheck /> : <FaEyeSlash />}
+                        {item.published ? "Published" : "Draft"}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))

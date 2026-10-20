@@ -6,6 +6,17 @@ import { api } from "../../services/api";
 
 const MAX_BYTES = 10 * 1024 * 1024;
 
+const requestFailureMessage = (error, fallback) => {
+  const serverMessage = error?.response?.data?.message;
+  if (serverMessage) return serverMessage;
+
+  if (error?.response?.status) {
+    return `${fallback} (HTTP ${error.response.status}). Check the API endpoint and try again.`;
+  }
+
+  return `${fallback}. ${error?.message || "Network connection failed"}.`;
+};
+
 const AssetDropzone = ({
   scope,
   accept = "image/*,.pdf,.txt,.md,.json,.csv,.zip,.7z,.rar,.pcap,.pcapng",
@@ -26,12 +37,21 @@ const AssetDropzone = ({
     }
 
     const mimeType = file.type || "application/octet-stream";
-    const intentResponse = await api.post(`/uploads/${scope}/sign`, {
-      name: file.name,
-      mimeType,
-      size: file.size,
-    });
+    let intentResponse;
+    try {
+      intentResponse = await api.post(`/uploads/${scope}/sign`, {
+        name: file.name,
+        mimeType,
+        size: file.size,
+      });
+    } catch (error) {
+      throw new Error(requestFailureMessage(error, "Could not prepare the upload"));
+    }
     const intent = intentResponse.data.upload;
+
+    if (!intent?.uploadUrl || !intent?.id) {
+      throw new Error("The API returned an incomplete upload URL. Refresh the portal and try again.");
+    }
 
     const finalize = async () => {
       const response = await api.post(`/uploads/${scope}/complete`, {
@@ -74,10 +94,22 @@ const AssetDropzone = ({
       }
     }
 
-    if (transferError && !finalizeError?.response) {
-      throw transferError;
+    if (finalizeError?.response?.data?.message) {
+      throw finalizeError;
     }
-    throw finalizeError;
+
+    if (transferError) {
+      throw new Error(
+        requestFailureMessage(
+          transferError,
+          "Storage rejected the file upload",
+        ),
+      );
+    }
+
+    throw new Error(
+      requestFailureMessage(finalizeError, "Could not finalize the uploaded file"),
+    );
   };
 
   const processFiles = async (fileList) => {
