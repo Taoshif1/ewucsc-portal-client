@@ -11,6 +11,8 @@ import {
 import { api } from "../services/api";
 import Spinner from "../components/common/Spinner";
 import AttachmentList from "../components/common/AttachmentList";
+import { usePagination } from "../hooks/usePagination";
+import Pagination from "../components/common/Pagination";
 
 const difficultyClass = {
   Easy: "badge-success",
@@ -51,6 +53,7 @@ const PortalCTF = () => {
     category === "All"
       ? challenges
       : challenges.filter((item) => item.category === category);
+  const pagination = usePagination(visible);
 
   const submitFlag = async (challenge) => {
     const flag = flags[challenge.id]?.trim();
@@ -110,7 +113,7 @@ const PortalCTF = () => {
             <button
               key={item}
               type="button"
-              onClick={() => setCategory(item)}
+              onClick={() => { setCategory(item); pagination.resetPage(); }}
               className={`btn btn-sm rounded-full ${
                 category === item ? "btn-secondary" : "btn-ghost border border-white/5"
               }`}
@@ -132,7 +135,7 @@ const PortalCTF = () => {
           </div>
         ) : (
           <section className="mt-8 grid gap-5 lg:grid-cols-2">
-            {visible.map((challenge) => (
+            {pagination.pageItems.map((challenge) => (
               <article
                 key={challenge.id}
                 className={`rounded-[1.5rem] border p-6 backdrop-blur-xl ${
@@ -205,6 +208,7 @@ const PortalCTF = () => {
             ))}
           </section>
         )}
+        {!loading && visible.length > 0 && <Pagination pagination={pagination} />}
       </div>
     </div>
   );

@@ -14,6 +14,8 @@ import {
 } from "react-icons/fa6";
 import { api } from "../services/api";
 import { useAuth } from "../hooks/useAuth";
+import { usePagination } from "../hooks/usePagination";
+import Pagination from "../components/common/Pagination";
 
 const ROLES = ["admin", "executive", "sub-executive", "member"];
 const FILTERS = ["all", "pending", "approved", "rejected", "suspended", "deleted"];
@@ -48,6 +50,8 @@ const AdminUsers = () => {
     if (filter === "all") return users;
     return users.filter((user) => !user.deletedAt && user.approvalStatus === filter);
   }, [filter, users]);
+
+  const pagination = usePagination(visibleUsers);
 
   const exportMembersCsv = () => {
     const headers = ["name", "studentId", "email", "role", "approvalStatus", "ctfScore", "solvedChallenges", "createdAt"];
@@ -189,7 +193,7 @@ const AdminUsers = () => {
 
       <div className="mt-6 flex flex-wrap gap-2">
         {FILTERS.map((item) => (
-          <button key={item} type="button" onClick={() => setFilter(item)} className={`btn btn-sm rounded-full capitalize ${filter === item ? "btn-primary" : "btn-ghost border border-white/5"}`}>{item}</button>
+          <button key={item} type="button" onClick={() => { setFilter(item); pagination.resetPage(); }} className={`btn btn-sm rounded-full capitalize ${filter === item ? "btn-primary" : "btn-ghost border border-white/5"}`}>{item}</button>
         ))}
       </div>
 
@@ -203,7 +207,7 @@ const AdminUsers = () => {
             <table className="table">
               <thead><tr><th>Student</th><th>Status</th><th>Role</th><th>Registered</th><th className="text-right">Actions</th></tr></thead>
               <tbody>
-                {visibleUsers.map((user) => {
+                {pagination.pageItems.map((user) => {
                   const busy = busyUid === user.uid;
                   const removed = Boolean(user.deletedAt);
                   return (
@@ -264,6 +268,7 @@ const AdminUsers = () => {
             </table>
           </div>
         )}
+        {!loading && visibleUsers.length > 0 && <Pagination pagination={pagination} />}
       </div>
       {editingUser && (
         <div

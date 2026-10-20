@@ -4,6 +4,8 @@ import { FaArrowRight, FaCalendarDays, FaNewspaper } from "react-icons/fa6";
 import PageHero from "../components/PageHero";
 import { publicApi } from "../services/api";
 import { resolveMediaUrl } from "../utils/mediaUrl";
+import { usePagination } from "../hooks/usePagination";
+import Pagination from "../components/common/Pagination";
 
 const formatDate = (value) =>
   value
@@ -24,6 +26,8 @@ const Blogs = () => {
       .catch(() => setItems([]))
       .finally(() => setLoading(false));
   }, []);
+
+  const pagination = usePagination(items);
 
   return (
     <div className="space-y-16 pb-16">
@@ -50,7 +54,7 @@ const Blogs = () => {
         </div>
       ) : (
         <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {items.map((item) => {
+          {pagination.pageItems.map((item) => {
             const images =
               item.imageUrls?.length > 0
                 ? item.imageUrls
@@ -104,6 +108,7 @@ const Blogs = () => {
           })}
         </section>
       )}
+      {!loading && items.length > 0 && <Pagination pagination={pagination} />}
     </div>
   );
 };

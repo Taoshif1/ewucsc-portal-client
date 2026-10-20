@@ -11,6 +11,8 @@ import {
 import { api } from "../services/api";
 import Spinner from "../components/common/Spinner";
 import AttachmentList from "../components/common/AttachmentList";
+import { usePagination } from "../hooks/usePagination";
+import Pagination from "../components/common/Pagination";
 
 const PortalHomeworks = () => {
   const [homeworks, setHomeworks] = useState([]);
@@ -33,6 +35,8 @@ const PortalHomeworks = () => {
   useEffect(() => {
     load();
   }, []);
+
+  const pagination = usePagination(homeworks);
 
   const submit = async (homework) => {
     const draft = drafts[homework.id] || {};
@@ -87,7 +91,7 @@ const PortalHomeworks = () => {
           </div>
         ) : (
           <section className="mt-8 space-y-5">
-            {homeworks.map((homework) => (
+            {pagination.pageItems.map((homework) => (
               <article key={homework.id} className="rounded-[1.5rem] border border-white/5 bg-base-100/65 p-6 md:p-7">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
@@ -168,6 +172,7 @@ const PortalHomeworks = () => {
             ))}
           </section>
         )}
+        {!loading && homeworks.length > 0 && <Pagination pagination={pagination} />}
       </div>
     </div>
   );

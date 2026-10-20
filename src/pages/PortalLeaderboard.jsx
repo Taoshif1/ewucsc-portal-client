@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { FaMedal, FaRankingStar } from "react-icons/fa6";
 import { api } from "../services/api";
 import Spinner from "../components/common/Spinner";
+import { usePagination } from "../hooks/usePagination";
+import Pagination from "../components/common/Pagination";
 
 const PortalLeaderboard = () => {
   const [rows, setRows] = useState([]);
@@ -13,6 +15,8 @@ const PortalLeaderboard = () => {
       .catch(() => setRows([]))
       .finally(() => setLoading(false));
   }, []);
+
+  const pagination = usePagination(rows);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 md:px-6 lg:px-8">
@@ -36,7 +40,7 @@ const PortalLeaderboard = () => {
                 <tr><th>Rank</th><th>Member</th><th>Role</th><th className="text-right">Score</th></tr>
               </thead>
               <tbody>
-                {rows.map((row) => (
+                {pagination.pageItems.map((row) => (
                   <tr key={row.id || row.studentId || row.rank}>
                     <td><span className="inline-flex items-center gap-2 font-bold"><FaMedal className={row.rank <= 3 ? "text-warning" : "opacity-30"} />#{row.rank}</span></td>
                     <td><div className="font-bold">{row.name}</div><div className="text-xs opacity-50">{row.studentId}</div></td>
@@ -48,6 +52,7 @@ const PortalLeaderboard = () => {
             </table>
           </div>
         )}
+        {!loading && rows.length > 0 && <Pagination pagination={pagination} />}
       </div>
     </div>
   );
