@@ -3,6 +3,8 @@ import { FaCalendarDays, FaImages } from "react-icons/fa6";
 import PageHero from "../components/PageHero";
 import { publicApi } from "../services/api";
 import { resolveMediaUrl } from "../utils/mediaUrl";
+import { usePagination } from "../hooks/usePagination";
+import Pagination from "../components/common/Pagination";
 
 const formatDate = (value) =>
   value
@@ -24,6 +26,8 @@ const Gallery = () => {
       .catch(() => setItems([]))
       .finally(() => setLoading(false));
   }, []);
+
+  const pagination = usePagination(items);
 
   return (
     <div className="space-y-14 pb-20">
@@ -50,7 +54,7 @@ const Gallery = () => {
         </div>
       ) : (
         <section className="columns-1 gap-5 sm:columns-2 lg:columns-3">
-          {items.map((item) => (
+          {pagination.pageItems.map((item) => (
             <article
               key={item.id}
               className="group mb-5 break-inside-avoid overflow-hidden rounded-[1.5rem] border border-white/5 bg-base-100/70 shadow-2xl"
@@ -82,6 +86,7 @@ const Gallery = () => {
           ))}
         </section>
       )}
+      {!loading && items.length > 0 && <Pagination pagination={pagination} />}
     </div>
   );
 };
