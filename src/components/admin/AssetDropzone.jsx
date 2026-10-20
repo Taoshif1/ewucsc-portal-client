@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import axios from "axios";
 import toast from "react-hot-toast";
 import { FaCloudArrowUp, FaFile, FaImage, FaSpinner } from "react-icons/fa6";
 import { api } from "../../services/api";
@@ -24,21 +25,59 @@ const AssetDropzone = ({
       throw new Error(`${file.name} is larger than 10 MB.`);
     }
 
-    const bytes = await file.arrayBuffer();
-    const response = await api.post(`/uploads/${scope}`, bytes, {
-      headers: {
-        "Content-Type": "application/octet-stream",
-        "X-File-Name": encodeURIComponent(file.name),
-        "X-File-Type": file.type || "application/octet-stream",
-      },
-      onUploadProgress: (event) => {
-        if (event.total) {
-          setProgress(Math.round((event.loaded / event.total) * 100));
-        }
-      },
+    const mimeType = file.type || "application/octet-stream";
+    const intentResponse = await api.post(`/uploads/${scope}/sign`, {
+      name: file.name,
+      mimeType,
+      size: file.size,
     });
+    const intent = intentResponse.data.upload;
 
-    return response.data.asset;
+    const finalize = async () => {
+      const response = await api.post(`/uploads/${scope}/complete`, {
+        id: intent.id,
+        name: intent.name,
+        mimeType: intent.mimeType,
+        size: intent.size,
+      });
+      return response.data.asset;
+    };
+
+    // Upload the bytes directly to Supabase Storage. They no longer pass
+    // through a Vercel Function, whose request-body limit is 4.5 MB.
+    let transferError = null;
+    try {
+      await axios.put(intent.uploadUrl, file, {
+        headers: {
+          "Content-Type": intent.mimeType || mimeType,
+          "x-upsert": "false",
+        },
+        onUploadProgress: (event) => {
+          if (event.total) {
+            setProgress(Math.round((event.loaded / event.total) * 100));
+          }
+        },
+      });
+    } catch (error) {
+      transferError = error;
+    }
+
+    // Always ask the server to verify that the object exists. This also
+    // recovers when the storage upload succeeds but the browser loses its
+    // response, avoiding a misleading "Network Error" toast for a saved file.
+    let finalizeError;
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        return await finalize();
+      } catch (error) {
+        finalizeError = error;
+      }
+    }
+
+    if (transferError && !finalizeError?.response) {
+      throw transferError;
+    }
+    throw finalizeError;
   };
 
   const processFiles = async (fileList) => {

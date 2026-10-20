@@ -5,7 +5,10 @@ import {
   FaCheck,
   FaDownload,
   FaKey,
+  FaPen,
   FaRotate,
+  FaRotateLeft,
+  FaTrash,
   FaUsersGear,
   FaXmark,
 } from "react-icons/fa6";
@@ -13,7 +16,7 @@ import { api } from "../services/api";
 import { useAuth } from "../hooks/useAuth";
 
 const ROLES = ["admin", "executive", "sub-executive", "member"];
-const FILTERS = ["all", "pending", "approved", "rejected", "suspended"];
+const FILTERS = ["all", "pending", "approved", "rejected", "suspended", "deleted"];
 
 const AdminUsers = () => {
   const { backendUser, resetPassword } = useAuth();
@@ -21,6 +24,8 @@ const AdminUsers = () => {
   const [filter, setFilter] = useState("pending");
   const [loading, setLoading] = useState(true);
   const [busyUid, setBusyUid] = useState(null);
+  const [editingUser, setEditingUser] = useState(null);
+  const [editingName, setEditingName] = useState("");
 
   const loadUsers = async () => {
     try {
@@ -38,10 +43,11 @@ const AdminUsers = () => {
     loadUsers();
   }, []);
 
-  const visibleUsers = useMemo(
-    () => filter === "all" ? users : users.filter((user) => user.approvalStatus === filter),
-    [filter, users],
-  );
+  const visibleUsers = useMemo(() => {
+    if (filter === "deleted") return users.filter((user) => Boolean(user.deletedAt));
+    if (filter === "all") return users;
+    return users.filter((user) => !user.deletedAt && user.approvalStatus === filter);
+  }, [filter, users]);
 
   const exportMembersCsv = () => {
     const headers = ["name", "studentId", "email", "role", "approvalStatus", "ctfScore", "solvedChallenges", "createdAt"];
@@ -109,6 +115,64 @@ const AdminUsers = () => {
     }
   };
 
+  const saveMemberName = async (event) => {
+    event.preventDefault();
+    if (!editingUser?.uid) return;
+
+    const name = editingName.trim();
+    if (name.length < 2 || name.length > 100) {
+      toast.error("Name must be between 2 and 100 characters.");
+      return;
+    }
+
+    try {
+      setBusyUid(editingUser.uid);
+      await api.patch(`/admin/users/${editingUser.uid}/profile`, { name });
+      toast.success("Member name updated.");
+      setEditingUser(null);
+      await loadUsers();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Unable to update member profile.");
+    } finally {
+      setBusyUid(null);
+    }
+  };
+
+  const removeMember = async (user) => {
+    if (!user.uid || user.uid === backendUser?.uid || user.isProtected || user.deletedAt) return;
+
+    const confirmed = window.confirm(
+      `Remove ${user.name || "this member"} from the portal? Their portal access will be disabled, while CTF solves and homework history will be preserved.`,
+    );
+    if (!confirmed) return;
+
+    try {
+      setBusyUid(user.uid);
+      await api.delete(`/admin/users/${user.uid}`);
+      toast.success("Member removed and portal access disabled.");
+      await loadUsers();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Unable to remove member.");
+    } finally {
+      setBusyUid(null);
+    }
+  };
+
+  const restoreMember = async (user) => {
+    if (!user.uid || !user.deletedAt || user.isProtected) return;
+
+    try {
+      setBusyUid(user.uid);
+      await api.post(`/admin/users/${user.uid}/restore`);
+      toast.success("Member restored.");
+      await loadUsers();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Unable to restore member.");
+    } finally {
+      setBusyUid(null);
+    }
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -141,29 +205,57 @@ const AdminUsers = () => {
               <tbody>
                 {visibleUsers.map((user) => {
                   const busy = busyUid === user.uid;
+                  const removed = Boolean(user.deletedAt);
                   return (
                     <tr key={user.uid || user.id}>
                       <td><div className="font-bold">{user.name}</div><div className="font-mono text-xs text-secondary">{user.studentId || "Legacy account"}</div><div className="text-xs opacity-45">{user.email}</div></td>
-                      <td><span className={`badge badge-outline capitalize ${user.approvalStatus === "approved" ? "badge-success" : user.approvalStatus === "pending" ? "badge-warning" : "badge-error"}`}>{user.approvalStatus}</span></td>
+                      <td><span className={`badge badge-outline capitalize ${removed ? "badge-error" : user.approvalStatus === "approved" ? "badge-success" : user.approvalStatus === "pending" ? "badge-warning" : "badge-error"}`}>{removed ? "Removed" : user.approvalStatus}</span></td>
                       <td>
-                        <select className="select select-sm select-bordered relative z-10 min-w-40 bg-base-100 text-base-content shadow-lg focus:z-50 focus:border-primary/40" value={user.role || "member"} disabled={busy} onChange={(event) => updateRole(user.uid, event.target.value)}>
+                        <select className="select select-sm select-bordered relative z-10 min-w-40 bg-base-100 text-base-content shadow-lg focus:z-50 focus:border-primary/40" value={user.role || "member"} disabled={busy || !user.uid || user.isProtected || removed} onChange={(event) => updateRole(user.uid, event.target.value)}>
                           {ROLES.map((role) => <option key={role} value={role} className="bg-base-100 text-base-content">{role}</option>)}
                         </select>
                       </td>
                       <td className="text-sm opacity-55">{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "—"}</td>
                       <td><div className="flex justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => sendPasswordReset(user)}
-                          disabled={busy || !user.email}
-                          className="btn btn-sm btn-outline"
-                          title="Send Firebase password-reset email"
-                        >
-                          <FaKey /> Reset Password
-                        </button>
-                        {user.approvalStatus !== "approved" && <button type="button" onClick={() => updateApproval(user.uid, "approved")} disabled={busy} className="btn btn-sm btn-success btn-outline"><FaCheck /> Approve</button>}
-                        {user.approvalStatus === "approved" && user.uid !== backendUser?.uid && <button type="button" onClick={() => updateApproval(user.uid, "suspended")} disabled={busy} className="btn btn-sm btn-warning btn-outline"><FaBan /> Suspend</button>}
-                        {user.approvalStatus !== "rejected" && user.uid !== backendUser?.uid && <button type="button" onClick={() => updateApproval(user.uid, "rejected")} disabled={busy} className="btn btn-sm btn-error btn-outline"><FaXmark /> Reject</button>}
+                        {!removed && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingUser(user);
+                              setEditingName(user.name || "");
+                            }}
+                            disabled={busy || !user.uid || user.isProtected}
+                            className="btn btn-sm btn-outline"
+                            title="Edit member display name"
+                          >
+                            <FaPen /> Edit
+                          </button>
+                        )}
+                        {removed ? (
+                          <button type="button" onClick={() => restoreMember(user)} disabled={busy || user.isProtected} className="btn btn-sm btn-success btn-outline">
+                            <FaRotateLeft /> Restore
+                          </button>
+                        ) : (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => sendPasswordReset(user)}
+                              disabled={busy || !user.email || !user.uid || user.isProtected}
+                              className="btn btn-sm btn-outline"
+                              title="Send Firebase password-reset email"
+                            >
+                              <FaKey /> Reset Password
+                            </button>
+                            {user.approvalStatus !== "approved" && <button type="button" onClick={() => updateApproval(user.uid, "approved")} disabled={busy || !user.uid || user.isProtected} className="btn btn-sm btn-success btn-outline"><FaCheck /> Approve</button>}
+                            {user.approvalStatus === "approved" && user.uid !== backendUser?.uid && <button type="button" onClick={() => updateApproval(user.uid, "suspended")} disabled={busy || user.isProtected} className="btn btn-sm btn-warning btn-outline"><FaBan /> Suspend</button>}
+                            {user.approvalStatus !== "rejected" && user.uid !== backendUser?.uid && <button type="button" onClick={() => updateApproval(user.uid, "rejected")} disabled={busy || user.isProtected} className="btn btn-sm btn-error btn-outline"><FaXmark /> Reject</button>}
+                            {user.uid !== backendUser?.uid && !user.isProtected && (
+                              <button type="button" onClick={() => removeMember(user)} disabled={busy || !user.uid} className="btn btn-sm btn-error btn-outline" title="Remove portal access while preserving history">
+                                <FaTrash /> Remove
+                              </button>
+                            )}
+                          </>
+                        )}
                       </div></td>
                     </tr>
                   );
@@ -173,6 +265,49 @@ const AdminUsers = () => {
           </div>
         )}
       </div>
+      {editingUser && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4"
+          onClick={() => setEditingUser(null)}
+        >
+          <form
+            onSubmit={saveMemberName}
+            onClick={(event) => event.stopPropagation()}
+            className="w-full max-w-lg rounded-2xl border border-white/10 bg-base-100 p-6 shadow-2xl"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="font-mono text-xs uppercase tracking-[0.18em] text-primary">// member profile</p>
+                <h2 className="mt-2 text-2xl font-black">Edit Member</h2>
+                <p className="mt-2 text-sm text-base-content/55">
+                  Update the display name. Student ID and university email remain tied to the verified Firebase identity.
+                </p>
+              </div>
+              <button type="button" onClick={() => setEditingUser(null)} className="btn btn-sm btn-circle btn-ghost" aria-label="Close edit dialog">
+                <FaXmark />
+              </button>
+            </div>
+            <label className="form-control mt-6">
+              <span className="mb-2 text-xs font-bold uppercase tracking-[0.12em] text-base-content/45">Full name</span>
+              <input
+                autoFocus
+                required
+                minLength={2}
+                maxLength={100}
+                value={editingName}
+                onChange={(event) => setEditingName(event.target.value)}
+                className="input input-bordered w-full bg-base-200/40"
+              />
+            </label>
+            <div className="mt-6 flex justify-end gap-3">
+              <button type="button" onClick={() => setEditingUser(null)} className="btn btn-ghost">Cancel</button>
+              <button type="submit" disabled={busyUid === editingUser.uid} className="btn btn-primary">
+                {busyUid === editingUser.uid ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
