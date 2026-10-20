@@ -11,15 +11,14 @@ const AttachmentList = ({ attachments = [] }) => {
   const openAsset = async (asset) => {
     try {
       setBusyId(asset.id);
-      const response = await api.get(asset.apiPath, { responseType: "blob" });
-      const url = URL.createObjectURL(response.data);
+      const response = await api.get(`${asset.apiPath}/link`);
       const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = asset.name || "attachment";
+      anchor.href = response.data.url;
+      anchor.download = response.data.name || asset.name || "attachment";
+      anchor.rel = "noreferrer";
       document.body.appendChild(anchor);
       anchor.click();
       anchor.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (error) {
       toast.error(error.response?.data?.message || "Unable to download attachment.");
     } finally {
