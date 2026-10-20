@@ -8,11 +8,14 @@ import {
 } from "react-icons/fa6";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { api } from "../../services/api";
+import { usePagination } from "../../hooks/usePagination";
+import Pagination from "../common/Pagination";
 
 const SubmissionReviewPanel = () => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(null);
+  const pagination = usePagination(rows);
 
   const load = async () => {
     try {
@@ -67,7 +70,7 @@ const SubmissionReviewPanel = () => {
         </div>
       ) : (
         <div className="mt-6 space-y-4">
-          {rows.map((row) => (
+          {pagination.pageItems.map((row) => (
             <article
               key={row.id}
               className="rounded-2xl border border-white/5 bg-base-200/35 p-5"
@@ -131,6 +134,7 @@ const SubmissionReviewPanel = () => {
           ))}
         </div>
       )}
+      {!loading && rows.length > 0 && <Pagination pagination={pagination} />}
     </section>
   );
 };
