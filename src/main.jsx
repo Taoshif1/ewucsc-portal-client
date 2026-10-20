@@ -4,11 +4,13 @@ import { RouterProvider } from "react-router";
 import { router } from "./router/router";
 import { AuthProvider } from "./context/AuthProvider";
 import { Toaster } from "react-hot-toast";
+import SiteCreditBar from "./components/SiteCreditBar";
 
 createRoot(document.getElementById("root")).render(
   <AuthProvider>
     <>
       <RouterProvider router={router} />
+      <SiteCreditBar onCreditsClick={() => router.navigate("/credits")} />
       <Toaster position="top-right" reverseOrder={false} />
     </>
   </AuthProvider>,
