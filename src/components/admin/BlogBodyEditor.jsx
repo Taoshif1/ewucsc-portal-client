@@ -110,7 +110,7 @@ const BlogBodyEditor = ({ value = "", onChange, disabled = false }) => {
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const selected = value.slice(start, end) || "your code here";
-    const replacement = `\n```text\n${selected}\n```\n`;
+    const replacement = "\n```text\n" + selected + "\n```\n";
 
     replaceRange(
       start,
