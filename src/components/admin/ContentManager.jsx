@@ -15,6 +15,7 @@ import {
 } from "react-icons/fa6";
 import { api } from "../../services/api";
 import AssetDropzone from "./AssetDropzone";
+import BlogBodyEditor from "./BlogBodyEditor";
 import { resolveMediaUrl } from "../../utils/mediaUrl";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
@@ -237,13 +238,26 @@ const ContentManager = () => {
             className="textarea textarea-bordered min-h-24 w-full bg-base-100"
           />
 
-          <textarea
-            value={draft.body}
-            onChange={(event) => setDraft({ ...draft, body: event.target.value })}
-            placeholder={type === "blogs" ? "Full blog body" : "Announcement details"}
-            className="textarea textarea-bordered min-h-44 w-full bg-base-100"
-            required={type === "blogs"}
-          />
+          {type === "blogs" ? (
+            <div>
+              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-base-content/45">
+                Blog article body
+              </label>
+              <BlogBodyEditor
+                value={draft.body}
+                onChange={(body) => setDraft((current) => ({ ...current, body }))}
+                disabled={busy}
+              />
+            </div>
+          ) : (
+            <textarea
+              value={draft.body}
+              onChange={(event) => setDraft({ ...draft, body: event.target.value })}
+              placeholder="Announcement details"
+              className="textarea textarea-bordered min-h-44 w-full bg-base-100"
+              required
+            />
+          )}
 
           <div>
             <label className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-base-content/45">
