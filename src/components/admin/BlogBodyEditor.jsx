@@ -121,17 +121,54 @@ const BlogBodyEditor = ({ value = "", onChange, disabled = false }) => {
     );
   };
 
+  const runToolbarAction = (action) => {
+    switch (action) {
+      case "h2":
+        prefixLines("## ", "Section heading");
+        break;
+      case "h3":
+        prefixLines("### ", "Subheading");
+        break;
+      case "bold":
+        wrapSelection("**", "**", "bold text");
+        break;
+      case "italic":
+        wrapSelection("*", "*", "italic text");
+        break;
+      case "link":
+        insertLink();
+        break;
+      case "bullets":
+        prefixLines("- ", "List item");
+        break;
+      case "numbered":
+        prefixLines("1. ", "List item");
+        break;
+      case "quote":
+        prefixLines("> ", "Important note");
+        break;
+      case "code":
+        insertCodeBlock();
+        break;
+      case "divider":
+        wrapSelection("\\n---\\n", "", "");
+        break;
+      default:
+        break;
+    }
+  };
+
   const toolbar = [
-    { label: "H2", title: "Section heading", icon: <FaHeading />, action: () => prefixLines("## ", "Section heading") },
-    { label: "H3", title: "Subheading", icon: <FaHeading />, action: () => prefixLines("### ", "Subheading") },
-    { label: "Bold", title: "Bold text", icon: <FaBold />, action: () => wrapSelection("**", "**", "bold text") },
-    { label: "Italic", title: "Italic text", icon: <FaItalic />, action: () => wrapSelection("*", "*", "italic text") },
-    { label: "Link", title: "Insert hyperlink", icon: <FaLink />, action: insertLink },
-    { label: "Bullets", title: "Bulleted list", icon: <FaListUl />, action: () => prefixLines("- ", "List item") },
-    { label: "Numbered", title: "Numbered list", icon: <FaListOl />, action: () => prefixLines("1. ", "List item") },
-    { label: "Quote", title: "Quote or highlight", icon: <FaQuoteLeft />, action: () => prefixLines("> ", "Important note") },
-    { label: "Code", title: "Code block", icon: <FaCode />, action: insertCodeBlock },
-    { label: "Divider", title: "Section divider", icon: <FaMinus />, action: () => wrapSelection("\n---\n", "", "") },
+    { label: "H2", title: "Section heading", icon: <FaHeading />, action: "h2" },
+    { label: "H3", title: "Subheading", icon: <FaHeading />, action: "h3" },
+    { label: "Bold", title: "Bold text", icon: <FaBold />, action: "bold" },
+    { label: "Italic", title: "Italic text", icon: <FaItalic />, action: "italic" },
+    { label: "Link", title: "Insert hyperlink", icon: <FaLink />, action: "link" },
+    { label: "Bullets", title: "Bulleted list", icon: <FaListUl />, action: "bullets" },
+    { label: "Numbered", title: "Numbered list", icon: <FaListOl />, action: "numbered" },
+    { label: "Quote", title: "Quote or highlight", icon: <FaQuoteLeft />, action: "quote" },
+    { label: "Code", title: "Code block", icon: <FaCode />, action: "code" },
+    { label: "Divider", title: "Section divider", icon: <FaMinus />, action: "divider" },
   ];
 
   return (
@@ -144,7 +181,7 @@ const BlogBodyEditor = ({ value = "", onChange, disabled = false }) => {
               type="button"
               title={tool.title}
               aria-label={tool.title}
-              onClick={tool.action}
+              onClick={() => runToolbarAction(tool.action)}
               disabled={disabled || showPreview}
               className="btn btn-xs btn-ghost gap-1.5 border border-white/5"
             >
