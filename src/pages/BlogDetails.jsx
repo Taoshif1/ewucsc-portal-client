@@ -13,7 +13,8 @@ import {
 } from "react-icons/fa6";
 import { publicApi } from "../services/api";
 import Spinner from "../components/common/Spinner";
-import MarkdownContent, { parseMarkdown } from "../components/blog/MarkdownContent";
+import MarkdownContent from "../components/blog/MarkdownContent";
+import { parseMarkdown } from "../utils/parseBlogMarkdown";
 import { resolveMediaUrl } from "../utils/mediaUrl";
 
 const formatDate = (value) =>
