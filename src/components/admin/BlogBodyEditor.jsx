@@ -151,7 +151,7 @@ const BlogBodyEditor = ({ value = "", onChange, disabled = false }) => {
         insertCodeBlock();
         break;
       case "divider":
-        wrapSelection("\\n---\\n", "", "");
+        wrapSelection("\n---\n", "", "");
         break;
       default:
         break;
