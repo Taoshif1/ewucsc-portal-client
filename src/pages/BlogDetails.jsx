@@ -41,12 +41,12 @@ const BlogDetails = () => {
   const [state, setState] = useState("loading");
   const [feedbackBySlug, setFeedbackBySlug] = useState({});
   const [feedbackMessageBySlug, setFeedbackMessageBySlug] = useState({});
-  const [shareMessageBySlug, setShareMessageBySlug] = useState("");
+  const [shareMessagesBySlug, setShareMessagesBySlug] = useState({});
   const feedback = Object.hasOwn(feedbackBySlug, slug)
     ? feedbackBySlug[slug]
     : readSavedFeedback(slug);
   const feedbackMessage = feedbackMessageBySlug[slug] || "";
-  const shareMessage = shareMessageBySlug;
+  const shareMessage = shareMessagesBySlug[slug] || "";
   const [readingProgress, setReadingProgress] = useState(0);
 
   useEffect(() => {
@@ -76,7 +76,6 @@ const BlogDetails = () => {
       setReadingProgress(Math.min(100, Math.max(0, nextProgress)));
     };
 
-    updateProgress();
     window.addEventListener("scroll", updateProgress, { passive: true });
     window.addEventListener("resize", updateProgress);
     return () => {
@@ -133,15 +132,15 @@ const BlogDetails = () => {
           text: item.excerpt || "Read this article from EWUCSC.",
           url,
         });
-        setShareMessageBySlug("Article shared.");
+        setShareMessagesBySlug((current) => ({ ...current, [slug]: "Article shared." }));
         return;
       }
 
       await navigator.clipboard.writeText(url);
-      setShareMessageBySlug("Article link copied.");
+      setShareMessagesBySlug((current) => ({ ...current, [slug]: "Article link copied." }));
     } catch (error) {
       if (error?.name !== "AbortError") {
-        setShareMessageBySlug("Could not share automatically. Copy the page URL from your browser.");
+        setShareMessagesBySlug((current) => ({ ...current, [slug]: "Could not share automatically. Copy the page URL from your browser." }));
       }
     }
   };
