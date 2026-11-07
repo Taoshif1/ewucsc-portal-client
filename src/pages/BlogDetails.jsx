@@ -35,9 +35,6 @@ const BlogDetails = () => {
 
   useEffect(() => {
     let active = true;
-    setState("loading");
-    setItem(null);
-
     publicApi
       .get("/content/blogs/" + slug)
       .then((res) => {
@@ -141,7 +138,7 @@ const BlogDetails = () => {
     }
   };
 
-  if (state === "loading") {
+  if (state === "loading" || item?.slug !== slug) {
     return <div className="flex min-h-[60vh] items-center justify-center"><Spinner /></div>;
   }
 
