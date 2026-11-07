@@ -131,7 +131,7 @@ const BlogBodyEditor = ({ value = "", onChange, disabled = false }) => {
     { label: "Numbered", title: "Numbered list", icon: <FaListOl />, action: () => prefixLines("1. ", "List item") },
     { label: "Quote", title: "Quote or highlight", icon: <FaQuoteLeft />, action: () => prefixLines("> ", "Important note") },
     { label: "Code", title: "Code block", icon: <FaCode />, action: insertCodeBlock },
-    { label: "Divider", title: "Section divider", icon: <FaMinus />, action: () => wrapSelection("\n---\n", "", "Section") },
+    { label: "Divider", title: "Section divider", icon: <FaMinus />, action: () => wrapSelection("\n---\n", "", "") },
   ];
 
   return (
