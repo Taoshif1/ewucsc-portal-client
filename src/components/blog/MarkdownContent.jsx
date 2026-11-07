@@ -21,7 +21,7 @@ const isTableDivider = (line) =>
 
 const isBlockStart = (line, nextLine = "") =>
   /^\s*#{1,6}\s+/.test(line) ||
-  /^\s*>s?/.test(line) ||
+  /^\s*>/.test(line) ||
   /^\s*([-*+]\s+|\d+[.)]\s+)/.test(line) ||
   /^\s*```/.test(line) ||
   /^\s*(---+|___+|\*\*\*+)\s*$/.test(line) ||
