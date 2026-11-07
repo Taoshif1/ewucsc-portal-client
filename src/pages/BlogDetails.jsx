@@ -17,6 +17,16 @@ import MarkdownContent from "../components/blog/MarkdownContent";
 import { parseMarkdown } from "../utils/parseBlogMarkdown";
 import { resolveMediaUrl } from "../utils/mediaUrl";
 
+const readSavedFeedback = (slug) => {
+  if (typeof window === "undefined") return null;
+
+  try {
+    return window.localStorage.getItem("ewucsc:blog-feedback:" + slug);
+  } catch {
+    return null;
+  }
+};
+
 const formatDate = (value) =>
   value
     ? new Date(value.includes("T") ? value : value + "T00:00:00").toLocaleDateString(
@@ -29,9 +39,14 @@ const BlogDetails = () => {
   const { slug } = useParams();
   const [item, setItem] = useState(null);
   const [state, setState] = useState("loading");
-  const [feedback, setFeedback] = useState(null);
-  const [feedbackMessage, setFeedbackMessage] = useState("");
-  const [shareMessage, setShareMessage] = useState("");
+  const [feedbackBySlug, setFeedbackBySlug] = useState({});
+  const [feedbackMessageBySlug, setFeedbackMessageBySlug] = useState({});
+  const [shareMessageBySlug, setShareMessageBySlug] = useState("");
+  const feedback = Object.hasOwn(feedbackBySlug, slug)
+    ? feedbackBySlug[slug]
+    : readSavedFeedback(slug);
+  const feedbackMessage = feedbackMessageBySlug[slug] || "";
+  const shareMessage = shareMessageBySlug;
   const [readingProgress, setReadingProgress] = useState(0);
 
   useEffect(() => {
@@ -50,16 +65,6 @@ const BlogDetails = () => {
     return () => {
       active = false;
     };
-  }, [slug]);
-
-  useEffect(() => {
-    try {
-      setFeedback(window.localStorage.getItem("ewucsc:blog-feedback:" + slug));
-    } catch {
-      setFeedback(null);
-    }
-    setFeedbackMessage("");
-    setShareMessage("");
   }, [slug]);
 
   useEffect(() => {
@@ -108,12 +113,14 @@ const BlogDetails = () => {
       // Keep the choice in the current page session when storage is unavailable.
     }
 
-    setFeedback(vote);
-    setFeedbackMessage(
-      vote === "yes"
-        ? "Thanks! Your feedback is saved on this device."
-        : "Thanks for letting us know. Your feedback is saved on this device.",
-    );
+    setFeedbackBySlug((current) => ({ ...current, [slug]: vote }));
+    setFeedbackMessageBySlug((current) => ({
+      ...current,
+      [slug]:
+        vote === "yes"
+          ? "Thanks! Your feedback is saved on this device."
+          : "Thanks for letting us know. Your feedback is saved on this device.",
+    }));
   };
 
   const handleShare = async () => {
@@ -126,20 +133,20 @@ const BlogDetails = () => {
           text: item.excerpt || "Read this article from EWUCSC.",
           url,
         });
-        setShareMessage("Article shared.");
+        setShareMessageBySlug("Article shared.");
         return;
       }
 
       await navigator.clipboard.writeText(url);
-      setShareMessage("Article link copied.");
+      setShareMessageBySlug("Article link copied.");
     } catch (error) {
       if (error?.name !== "AbortError") {
-        setShareMessage("Could not share automatically. Copy the page URL from your browser.");
+        setShareMessageBySlug("Could not share automatically. Copy the page URL from your browser.");
       }
     }
   };
 
-  if (state === "loading" || item?.slug !== slug) {
+  if (state === "loading" || (state === "ready" && item?.slug !== slug)) {
     return <div className="flex min-h-[60vh] items-center justify-center"><Spinner /></div>;
   }
 
